@@ -1,13 +1,20 @@
+/* Contenedor fijo: agrupa la barra, los mega-menús y el velo oscuro */
 .navbar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 100;
-  height: var(--altura-navbar);
+}
 
-  /* Efecto vidrio: fondo translúcido + desenfoque */
-  background: rgba(0, 0, 0, 0.55);
+/* La barra tiene el efecto vidrio. Los mega-menús NO son hijos de ella, para
+   que su propio desenfoque funcione (los backdrop-filter anidados no se ven). */
+.navbar__barra {
+  position: relative;
+  z-index: 2;
+  height: var(--altura-navbar);
+  /* Vidrio oscuro: se lee bien tanto sobre secciones negras como claras */
+  background: rgba(12, 12, 14, 0.86);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -16,40 +23,108 @@
 .navbar__contenido {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
+  gap: 20px;
   height: 100%;
-  max-width: 1200px;
+  max-width: 1320px;
   margin: 0 auto;
   padding: 0 24px;
 }
 
 .navbar__logo {
+  flex: none;
   font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--color-texto);
 }
 
+/* ---- Enlaces de escritorio ---- */
+
 .navbar__enlaces {
   display: flex;
+  flex: 1;
   align-items: center;
-  gap: 32px;
+  justify-content: center;
+  gap: clamp(14px, 1.7vw, 28px);
 }
 
 .navbar__enlace {
-  font-size: 0.875rem;
-  font-weight: 400;
+  display: block;
+  padding: 8px 0;
+  line-height: 1.5;
+  border: none;
+  background: none;
   color: var(--color-gris);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  white-space: nowrap;
   transition: color 0.25s ease;
 }
 
 .navbar__enlace:hover,
-.navbar__enlace.active {
+.navbar__enlace--activo {
   color: var(--color-texto);
 }
 
+/* ---- Acciones a la derecha ---- */
+
+.navbar__acciones {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.navbar__enlaces + .navbar__acciones {
+  margin-left: 0;
+}
+
+.navbar__icono {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--color-gris);
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.navbar__icono:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-texto);
+}
+
+.navbar__icono svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Contador del carrito */
+.navbar__contador {
+  position: absolute;
+  top: 3px;
+  right: 1px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--color-acento);
+  color: #ffffff;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+}
+
 .navbar__boton {
+  margin-left: 8px;
   padding: 8px 20px;
   border: none;
   border-radius: 980px;
@@ -57,7 +132,9 @@
   color: #ffffff;
   font-size: 0.875rem;
   font-weight: 500;
-  transition: background-color 0.25s ease, transform 0.25s ease;
+  transition:
+    background-color 0.25s ease,
+    transform 0.25s ease;
 }
 
 .navbar__boton:hover {
@@ -68,22 +145,105 @@
   transform: scale(0.97);
 }
 
-@media (max-width: 640px) {
-  .navbar__contenido {
-    gap: 12px;
-    padding: 0 16px;
-  }
+/* ---- Hamburguesa (solo en pantallas pequeñas) ---- */
 
+.navbar__hamburguesa {
+  position: relative;
+  display: none;
+  width: 40px;
+  height: 40px;
+  margin-left: 4px;
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+.navbar__hamburguesa span {
+  position: absolute;
+  left: 11px;
+  right: 11px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-texto);
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
+    top 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.navbar__hamburguesa span:first-child {
+  top: 15px;
+}
+
+.navbar__hamburguesa span:last-child {
+  top: 23px;
+}
+
+/* Al abrir, las dos líneas forman una X */
+.navbar__hamburguesa--abierta span:first-child {
+  top: 19px;
+  transform: rotate(45deg);
+}
+
+.navbar__hamburguesa--abierta span:last-child {
+  top: 19px;
+  transform: rotate(-45deg);
+}
+
+/* ---- Velo que oscurece la página con el mega-menú abierto ---- */
+
+.navbar__velo {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.35s ease,
+    visibility 0s linear 0.35s;
+}
+
+.navbar__velo--visible {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+/* ---- Tablet y móvil ---- */
+
+@media (max-width: 1100px) {
   .navbar__enlaces {
-    gap: 16px;
+    display: none;
   }
 
-  .navbar__enlace {
-    font-size: 0.8125rem;
+  .navbar__acciones {
+    margin-left: auto;
   }
 
+  .navbar__hamburguesa {
+    display: block;
+  }
+
+  .navbar__velo {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .navbar__contenido {
+    padding: 0 12px 0 18px;
+  }
+
+  /* "Ingresar" pasa al menú de pantalla completa */
   .navbar__boton {
-    padding: 6px 14px;
-    font-size: 0.8125rem;
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar__hamburguesa span,
+  .navbar__velo {
+    transition-duration: 0.01s;
   }
 }

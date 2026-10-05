@@ -74,6 +74,24 @@ button {
   cursor: pointer;
 }
 
+/* Anillo de foco visible solo al navegar con teclado */
+:focus-visible {
+  outline: 2px solid var(--color-acento);
+  outline-offset: 3px;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+dl,
+dd {
+  margin: 0;
+}
+
 img,
 svg,
 video,

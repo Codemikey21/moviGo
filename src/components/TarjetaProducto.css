@@ -1,0 +1,152 @@
+/* El envoltorio (Revelar) es el elemento de la cuadrícula: ocupa toda la celda */
+.tarjeta-envoltorio {
+  height: 100%;
+}
+
+.tarjeta {
+  --giro-x: 0deg;
+  --giro-y: 0deg;
+  --elevacion: 0px;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--s-borde, rgba(255, 255, 255, 0.1));
+  border-radius: 28px;
+  background: var(--s-tarjeta, #151517);
+  color: var(--s-texto, var(--color-texto));
+  transform: perspective(900px) rotateX(var(--giro-x)) rotateY(var(--giro-y))
+    translateY(var(--elevacion));
+  transition:
+    transform 0.25s ease-out,
+    box-shadow 0.35s ease;
+  will-change: transform;
+}
+
+/* Elevación e inclinación: solo con mouse y sin "reducir movimiento" */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .tarjeta:hover {
+    --elevacion: -8px;
+    box-shadow: 0 28px 60px rgba(0, 0, 0, 0.3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tarjeta {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ---- Parte visual: el color elegido tiñe la tarjeta ---- */
+
+.tarjeta__visual {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 5 / 4;
+  background-color: var(--tono);
+  background-image:
+    radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.4), transparent 55%),
+    linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.3));
+  color: rgba(255, 255, 255, 0.9);
+  transition: background-color 0.45s ease;
+}
+
+/* Sobre colores claros el ícono se oscurece para que se vea */
+.tarjeta__visual--claro {
+  color: rgba(0, 0, 0, 0.72);
+}
+
+.tarjeta__icono {
+  width: 44%;
+  height: auto;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.25));
+}
+
+.tarjeta__insignia {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+}
+
+.tarjeta__etiqueta {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  padding: 3px 10px;
+  border-radius: 980px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #ffffff;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+/* ---- Cuerpo ---- */
+
+.tarjeta__cuerpo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  padding: 20px 24px 26px;
+}
+
+/* Los puntos de color quedan por encima del enlace extendido */
+.tarjeta__cuerpo .selector-color {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 12px;
+  padding-left: 5px;
+}
+
+.tarjeta__nombre {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+/* Enlace extendido: hace clicable toda la tarjeta */
+.tarjeta__enlace::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.tarjeta__tagline {
+  color: var(--s-suave, var(--color-gris));
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+
+.tarjeta__precios {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.tarjeta__precio {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.tarjeta__alquiler {
+  color: var(--s-suave, var(--color-gris));
+  font-size: 0.875rem;
+}
+
+/* ---- Cuadrícula que contiene las tarjetas (se usa en varias páginas) ---- */
+
+.grilla-productos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: 24px;
+}

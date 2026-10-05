@@ -1,0 +1,23 @@
+.insignia {
+  display: inline-block;
+  padding: 4px 11px;
+  border-radius: 980px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* "Nuevo" usa el color de acento de la categoría */
+.insignia--nuevo {
+  background: var(--acento, var(--color-acento));
+  color: #000000;
+}
+
+/* "Más vendido" es un vidrio oscuro: se lee sobre cualquier fondo */
+.insignia--vendido {
+  background: rgba(0, 0, 0, 0.7);
+  color: #ffffff;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}

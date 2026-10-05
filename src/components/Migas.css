@@ -1,0 +1,37 @@
+.migas__lista {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+}
+
+.migas__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Separador entre elementos */
+.migas__item + .migas__item::before {
+  content: '/';
+  color: var(--s-suave, var(--color-gris));
+  opacity: 0.6;
+}
+
+.migas__enlace {
+  color: var(--s-suave, var(--color-gris));
+  transition: color 0.2s ease;
+}
+
+.migas__enlace:hover {
+  color: var(--s-texto, var(--color-texto));
+}
+
+.migas__actual {
+  color: var(--s-texto, var(--color-texto));
+  font-weight: 500;
+}

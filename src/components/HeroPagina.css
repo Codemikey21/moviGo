@@ -1,0 +1,98 @@
+.hero-pagina {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: min(78vh, 680px);
+  padding: calc(var(--altura-navbar) + 56px) 0 72px;
+  overflow: hidden;
+  background: #000000;
+  color: var(--color-texto);
+}
+
+/* Degradado con el color de acento */
+.hero-pagina__fondo {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse 70% 90% at 82% 12%,
+      color-mix(in srgb, var(--acento) 50%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 55% 60% at 8% 105%,
+      color-mix(in srgb, var(--acento) 24%, transparent),
+      transparent 70%
+    ),
+    #000000;
+}
+
+/* Ícono gigante y tenue a la derecha */
+.hero-pagina__icono {
+  position: absolute;
+  top: 50%;
+  right: clamp(-60px, 3vw, 60px);
+  width: min(46vw, 540px);
+  height: auto;
+  color: var(--acento);
+  opacity: 0.28;
+  transform: translateY(-46%);
+  pointer-events: none;
+}
+
+.hero-pagina__interior {
+  position: relative;
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 4vw, 40px);
+}
+
+.hero-pagina__eyebrow {
+  margin-bottom: 18px;
+  color: var(--acento);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.hero-pagina__titulo {
+  max-width: 14ch;
+  font-size: clamp(2.8rem, 8vw, 6.5rem);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  background: linear-gradient(180deg, #ffffff 30%, #a1a1a6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-pagina__descripcion {
+  max-width: 36rem;
+  margin-top: 24px;
+  color: #a1a1a6;
+  font-size: clamp(1.0625rem, 1.8vw, 1.4rem);
+  line-height: 1.45;
+}
+
+.hero-pagina__extra {
+  margin-top: 36px;
+}
+
+@media (max-width: 768px) {
+  .hero-pagina {
+    min-height: 0;
+    padding-bottom: 56px;
+  }
+
+  .hero-pagina__icono {
+    top: calc(var(--altura-navbar) + 8px);
+    right: -8vw;
+    width: 62vw;
+    opacity: 0.2;
+    transform: none;
+  }
+}

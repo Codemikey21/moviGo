@@ -1,0 +1,71 @@
+.seccion {
+  position: relative;
+  padding: clamp(64px, 9vw, 120px) 0;
+  background: var(--s-fondo);
+  color: var(--s-texto);
+}
+
+/* Paleta del tono oscuro (base del sitio) */
+.seccion--oscuro {
+  --s-fondo: #000000;
+  --s-texto: #f5f5f7;
+  --s-suave: #86868b;
+  --s-tarjeta: #151517;
+  --s-tarjeta-alta: #1d1d1f;
+  --s-borde: rgba(255, 255, 255, 0.1);
+  --s-chip: rgba(255, 255, 255, 0.08);
+}
+
+/* Paleta del tono claro (#f5f5f7, como en las tiendas de Apple) */
+.seccion--claro {
+  --s-fondo: #f5f5f7;
+  --s-texto: #1d1d1f;
+  --s-suave: #6e6e73;
+  --s-tarjeta: #ffffff;
+  --s-tarjeta-alta: #ffffff;
+  --s-borde: rgba(0, 0, 0, 0.08);
+  --s-chip: rgba(0, 0, 0, 0.05);
+
+  /* Los controles nativos (select, rango…) se dibujan con tema claro */
+  color-scheme: light;
+}
+
+.seccion__interior {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 4vw, 40px);
+}
+
+/* Cabecera de la sección */
+.seccion__cabecera {
+  max-width: 46rem;
+  margin-bottom: clamp(36px, 5vw, 64px);
+}
+
+.seccion__cabecera--centro {
+  margin-inline: auto;
+  text-align: center;
+}
+
+.seccion__eyebrow {
+  margin-bottom: 14px;
+  color: var(--s-suave);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.seccion__titulo {
+  font-size: clamp(2.1rem, 5vw, 3.6rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+
+.seccion__descripcion {
+  margin-top: 18px;
+  color: var(--s-suave);
+  font-size: clamp(1.0625rem, 1.6vw, 1.3125rem);
+  line-height: 1.45;
+}

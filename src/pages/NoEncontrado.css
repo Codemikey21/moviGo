@@ -1,0 +1,108 @@
+.no-encontrado {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: calc(var(--altura-navbar) + 40px) 24px 80px;
+  overflow: hidden;
+  text-align: center;
+}
+
+.no-encontrado__fondo {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 45% at 50% 30%, rgba(41, 151, 255, 0.28), transparent 70%),
+    radial-gradient(ellipse 40% 40% at 85% 85%, rgba(191, 90, 242, 0.16), transparent 70%),
+    #000000;
+}
+
+.no-encontrado__interior {
+  position: relative;
+  max-width: 640px;
+}
+
+.no-encontrado__codigo {
+  font-size: clamp(6rem, 24vw, 13rem);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  background: linear-gradient(180deg, #ffffff 20%, var(--color-acento));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.no-encontrado__titulo {
+  margin-top: 16px;
+  font-size: clamp(1.9rem, 5vw, 3rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+
+.no-encontrado__texto {
+  margin-top: 18px;
+  color: var(--color-gris);
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+
+.no-encontrado__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 36px;
+}
+
+.no-encontrado__boton {
+  padding: 13px 28px;
+  border-radius: 980px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.no-encontrado__boton--lleno {
+  background: var(--color-acento);
+  color: #ffffff;
+}
+
+.no-encontrado__boton--lleno:hover {
+  background: #4aa8ff;
+}
+
+.no-encontrado__boton--borde {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.no-encontrado__boton--borde:hover {
+  border-color: #ffffff;
+}
+
+.no-encontrado__categorias {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 44px;
+}
+
+.no-encontrado__chip {
+  display: block;
+  padding: 7px 16px;
+  border: 1px solid color-mix(in srgb, var(--acento) 55%, transparent);
+  border-radius: 980px;
+  color: var(--acento);
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
+}
+
+.no-encontrado__chip:hover {
+  background: color-mix(in srgb, var(--acento) 18%, transparent);
+}

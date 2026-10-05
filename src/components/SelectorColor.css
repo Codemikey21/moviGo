@@ -1,0 +1,61 @@
+.selector-color {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.selector-color__puntos {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.selector-color__punto {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 1px solid rgba(128, 128, 128, 0.45);
+  border-radius: 50%;
+  background: var(--punto);
+  transition: transform 0.2s ease;
+}
+
+/* Anillo exterior del color elegido */
+.selector-color__punto::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  transition: border-color 0.2s ease;
+}
+
+.selector-color__punto:hover {
+  transform: scale(1.12);
+}
+
+.selector-color__punto--activo::after {
+  border-color: var(--s-texto, var(--color-texto));
+}
+
+.selector-color--grande .selector-color__punto {
+  width: 28px;
+  height: 28px;
+}
+
+.selector-color--grande .selector-color__puntos {
+  gap: 14px;
+}
+
+.selector-color__nombre {
+  color: var(--s-suave, var(--color-gris));
+  font-size: 0.9375rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .selector-color__punto,
+  .selector-color__punto::after {
+    transition: none;
+  }
+}

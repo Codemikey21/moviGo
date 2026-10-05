@@ -1,0 +1,181 @@
+/* Panel de vidrio a todo el ancho, justo bajo la barra */
+.mega {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  max-height: calc(100vh - var(--altura-navbar));
+  overflow-y: auto;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(12, 12, 14, 0.82);
+  -webkit-backdrop-filter: saturate(180%) blur(30px);
+  backdrop-filter: saturate(180%) blur(30px);
+
+  /* Cerrado: invisible, ligeramente desplazado hacia arriba */
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-12px);
+  transition:
+    opacity 0.28s ease,
+    transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1),
+    visibility 0s linear 0.4s;
+}
+
+.mega--abierto {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  transition-delay: 0s;
+}
+
+.mega__interior {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 32px 24px 44px;
+}
+
+/* Cada elemento entra con un pequeño retraso según su posición (--i) */
+.mega__item {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.mega--abierto .mega__item {
+  opacity: 1;
+  transform: none;
+  transition-duration: 0.5s;
+  transition-delay: calc(var(--i, 0) * 45ms + 80ms);
+}
+
+.mega__cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.mega__etiqueta {
+  margin-bottom: 14px;
+  color: var(--color-gris);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.mega__cabecera .mega__etiqueta {
+  margin-bottom: 0;
+}
+
+.mega__ver-todo {
+  color: var(--color-acento);
+  font-size: 0.9375rem;
+  transition: opacity 0.2s ease;
+}
+
+.mega__ver-todo:hover {
+  opacity: 0.75;
+}
+
+/* ---- Columnas ---- */
+
+.mega__columnas {
+  display: grid;
+  gap: 28px 24px;
+}
+
+.mega__columnas--tienda {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.mega__columnas--servicios {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px 48px;
+}
+
+.mega__categoria {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  color: var(--color-texto);
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+
+.mega__icono {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  color: var(--acento);
+}
+
+.mega__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mega__enlace {
+  color: var(--color-gris);
+  font-size: 0.875rem;
+  line-height: 1.35;
+  transition: color 0.2s ease;
+}
+
+.mega__enlace:hover {
+  color: var(--color-texto);
+}
+
+/* Enlaces de servicios: nombre + resumen */
+.mega__servicio {
+  display: block;
+  padding: 4px 0;
+}
+
+.mega__servicio-nombre {
+  display: block;
+  color: var(--color-texto);
+  font-size: 1.375rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  transition: color 0.2s ease;
+}
+
+.mega__servicio:hover .mega__servicio-nombre {
+  color: var(--color-acento);
+}
+
+.mega__servicio-resumen {
+  display: block;
+  margin-top: 2px;
+  color: var(--color-gris);
+  font-size: 0.875rem;
+}
+
+/* Pantallas medianas: la tienda pasa a 4 columnas */
+@media (max-width: 1280px) {
+  .mega__columnas--tienda {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* En móvil y tablet se usa el menú de pantalla completa */
+@media (max-width: 1100px) {
+  .mega {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mega,
+  .mega__item {
+    transform: none;
+    transition-duration: 0.01s;
+    transition-delay: 0s;
+  }
+}
