@@ -14,6 +14,13 @@ function SmoothScroll() {
 
   // Crea la instancia de Lenis y la conecta con GSAP.
   useEffect(() => {
+    // Con "reducir movimiento" se usa el scroll nativo, sin inercia.
+    // ScrollTrigger funciona igual con el scroll del navegador.
+    const reducirMovimiento = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches
+    if (reducirMovimiento) return
+
     const lenis = new Lenis({
       // Lo controla el ticker de GSAP, no el requestAnimationFrame propio.
       autoRaf: false,
@@ -42,7 +49,11 @@ function SmoothScroll() {
 
   // Al cambiar de ruta, vuelve al inicio de la página sin animación.
   useEffect(() => {
-    lenisRef.current?.scrollTo(0, { immediate: true })
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(0, { immediate: true })
+    } else {
+      window.scrollTo(0, 0)
+    }
   }, [pathname])
 
   return null

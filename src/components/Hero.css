@@ -1,0 +1,205 @@
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+
+  /* Abajo se reserva espacio para el indicador "Desliza para descubrir" */
+  padding: var(--altura-navbar) 24px 112px;
+  text-align: center;
+}
+
+/* ==========================================================================
+   Fondo: resplandor azul que sigue al cursor
+   ========================================================================== */
+
+/* Solo el fondo recorta el resplandor (que es más grande que la pantalla);
+   así el contenido puede desplazarse libremente con el parallax. */
+.hero__fondo {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero__resplandor {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  width: 80vmax;
+  height: 80vmax;
+  margin: -40vmax 0 0 -40vmax;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(41, 151, 255, 0.3) 0%,
+    rgba(41, 151, 255, 0.12) 25%,
+    rgba(41, 151, 255, 0.03) 45%,
+    transparent 65%
+  );
+  will-change: transform;
+}
+
+/* ==========================================================================
+   Contenido
+   ========================================================================== */
+
+.hero__contenido {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+}
+
+.hero__titulo {
+  /* Limitado también por la altura para que todo quepa en 100vh */
+  font-size: clamp(3.2rem, min(12.5vw, 14vh), 10rem);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+/* Máscara: recorta cada línea para que el texto "suba" desde abajo.
+   El relleno extra evita cortar tildes y la parte baja de las letras. */
+.hero__linea {
+  display: block;
+  overflow: hidden;
+  padding: 0.06em 0.05em 0.12em;
+  margin: -0.06em 0 -0.12em;
+}
+
+/* Degradado de blanco a gris repartido entre las tres líneas */
+.hero__linea-texto {
+  display: block;
+  background: linear-gradient(180deg, var(--degradado-inicio), var(--degradado-fin));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero__linea:nth-child(1) .hero__linea-texto {
+  --degradado-inicio: #ffffff;
+  --degradado-fin: #dcdce0;
+}
+
+.hero__linea:nth-child(2) .hero__linea-texto {
+  --degradado-inicio: #dcdce0;
+  --degradado-fin: #adadb2;
+}
+
+.hero__linea:nth-child(3) .hero__linea-texto {
+  --degradado-inicio: #adadb2;
+  --degradado-fin: #86868b;
+}
+
+.hero__subtitulo {
+  max-width: 40rem;
+  margin: 28px auto 32px;
+  color: var(--color-gris);
+  font-size: clamp(1.0625rem, 1.7vw, 1.5rem);
+  line-height: 1.4;
+}
+
+.hero__boton {
+  display: inline-block;
+  padding: 14px 32px;
+  border-radius: 980px;
+  background: var(--color-acento);
+  color: #ffffff;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  transition:
+    background-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.hero__boton:hover {
+  background: #4aa8ff;
+  box-shadow: 0 10px 40px rgba(41, 151, 255, 0.4);
+}
+
+.hero__boton:active {
+  transform: scale(0.97);
+}
+
+/* ==========================================================================
+   Indicador "Desliza para descubrir"
+   ========================================================================== */
+
+.hero__indicador {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 14rem;
+  margin-left: -7rem;
+  pointer-events: none;
+}
+
+.hero__indicador-texto {
+  color: var(--color-gris);
+  white-space: nowrap;
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  animation: hero-pulso 2.6s ease-in-out infinite;
+}
+
+.hero__indicador-linea {
+  position: relative;
+  width: 1px;
+  height: 44px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* Destello que baja por la línea */
+.hero__indicador-linea::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: linear-gradient(to bottom, transparent, var(--color-texto));
+  animation: hero-deslizar 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes hero-deslizar {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(200%);
+  }
+}
+
+@keyframes hero-pulso {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__indicador-texto {
+    animation: none;
+  }
+
+  .hero__indicador-linea::after {
+    animation: none;
+    transform: translateY(40%);
+  }
+
+  .hero__boton {
+    transition: none;
+  }
+}

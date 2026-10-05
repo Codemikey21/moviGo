@@ -1,9 +1,11 @@
-import './Pagina.css'
+import Hero from '../components/Hero'
+import Scrollytelling3D from '../components/Scrollytelling3D'
 
 function Home() {
   return (
-    <main className="pagina">
-      <h1 className="pagina__titulo">MoviGo — Inicio (página de prueba)</h1>
+    <main>
+      <Hero />
+      <Scrollytelling3D />
     </main>
   )
 }

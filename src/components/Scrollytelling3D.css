@@ -1,0 +1,191 @@
+/* ==========================================================================
+   Contenedor alto + escenario sticky
+   ========================================================================== */
+
+.scrolly {
+  position: relative;
+  height: 600vh;
+  background: var(--color-fondo);
+}
+
+.scrolly__escenario {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Resplandor detrás del modelo
+   Las variables las actualiza el componente según el progreso del scroll.
+   ========================================================================== */
+
+.scrolly__resplandor {
+  --resplandor-rgb: 41, 151, 255;
+  --resplandor-alfa: 0.18;
+  --resplandor-x: 70%;
+
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 48% 62% at var(--resplandor-x) 52%,
+    rgba(var(--resplandor-rgb), var(--resplandor-alfa)) 0%,
+    rgba(var(--resplandor-rgb), calc(var(--resplandor-alfa) * 0.35)) 45%,
+    transparent 100%
+  );
+}
+
+/* ==========================================================================
+   Textos de cada capítulo
+   El contenedor ocupa todo el escenario; así el desplazamiento (transform)
+   que aplica el scroll no interfiere con el centrado.
+   ========================================================================== */
+
+.scrolly__texto {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  padding: 0 clamp(24px, 7vw, 120px);
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+.scrolly__texto--izquierda {
+  justify-content: flex-start;
+}
+
+.scrolly__texto--derecha {
+  justify-content: flex-end;
+}
+
+.scrolly__contenido {
+  max-width: 27rem;
+}
+
+.scrolly__eyebrow {
+  margin-bottom: 14px;
+  color: var(--color-acento);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.scrolly__titulo {
+  font-size: clamp(2.1rem, 4.4vw, 3.75rem);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  color: var(--color-texto);
+}
+
+.scrolly__parrafo {
+  margin-top: 20px;
+  color: var(--color-gris);
+  font-size: clamp(1.0625rem, 1.5vw, 1.3125rem);
+  line-height: 1.45;
+}
+
+/* ==========================================================================
+   Indicador de progreso lateral
+   ========================================================================== */
+
+.scrolly__progreso {
+  position: absolute;
+  top: 50%;
+  right: clamp(14px, 2.4vw, 36px);
+  z-index: 3;
+  width: 8px;
+  height: clamp(130px, 22vh, 210px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transform: translateY(-50%);
+}
+
+.scrolly__pista {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 3.5px;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.scrolly__relleno {
+  position: absolute;
+  inset: 0;
+  background: var(--color-acento);
+  transform: scaleY(0);
+  transform-origin: top;
+}
+
+.scrolly__punto {
+  position: absolute;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  margin-top: -4px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  background: var(--color-fondo);
+  transition:
+    transform 0.35s ease,
+    background-color 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.scrolly__punto--visto {
+  border-color: var(--color-texto);
+  background: var(--color-texto);
+}
+
+.scrolly__punto--activo {
+  border-color: var(--color-acento);
+  background: var(--color-acento);
+  transform: scale(1.6);
+}
+
+/* ==========================================================================
+   Móvil: el texto va centrado en la parte inferior
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .scrolly__texto {
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 24px 11vh;
+    text-align: center;
+  }
+
+  .scrolly__texto--izquierda,
+  .scrolly__texto--derecha {
+    justify-content: center;
+  }
+
+  .scrolly__contenido {
+    max-width: 24rem;
+  }
+
+  .scrolly__titulo {
+    font-size: clamp(1.8rem, 8vw, 2.4rem);
+  }
+
+  .scrolly__parrafo {
+    margin-top: 14px;
+  }
+
+  .scrolly__progreso {
+    right: 12px;
+    height: 110px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrolly__punto {
+    transition: none;
+  }
+}
