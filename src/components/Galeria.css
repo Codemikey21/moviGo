@@ -1,0 +1,294 @@
+/* La galería va dentro de la sección oscura de la ficha: usa sus variables (--s-*). */
+
+.galeria {
+  position: sticky;
+  top: calc(var(--altura-navbar) + 24px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-fijo-14);
+}
+
+/* Marco 4:3 con tamaño fijo: la foto no cambia su altura al cargar (sin saltos). */
+.galeria__marco {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radio-xl);
+  background-color: var(--tono, var(--s-tarjeta));
+  background-image:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.45), transparent 55%),
+    linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.35));
+}
+
+/* El anillo de foco va en el marco: el botón de dentro queda recortado por el marco */
+.galeria__marco:has(.galeria__ampliar:focus-visible) {
+  outline: 2px solid var(--anillo-foco);
+  outline-offset: 3px;
+}
+
+.galeria__ampliar:focus-visible {
+  outline: none;
+}
+
+/* ---- Foto ---- */
+
+/* Capa que se desplaza con el parallax; el marco recorta lo que sobra */
+.galeria__paralaje {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.galeria__ampliar {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.galeria__imagen {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Ícono decorativo: indica que la foto se puede ampliar */
+.galeria__lupa {
+  position: absolute;
+  right: var(--espacio-fijo-14);
+  bottom: var(--espacio-fijo-14);
+  width: var(--area-tactil);
+  height: var(--area-tactil);
+  padding: var(--espacio-fijo-10);
+  border-radius: var(--radio-circulo);
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--color-blanco);
+  pointer-events: none;
+}
+
+/* Cambio de vista: la foto nueva entra con un fundido y un desplazamiento corto.
+   Con "reducir movimiento" solo hay un fundido breve, sin desplazamiento. */
+@media (prefers-reduced-motion: no-preference) {
+  .galeria__imagen--cambio {
+    animation: galeria-entra var(--dur-entrada) var(--ease-entrada) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .galeria__imagen--cambio {
+    animation: galeria-fundido var(--dur-instante) linear both;
+  }
+}
+
+@keyframes galeria-entra {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes galeria-fundido {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---- Marcador mientras no hay foto ---- */
+
+.galeria__marco--pendiente {
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.galeria__marco--claro {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.galeria__icono {
+  width: 46%;
+  height: auto;
+  filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.3));
+}
+
+/* Píldora oscura con texto blanco: se lee sobre cualquier tono de fondo */
+.galeria__pendiente {
+  position: absolute;
+  bottom: var(--espacio-fijo-22);
+  left: 50%;
+  padding: 6px var(--espacio-fijo-14);
+  border-radius: var(--radio-pildora);
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--color-blanco);
+  font-size: var(--texto-3);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+/* ---- Selector de vistas ---- */
+
+.galeria__descripcion {
+  color: var(--s-suave);
+  font-size: var(--texto-4);
+  line-height: var(--interlinea-compacta);
+}
+
+.galeria__vistas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.galeria__vista {
+  min-height: var(--area-tactil);
+  padding: 0 var(--espacio-fijo-18);
+  border: 1px solid var(--s-borde);
+  border-radius: var(--radio-pildora);
+  background: var(--s-chip);
+  color: var(--s-texto);
+  font-size: var(--texto-5);
+  font-weight: 500;
+  transition:
+    background-color var(--dur-media) var(--ease-estandar),
+    color var(--dur-media) var(--ease-estandar),
+    border-color var(--dur-media) var(--ease-estandar);
+}
+
+@media (hover: hover) {
+  .galeria__vista:not([aria-current='true']):hover {
+    border-color: var(--s-texto);
+  }
+}
+
+/* Vista actual: colores invertidos */
+.galeria__vista[aria-current='true'] {
+  border-color: transparent;
+  background: var(--s-texto);
+  color: var(--s-fondo);
+}
+
+@media (max-width: 56.25em) {
+  .galeria {
+    position: relative;
+    top: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .galeria__vista {
+    transition: none;
+  }
+}
+
+/* ---- Imagen ampliada (diálogo) ---- */
+/* Se dibuja en <body>, fuera de las secciones: usa los colores base del sitio. */
+
+.galeria-dialogo {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-buscador);
+  display: grid;
+  place-items: center;
+  padding: var(--espacio-5);
+  background: rgba(0, 0, 0, 0.9);
+  color: var(--color-texto);
+  animation: galeria-fundido var(--dur-media) var(--ease-estandar) both;
+  --anillo-foco: var(--color-foco-oscuro);
+}
+
+.galeria-dialogo__contenido {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1280px;
+}
+
+.galeria-dialogo__figura {
+  margin: 0;
+  text-align: center;
+}
+
+.galeria-dialogo__imagen {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(100svh - 150px);
+  margin: 0 auto;
+  border-radius: var(--radio-md);
+}
+
+.galeria-dialogo__pie {
+  margin-top: var(--espacio-fijo-14);
+  color: var(--color-gris-medio);
+  font-size: var(--texto-5);
+}
+
+.galeria-dialogo__cerrar,
+.galeria-dialogo__nav {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: var(--area-tactil);
+  height: var(--area-tactil);
+  border: 1px solid var(--blanco-30);
+  border-radius: var(--radio-circulo);
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--color-blanco);
+  font-size: 1.75rem;
+  line-height: 1;
+  transition: background-color var(--dur-rapida) var(--ease-estandar);
+}
+
+.galeria-dialogo__cerrar:hover,
+.galeria-dialogo__nav:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Fijo en la esquina de la ventana: nunca queda recortado, sea cual sea la altura */
+.galeria-dialogo__cerrar {
+  position: fixed;
+  top: var(--espacio-fijo-14);
+  right: var(--espacio-fijo-14);
+}
+
+.galeria-dialogo__nav {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.galeria-dialogo__nav--anterior {
+  left: var(--espacio-fijo-14);
+}
+
+.galeria-dialogo__nav--siguiente {
+  right: var(--espacio-fijo-14);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .galeria-dialogo {
+    animation-duration: var(--dur-instante);
+  }
+
+  .galeria-dialogo__cerrar,
+  .galeria-dialogo__nav {
+    transition: none;
+  }
+}

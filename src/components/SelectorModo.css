@@ -1,0 +1,65 @@
+/* Usa las variables de color de la sección donde se coloca (--s-*): se ve igual
+   de bien sobre fondo oscuro, sobre fondo claro y en la barra de filtros. */
+
+.selector-modo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espacio-2);
+  max-width: 100%;
+}
+
+.selector-modo__grupo {
+  display: inline-flex;
+  max-width: 100%;
+  padding: 3px;
+  border-radius: var(--radio-pildora);
+  background: var(--s-chip, var(--blanco-8));
+}
+
+.selector-modo__opcion {
+  flex: 1 1 auto;
+  min-width: 6.5rem;
+  min-height: var(--area-tactil);
+  padding: 0 var(--espacio-fijo-22);
+  border: none;
+  border-radius: var(--radio-pildora);
+  background: transparent;
+  color: var(--s-texto, var(--color-texto));
+  font-size: var(--texto-5);
+  font-weight: 500;
+  transition:
+    background-color var(--dur-media) var(--ease-estandar),
+    color var(--dur-media) var(--ease-estandar);
+}
+
+/* Opción elegida: colores invertidos (fondo del texto, texto del fondo) */
+.selector-modo__opcion[aria-checked='true'] {
+  background: var(--s-texto, var(--color-texto));
+  color: var(--s-fondo, var(--color-fondo));
+}
+
+@media (hover: hover) {
+  .selector-modo__opcion[aria-checked='false']:not([aria-disabled='true']):hover {
+    background: color-mix(in srgb, var(--s-texto, var(--color-texto)) 12%, transparent);
+  }
+}
+
+/* Opción no disponible: se ve atenuada y el motivo está escrito debajo */
+.selector-modo__opcion[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.selector-modo__motivo {
+  max-width: 30rem;
+  color: var(--s-suave, var(--color-gris));
+  font-size: var(--texto-4);
+  line-height: var(--interlinea-compacta);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .selector-modo__opcion {
+    transition: none;
+  }
+}

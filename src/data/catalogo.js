@@ -10,9 +10,16 @@
  *  - marca, modelo      → texto. `nombre` se arma como "marca modelo".
  *  - descripcion        → una o dos frases descriptivas, sacadas de las especificaciones.
  *  - colores            → solo los que publica la fuente (puede estar vacío).
- *  - galeria            → [{ src, alt }]. Vacía hasta tener fotos con licencia
- *                         (ver ASSETS.md); mientras tanto la tarjeta y la página
- *                         usan el ícono de la categoría como imagen.
+ *  - vistas             → [{ id, etiqueta, imagen, alt, descripcion }]. Se arma sola
+ *                         con las fotos que existen (src/data/medios.generado.json,
+ *                         que crea `npm run imagenes`) y las vistas de la categoría
+ *                         (src/data/vistas.js). Sin fotos queda vacía y la página
+ *                         muestra "Foto pendiente".
+ *  - video              → { src, poster, descripcion } o null. También sale del
+ *                         manifiesto: public/productos/video/<slug>.mp4 y
+ *                         <slug>-poster.webp.
+ *  - destacado          → true para el producto estrella de la categoría (lo usará
+ *                         el Lote B1-3). Por defecto false; se decide a mano.
  *  - especificaciones   → [{ etiqueta, valor, unidad, clave, nota }]. Las tres
  *                         marcadas con `clave: true` salen en la tarjeta.
  *  - precioCompra       → número en COP (precio de referencia).
@@ -25,9 +32,13 @@
  *  - verificado         → true si TODAS las especificaciones se leyeron en la fuente.
  *  - porConfirmar       → lista de datos que faltan por confirmar (vacía si todo está verificado).
  *
- * Los campos `nombre`, `disponibleCompra`, `disponibleAlquiler` y
- * `especificacionesClave` los calcula `completar()` al final del archivo.
+ * Los campos `nombre`, `disponibleCompra`, `disponibleAlquiler`,
+ * `especificacionesClave`, `vistas`, `video` y `destacado` los calcula
+ * `completar()` al final del archivo.
  */
+
+import medios from './medios.generado.json' with { type: 'json' }
+import { VISTAS_POR_CATEGORIA } from './vistas.js'
 
 // Fecha en la que se consultaron las fuentes (AAAA-MM-DD).
 export const FECHA_CONSULTA = '2026-10-06'
@@ -223,7 +234,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Bicicleta de montaña de aluminio con horquilla de suspensión, frenos de disco hidráulicos y transmisión 1×9.',
     colores: [],
-    galeria: [],
     especificaciones: [
       esp('Cuadro', 'Aluminio A1 Premium con tubos butted'),
       esp('Horquilla', 'SR Suntour XCM 29 con bloqueo'),
@@ -253,7 +263,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Bicicleta de montaña de aluminio con horquilla RockShox Judy, frenos hidráulicos de dos pistones y transmisión SRAM de 12 velocidades.',
     colores: [],
-    galeria: [],
     especificaciones: [
       esp('Cuadro', 'Aluminio A1 Premium con tubos butted'),
       esp('Horquilla', 'RockShox Judy, Solo Air'),
@@ -283,7 +292,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Bicicleta urbana de aluminio con ruedas 700c, transmisión Shimano de 3×7 velocidades y soportes para portaequipaje.',
     colores: [color('Negro metálico', '#2d2f33'), color('Azul ceniza', '#7d93a8')],
-    galeria: [],
     especificaciones: [
       esp('Cuadro', 'Aluminio ALUXX', null, true),
       esp('Horquilla', 'Acero de alta resistencia, con soporte para portaequipaje'),
@@ -316,7 +324,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Bicicleta eléctrica de Auteco con asistencia de pedaleo, motor de buje de 350 W, batería extraíble de 48 V y ruedas de 20 pulgadas.',
     colores: [],
-    galeria: [],
     especificaciones: [
       esp('Autonomía', 'Hasta 60', 'km', true, 'A 25 km/h, terreno plano, 1.500 msnm, conductor de 70 kg y batería nueva al 100 %.'),
       esp('Velocidad máxima de asistencia', 25, 'km/h', true),
@@ -349,7 +356,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Patineta eléctrica con motor de 300 W, llantas de 10 pulgadas y frenado combinado E-ABS y de tambor.',
     colores: [],
-    galeria: [],
     especificaciones: [
       esp('Velocidad máxima', 24, 'km/h', true, 'La ficha de Xiaomi Colombia la publica como 15 mph.'),
       esp('Autonomía', 24, 'km', true, 'La ficha de Xiaomi Colombia la publica como 15 millas.'),
@@ -383,7 +389,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Patineta eléctrica con motor de 400 W, batería de 468 Wh y llantas de 10 pulgadas sin cámara.',
     colores: [],
-    galeria: [],
     especificaciones: [
       esp('Velocidad máxima', 25, 'km/h', true),
       esp('Autonomía', 'Aprox. 60', 'km', true),
@@ -416,7 +421,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Patineta eléctrica con motor de 350 W, batería de 48 V y frenos de disco delantero y trasero con frenado regenerativo.',
     colores: [color('Oro rosa', '#e3b5a4')],
-    galeria: [],
     especificaciones: [
       esp('Velocidad máxima', 32, 'km/h', true),
       esp('Autonomía', '40–50', 'km', true),
@@ -444,7 +448,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Patineta eléctrica con motor de 450 W, batería de 551 Wh, llantas de 10 pulgadas y suspensión delantera y trasera.',
     colores: [],
-    galeria: [],
     especificaciones: [
       esp('Velocidad máxima', 35, 'km/h', true, 'Dato de la tienda oficial de Segway Colombia; la página de Asia-Pacífico indica 25 km/h.'),
       esp('Autonomía', 'Aprox. 75', 'km', true, 'Dato de la tienda oficial de Segway Colombia.'),
@@ -482,7 +485,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Patines en línea urbanos de bota rígida con ruedas de 80 mm, rodamientos ABEC 9 y chasis de aluminio fundido.',
     colores: [color('Negro', '#1d1d1f')],
-    galeria: [],
     especificaciones: [
       esp('Tipo', 'Bota rígida urbana'),
       esp('Diámetro de las ruedas', 80, 'mm', true, 'En las tallas grandes las ruedas son de 90 mm.'),
@@ -513,7 +515,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Patines en línea de fitness con bota blanda, cierre PDS y chasis para ruedas de hasta 90 mm.',
     colores: [color('Ciruela', '#5e3552')],
-    galeria: [],
     especificaciones: [
       esp('Tipo', 'Fitness, de bota blanda'),
       esp('Cierre', 'PDS (Power Disc System)', null, true),
@@ -544,7 +545,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Patines en línea urbanos con ruedas de 80 mm, chasis de aluminio fundido y forro termomoldeable.',
     colores: [color('Negro', '#1d1d1f')],
-    galeria: [],
     especificaciones: [
       esp('Diámetro de las ruedas', 80, 'mm', true, 'En las tallas grandes las ruedas son de 90 mm.'),
       esp('Dureza de las ruedas', '85A'),
@@ -577,7 +577,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Dron compacto de 135 g con cámara 4K, 22 GB de almacenamiento interno y vuelo de hasta 18 minutos.',
     colores: [],
-    galeria: [],
     especificaciones: [
       esp('Peso de despegue', 'Aprox. 135', 'g', true),
       esp('Tiempo máximo de vuelo', 'Aprox. 18', 'min', true, 'Medido sin protectores de hélices.'),
@@ -610,7 +609,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Dron de menos de 249 g con sensor de 1/1,3 pulgadas, video 4K y vuelo de hasta 34 minutos con la batería estándar.',
     colores: [],
-    galeria: [],
     especificaciones: [
       esp('Peso de despegue', '< 249', 'g', true),
       esp('Tiempo máximo de vuelo', 34, 'min', true, 'Con la batería estándar; con la batería Plus llega a 45 min.'),
@@ -641,7 +639,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Dron de 724 g con cámara de 1 pulgada y teleobjetivo, video 4K a 120 fps y vuelo de hasta 45 minutos.',
     colores: [],
-    galeria: [],
     especificaciones: [
       esp('Peso de despegue', 724, 'g', true),
       esp('Tiempo máximo de vuelo', 45, 'min', true),
@@ -676,7 +673,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Moto eléctrica para dos personas con motor de 1.500 W, batería de litio extraíble de 60 V y frenos de disco hidráulicos.',
     colores: [color('Blanco', '#f5f5f7')],
-    galeria: [],
     especificaciones: [
       esp('Velocidad máxima', 55, 'km/h', true),
       esp('Autonomía', '55–65', 'km', true),
@@ -704,7 +700,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Moto eléctrica de Auteco con motor de 1.500 W, batería de litio removible de 72 V y velocidad máxima de 76 km/h.',
     colores: [],
-    galeria: [],
     especificaciones: [
       esp('Potencia del motor', 1500, 'W', true),
       esp('Velocidad máxima', 76, 'km/h', true, 'Con un conductor de 70 kg.'),
@@ -735,7 +730,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Moto eléctrica de Auteco con motor de 500 W, batería de plomo-ácido de 48 V y velocidad máxima de 32 km/h.',
     colores: [],
-    galeria: [],
     especificaciones: [
       esp('Potencia del motor', '500 nominal / 750 máxima', 'W', true),
       esp('Velocidad máxima', 32, 'km/h', true),
@@ -767,7 +761,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Auto eléctrico de cuatro plazas con motor de 48 kW, batería de 26,8 kWh y autonomía de hasta 298 km en ciclo urbano.',
     colores: [],
-    galeria: [],
     especificaciones: [
       esp('Autonomía', 'Hasta 298', 'km', true, 'Ciclo urbano, norma SAE J1634.'),
       esp('Motor', '48 kW (65 CV)', null, true),
@@ -804,7 +797,6 @@ const PRODUCTOS_BASE = [
       color('Azul claro', '#a5cde9'),
       color('Rosa durazno', '#f3b8a6'),
     ],
-    galeria: [],
     especificaciones: [
       esp('Autonomía', 380, 'km', true, 'Ciclo NEDC, según la página de BYD Colombia. Otras fuentes publican versiones de 300 y 400 km (ciclo CLTC).'),
       esp('Batería', 'Blade (LFP)', null, true),
@@ -841,7 +833,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Casco de ciclismo en molde con protección Mips Evolve Core, visera removible y sistema de ajuste Roc Loc Sport.',
     colores: [],
-    galeria: [],
     especificaciones: [
       esp('Tipo', 'Casco recreativo en molde (in-mold)'),
       esp('Cáscara', 'Dos piezas: exterior duro y parte inferior de policarbonato unida al forro'),
@@ -874,7 +865,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Candado en U con grillete de acero endurecido de 13 mm, cilindro de alta seguridad y cable KryptoFlex de doble lazo.',
     colores: [],
-    galeria: [],
     especificaciones: [
       esp('Tipo', 'Candado en U'),
       esp('Grillete', '13 mm, acero endurecido', null, true),
@@ -905,7 +895,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Luz delantera recargable de 400 lúmenes con cinco modos de luz y batería de ion de litio de 2.200 mAh.',
     colores: [],
-    galeria: [],
     especificaciones: [
       esp('Luminosidad', 400, 'lm', true),
       esp('Modos de luz', 5),
@@ -937,7 +926,6 @@ const PRODUCTOS_BASE = [
     descripcion:
       'Batería de vuelo de 3.850 mAh para los drones DJI Mini 4 Pro, Mini 3 Pro y Mini 3, con vuelo de hasta 45 minutos en el Mini 4 Pro.',
     colores: [],
-    galeria: [],
     especificaciones: [
       esp('Capacidad', 3850, 'mAh', true),
       esp('Energía', 28.4, 'Wh', true),
@@ -966,16 +954,50 @@ const PRODUCTOS_BASE = [
 // Productos completos: agrega los campos que se calculan a partir de los datos.
 // ---------------------------------------------------------------------------
 
+// Vistas con foto: las del manifiesto, en el orden que define la categoría.
+// Cada vista queda como { id, etiqueta, imagen, alt, descripcion }; la
+// descripción es null porque no hay textos escritos para las fotos.
+function armarVistas(producto, nombre) {
+  const presentes = medios.vistas?.[`${producto.categoria}/${producto.slug}`] ?? []
+
+  return (VISTAS_POR_CATEGORIA[producto.categoria] ?? [])
+    .filter((vista) => presentes.includes(vista.id))
+    .map((vista) => ({
+      id: vista.id,
+      etiqueta: vista.etiqueta,
+      imagen: `/productos/${producto.categoria}-${producto.slug}-${vista.id}.webp`,
+      alt: `${nombre}, ${vista.etiqueta.toLowerCase()}`,
+      descripcion: null,
+    }))
+}
+
+// Video del producto: solo si el manifiesto lo registra (video y póster existen).
+function armarVideo(producto) {
+  const registrado = medios.videos?.[`${producto.categoria}/${producto.slug}`]
+  if (!registrado) return null
+
+  return {
+    src: `/productos/video/${producto.slug}.mp4`,
+    poster: `/productos/video/${producto.slug}-poster.webp`,
+    descripcion: null,
+  }
+}
+
 function completar({ alquilable, ...producto }) {
+  const nombre = `${producto.marca} ${producto.modelo}`
+
   return {
     ...producto,
-    nombre: `${producto.marca} ${producto.modelo}`,
+    nombre,
     tarifasAlquiler: alquilable
       ? tarifasDeEjemplo(producto.precioCompra, producto.categoria)
       : null,
     disponibleCompra: producto.precioCompra !== null,
     disponibleAlquiler: alquilable,
     especificacionesClave: producto.especificaciones.filter((e) => e.clave),
+    vistas: armarVistas(producto, nombre),
+    video: armarVideo(producto),
+    destacado: producto.destacado ?? false,
   }
 }
 

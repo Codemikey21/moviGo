@@ -34,37 +34,6 @@
   padding: var(--espacio-4) var(--gutter);
 }
 
-/* Control segmentado: Todos / Comprar / Alquilar */
-.categoria__modos {
-  display: inline-flex;
-  flex-wrap: wrap;
-  max-width: 100%;
-  padding: 3px;
-  border-radius: var(--radio-pildora);
-  background: rgba(0, 0, 0, 0.07);
-}
-
-.categoria__modo {
-  flex: 1 1 auto;
-  padding: 7px var(--espacio-fijo-20);
-  border: none;
-  border-radius: var(--radio-pildora);
-  background: transparent;
-  color: var(--s-suave);
-  font-size: var(--texto-5);
-  font-weight: 500;
-  transition:
-    background-color var(--dur-media) var(--ease-estandar),
-    color var(--dur-media) var(--ease-estandar),
-    box-shadow var(--dur-media) var(--ease-estandar);
-}
-
-.categoria__modo--activo {
-  background: var(--color-blanco);
-  color: var(--s-texto);
-  box-shadow: var(--sombra-reposo);
-}
-
 .categoria__precio,
 .categoria__orden {
   display: flex;
@@ -161,10 +130,6 @@
 
 /* Pantallas táctiles: los controles llegan a 44 px de alto */
 @media (pointer: coarse) {
-  .categoria__modo {
-    min-height: var(--area-tactil);
-  }
-
   .categoria__orden select {
     min-height: var(--area-tactil);
   }

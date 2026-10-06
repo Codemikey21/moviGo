@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react'
-import { Link, useParams, useSearchParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import HeroPagina from '../components/HeroPagina'
 import IconoCategoria from '../components/IconoCategoria'
 import Revelar from '../components/Revelar'
 import Seccion from '../components/Seccion'
+import SelectorModo from '../components/SelectorModo'
 import TarjetaProducto from '../components/TarjetaProducto'
 import { SERVICIOS } from '../data/servicios'
 import {
@@ -12,15 +13,10 @@ import {
   formatearPrecio,
   productosDeCategoria,
 } from '../lib/formato'
+import { useModo } from '../lib/useModo'
 import { useTitulo } from '../lib/useTitulo'
 import NoEncontrado from './NoEncontrado'
 import './Categoria.css'
-
-const MODOS = [
-  { valor: 'todos', texto: 'Todos' },
-  { valor: 'comprar', texto: 'Comprar' },
-  { valor: 'alquilar', texto: 'Alquilar' },
-]
 
 const OPCIONES_ORDEN = [
   { valor: 'recomendado', texto: 'Recomendados' },
@@ -33,12 +29,13 @@ const OPCIONES_ORDEN = [
 const SERVICIOS_SUGERIDOS = ['alquiler', 'domicilios', 'mantenimiento']
 
 /**
- * Precio que se usa para filtrar y ordenar: en modo "alquilar" es la tarifa
- * de ejemplo por día; en los demás casos, el precio de referencia de compra.
+ * Valor que se usa para filtrar y ordenar: con el modo "alquilar" es la tarifa
+ * de ejemplo por día; con "comprar", el precio de referencia. Es null cuando el
+ * producto no tiene valor en ese modo (un producto que no se alquila).
  */
 function precioDe(producto, modo) {
-  if (modo === 'alquilar') return producto.tarifasAlquiler.dia
-  return producto.precioCompra ?? producto.tarifasAlquiler?.dia ?? 0
+  if (modo === 'alquilar') return producto.tarifasAlquiler?.dia ?? null
+  return producto.precioCompra
 }
 
 // Paso del control de precio según el orden de magnitud de los valores.
@@ -48,13 +45,23 @@ function pasoDePrecio(maximo) {
   return 10000
 }
 
+// Orden por precio: los productos sin valor en el modo (null) van al final.
+function porPrecio(a, b, modo, sentido) {
+  const precioA = precioDe(a, modo)
+  const precioB = precioDe(b, modo)
+  if (precioA === null && precioB === null) return 0
+  if (precioA === null) return 1
+  if (precioB === null) return -1
+  return sentido * (precioA - precioB)
+}
+
 function ordenar(productos, orden, modo) {
   const copia = [...productos]
 
   if (orden === 'precio-asc') {
-    copia.sort((a, b) => precioDe(a, modo) - precioDe(b, modo))
+    copia.sort((a, b) => porPrecio(a, b, modo, 1))
   } else if (orden === 'precio-desc') {
-    copia.sort((a, b) => precioDe(b, modo) - precioDe(a, modo))
+    copia.sort((a, b) => porPrecio(a, b, modo, -1))
   } else if (orden === 'nombre') {
     copia.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'))
   }
@@ -80,36 +87,23 @@ function Categoria() {
 function VistaCategoria({ categoria }) {
   useTitulo(categoria.nombre)
 
-  const [parametros, setParametros] = useSearchParams()
+  // El modo (comprar / alquilar) vive en la URL: ?modo=alquilar. Se aplica a todas las tarjetas.
+  const [modo, cambiarModo] = useModo()
   const [orden, setOrden] = useState('recomendado')
-  const [limiteGuardado, setLimiteGuardado] = useState({ modo: 'todos', valor: null })
+  const [limiteGuardado, setLimiteGuardado] = useState({ modo: 'comprar', valor: null })
 
   const productos = useMemo(() => productosDeCategoria(categoria.slug), [categoria.slug])
   const hayAlquiler = productos.some((producto) => producto.disponibleAlquiler)
   const alquilerDesde = alquilerDesdePorDia(productos)
   const precioMinimo = Math.min(...productos.map((p) => precioDe(p, 'comprar')))
 
-  // El modo (Todos / Comprar / Alquilar) vive en la URL: ?modo=alquilar
-  const modoUrl = parametros.get('modo')
-  const modo =
-    modoUrl === 'comprar' || (modoUrl === 'alquilar' && hayAlquiler) ? modoUrl : 'todos'
+  // Si ningún producto de la categoría se alquila, siempre se muestra "comprar".
+  const modoMostrado = modo === 'alquilar' && hayAlquiler ? 'alquilar' : 'comprar'
 
-  const cambiarModo = (valor) => {
-    const siguiente = new URLSearchParams(parametros)
-    if (valor === 'todos') siguiente.delete('modo')
-    else siguiente.set('modo', valor)
-    setParametros(siguiente, { replace: true })
-  }
-
-  // Productos que cumplen el modo elegido.
-  const porModo = productos.filter((producto) => {
-    if (modo === 'comprar') return producto.disponibleCompra
-    if (modo === 'alquilar') return producto.disponibleAlquiler
-    return true
-  })
-
-  // Rango de precio: el control llega hasta el producto más caro del modo.
-  const precios = porModo.map((producto) => precioDe(producto, modo))
+  // Rango de precio: solo cuentan los productos que tienen valor en el modo.
+  const precios = productos
+    .map((producto) => precioDe(producto, modoMostrado))
+    .filter((valor) => valor !== null)
   const maximoReal = precios.length ? Math.max(...precios) : 0
   const minimoReal = precios.length ? Math.min(...precios) : 0
   const paso = pasoDePrecio(maximoReal)
@@ -118,24 +112,31 @@ function VistaCategoria({ categoria }) {
 
   // El límite elegido solo vale para el modo en el que se eligió.
   const limite =
-    limiteGuardado.modo === modo && limiteGuardado.valor !== null
+    limiteGuardado.modo === modoMostrado && limiteGuardado.valor !== null
       ? Math.min(limiteGuardado.valor, techo)
       : techo
 
+  // Los productos sin valor en el modo (no se alquilan) no se filtran por precio.
   const visibles = ordenar(
-    porModo.filter((producto) => precioDe(producto, modo) <= limite),
+    productos.filter((producto) => {
+      const valor = precioDe(producto, modoMostrado)
+      return valor === null || valor <= limite
+    }),
     orden,
-    modo,
+    modoMostrado,
   )
+  const sinAlquiler = visibles.filter((producto) => !producto.disponibleAlquiler).length
 
   const restablecer = () => {
     setOrden('recomendado')
-    setLimiteGuardado({ modo, valor: null })
-    cambiarModo('todos')
+    setLimiteGuardado({ modo: modoMostrado, valor: null })
+    cambiarModo('comprar')
   }
 
   const etiquetaPrecio =
-    modo === 'alquilar' ? 'Tarifa de ejemplo máxima por día' : 'Precio de referencia máximo'
+    modoMostrado === 'alquilar'
+      ? 'Tarifa de ejemplo máxima por día'
+      : 'Precio de referencia máximo'
 
   return (
     <div style={{ '--acento': categoria.colorAcento }}>
@@ -158,21 +159,12 @@ function VistaCategoria({ categoria }) {
       <section className="seccion seccion--claro categoria__catalogo">
         <div className="categoria__filtros">
           <div className="categoria__filtros-interior">
-            <div className="categoria__modos" role="group" aria-label="Tipo de oferta">
-              {MODOS.filter((m) => m.valor !== 'alquilar' || hayAlquiler).map((m) => (
-                <button
-                  key={m.valor}
-                  type="button"
-                  className={`categoria__modo ${
-                    modo === m.valor ? 'categoria__modo--activo' : ''
-                  }`}
-                  aria-pressed={modo === m.valor}
-                  onClick={() => cambiarModo(m.valor)}
-                >
-                  {m.texto}
-                </button>
-              ))}
-            </div>
+            <SelectorModo
+              modo={modoMostrado}
+              onCambiar={cambiarModo}
+              alquilerDisponible={hayAlquiler}
+              motivoSinAlquiler="Ningún producto de esta categoría se alquila."
+            />
 
             {piso < techo && (
               <label className="categoria__precio">
@@ -187,7 +179,10 @@ function VistaCategoria({ categoria }) {
                   value={limite}
                   style={{ '--relleno': `${((limite - piso) / (techo - piso)) * 100}%` }}
                   onChange={(evento) =>
-                    setLimiteGuardado({ modo, valor: Number(evento.target.value) })
+                    setLimiteGuardado({
+                      modo: modoMostrado,
+                      valor: Number(evento.target.value),
+                    })
                   }
                 />
               </label>
@@ -209,6 +204,11 @@ function VistaCategoria({ categoria }) {
         <div className="seccion__interior">
           <p className="categoria__conteo" aria-live="polite">
             {visibles.length} {visibles.length === 1 ? 'producto' : 'productos'}
+            {sinAlquiler > 0 &&
+              modoMostrado === 'alquilar' &&
+              ` · ${sinAlquiler} ${
+                sinAlquiler === 1 ? 'se ofrece' : 'se ofrecen'
+              } solo para compra`}
           </p>
 
           {visibles.length > 0 ? (
@@ -219,6 +219,7 @@ function VistaCategoria({ categoria }) {
                   producto={producto}
                   categoria={categoria}
                   indice={indice}
+                  modo={modoMostrado}
                 />
               ))}
             </div>

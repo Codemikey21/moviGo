@@ -19,45 +19,6 @@
   margin-top: var(--espacio-fijo-28);
 }
 
-/* ---- Espacio del visor 3D (Etapa B) ---- */
-
-.producto__visor {
-  position: sticky;
-  top: calc(var(--altura-navbar) + 24px);
-  display: grid;
-  place-items: center;
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
-  border-radius: var(--radio-xl);
-  background-color: var(--tono);
-  background-image:
-    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.45), transparent 55%),
-    linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.35));
-  color: rgba(255, 255, 255, 0.9);
-  transition: background-color 0.5s var(--ease-estandar);
-}
-
-.producto__visor--claro {
-  color: rgba(0, 0, 0, 0.7);
-}
-
-.producto__visor-icono {
-  width: 52%;
-  height: auto;
-  filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.3));
-}
-
-.producto__visor-nota {
-  position: absolute;
-  bottom: var(--espacio-fijo-22);
-  left: 0;
-  right: 0;
-  font-size: var(--texto-3);
-  letter-spacing: 0.04em;
-  text-align: center;
-  opacity: 0.75;
-}
-
 /* ---- Información ---- */
 
 .producto__nombre {
@@ -75,6 +36,10 @@
   line-height: 1.55;
 }
 
+.producto__modo {
+  margin-top: var(--espacio-6);
+}
+
 .producto__etiqueta {
   margin-bottom: var(--espacio-2);
   color: var(--s-suave);
@@ -85,10 +50,7 @@
 }
 
 .producto__precios {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--espacio-5) var(--espacio-7);
-  margin-top: var(--espacio-6);
+  margin-top: var(--espacio-5);
   padding: var(--espacio-5) 0;
   border-top: 1px solid var(--s-borde);
   border-bottom: 1px solid var(--s-borde);
@@ -118,6 +80,54 @@
   font-weight: 600;
 }
 
+/* Al cambiar de modo, el precio o las tarifas entran con un fundido corto.
+   Con "reducir movimiento" no hay desplazamiento. */
+@media (prefers-reduced-motion: no-preference) {
+  .producto__oferta--cambio {
+    animation: producto-oferta var(--dur-entrada) var(--ease-entrada) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .producto__oferta--cambio {
+    animation: producto-fundido var(--dur-instante) linear both;
+  }
+}
+
+@keyframes producto-oferta {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes producto-fundido {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---- Datos por confirmar (mismo tratamiento que en las tarjetas) ---- */
+
+.producto__confirmar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+  margin-top: var(--espacio-fijo-14);
+  color: var(--s-suave);
+  font-size: var(--texto-3);
+  line-height: var(--interlinea-compacta);
+}
+
 .producto__color {
   margin-top: var(--espacio-fijo-28);
 }
@@ -126,91 +136,59 @@
   padding-left: 6px;
 }
 
-.producto__acciones {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--espacio-fijo-14);
-  margin-top: var(--espacio-6);
-}
-
-.producto__boton {
-  flex: 1;
-  min-width: min(100%, 150px);
-  padding: 15px var(--espacio-fijo-28);
-  border-radius: var(--radio-pildora);
-  font-size: var(--texto-7);
-  font-weight: 600;
-  transition:
-    background-color var(--dur-media) var(--ease-estandar),
-    border-color var(--dur-media) var(--ease-estandar),
-    transform var(--dur-rapida) var(--ease-estandar),
-    opacity var(--dur-rapida) var(--ease-estandar);
-}
-
-.producto__boton:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
-.producto__boton:disabled {
-  cursor: not-allowed;
-  opacity: 0.35;
-}
-
-.producto__boton--lleno {
-  border: 1px solid var(--acento);
-  background: var(--acento);
-  color: var(--color-sobre-acento);
-}
-
-.producto__boton--lleno:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--acento) 80%, var(--color-blanco));
-}
-
-.producto__boton--borde {
-  border: 1px solid var(--blanco-30);
-  background: transparent;
+.producto__colores {
   color: var(--s-texto);
+  font-size: var(--texto-6);
 }
 
-.producto__boton--borde:hover:not(:disabled) {
-  border-color: var(--color-blanco);
+/* ---- Video opcional ---- */
+
+.producto__video {
+  margin-top: var(--espacio-8);
 }
 
-/* ---- Lista de especificaciones clave ---- */
+/* ---- Especificaciones clave ---- */
 
-.producto__destacados {
+.producto__clave {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--espacio-fijo-20);
+  margin: 0 0 var(--espacio-7);
+  padding: 0;
+  list-style: none;
+}
+
+.producto__clave-item {
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-3);
-  margin-top: var(--espacio-fijo-36);
+  gap: var(--espacio-1);
+  min-width: 0;
+  padding: var(--espacio-5);
+  border: 1px solid var(--s-borde);
+  border-radius: var(--radio-md);
+  background: var(--s-tarjeta);
 }
 
-.producto__destacados li {
-  position: relative;
+.producto__clave-valor {
   overflow-wrap: anywhere;
-  padding-left: var(--espacio-6);
-  line-height: var(--interlinea-compacta);
+  font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: var(--tracking-subtitulo);
+  line-height: 1.15;
 }
 
-/* Marca de verificación */
-.producto__destacados li::before {
-  content: '';
-  position: absolute;
-  top: 0.25em;
-  left: 4px;
-  width: 7px;
-  height: 13px;
-  border: solid var(--acento);
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
+.producto__clave-etiqueta {
+  color: var(--s-suave);
+  font-size: var(--texto-4);
 }
 
-/* ---- Tabla de especificaciones ---- */
+/* ---- Tabla del resto de las especificaciones ---- */
 
 .producto__tabla {
   width: 100%;
   max-width: 880px;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .producto__tabla th,
@@ -271,27 +249,26 @@
   .producto__grid {
     grid-template-columns: 1fr;
   }
+}
 
-  .producto__visor {
-    position: relative;
-    top: 0;
-    aspect-ratio: 4 / 3;
+@media (max-width: 48em) {
+  .producto__clave {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 35em) {
   .producto__tabla th {
-    width: 44%;
+    width: 42%;
+    padding-right: var(--espacio-3);
+    font-size: var(--texto-5);
+  }
+
+  .producto__tabla td {
+    font-size: var(--texto-6);
   }
 
   .producto__tarifas {
     gap: var(--espacio-fijo-18);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .producto__visor,
-  .producto__boton {
-    transition: none;
   }
 }

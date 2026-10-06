@@ -1,0 +1,59 @@
+.video-producto {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Marco 16:9 con tamaño fijo: el póster y el video no cambian la altura */
+.video-producto__marco {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--radio-xl);
+  background: var(--color-negro);
+}
+
+.video-producto__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-producto__boton {
+  position: absolute;
+  right: var(--espacio-fijo-14);
+  bottom: var(--espacio-fijo-14);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-height: var(--area-tactil);
+  padding: 0 var(--espacio-fijo-18) 0 var(--espacio-fijo-14);
+  border: 1px solid var(--blanco-30);
+  border-radius: var(--radio-pildora);
+  background: rgba(0, 0, 0, 0.65);
+  color: var(--color-blanco);
+  font-size: var(--texto-5);
+  font-weight: 500;
+  transition: background-color var(--dur-rapida) var(--ease-estandar);
+}
+
+.video-producto__boton svg {
+  width: 18px;
+  height: 18px;
+}
+
+.video-producto__boton:hover {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.video-producto__pie {
+  margin-top: var(--espacio-fijo-14);
+  color: var(--s-suave);
+  font-size: var(--texto-4);
+  line-height: var(--interlinea-compacta);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .video-producto__boton {
+    transition: none;
+  }
+}

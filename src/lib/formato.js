@@ -19,6 +19,9 @@ export function formatearPrecio(valor) {
 export const ETIQUETA_PRECIO = 'Precio de referencia'
 export const ETIQUETA_TARIFA = 'Tarifa de ejemplo'
 
+// Explicación que acompaña a "Alquilar" cuando el producto no se alquila.
+export const MOTIVO_SIN_ALQUILER = 'Este producto solo se ofrece para compra.'
+
 // ---------------------------------------------------------------------------
 // Especificaciones
 // ---------------------------------------------------------------------------
@@ -65,8 +68,11 @@ export function rutaCategoria(categoria) {
   return `/tienda/${categoria.slug}`
 }
 
-export function rutaProducto(producto) {
-  return `/tienda/${producto.categoria}/${producto.slug}`
+// Con modo "alquilar" el enlace conserva el modo (?modo=alquilar); con "comprar"
+// no lleva parámetro, porque es el modo por defecto.
+export function rutaProducto(producto, modo = 'comprar') {
+  const ruta = `/tienda/${producto.categoria}/${producto.slug}`
+  return modo === 'alquilar' ? `${ruta}?modo=alquilar` : ruta
 }
 
 // Un producto por categoría (el primero del catálogo), para mostrar una muestra.

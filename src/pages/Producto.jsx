@@ -1,12 +1,14 @@
 import { useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import IconoCategoria from '../components/IconoCategoria'
+import Galeria from '../components/Galeria'
 import Migas from '../components/Migas'
 import Seccion from '../components/Seccion'
 import SelectorColor from '../components/SelectorColor'
+import SelectorModo from '../components/SelectorModo'
 import TarjetaProducto from '../components/TarjetaProducto'
+import VideoProducto from '../components/VideoProducto'
 import { FECHA_CONSULTA } from '../data/catalogo'
-import { TONO_NEUTRO, esColorClaro } from '../lib/color'
+import { TONO_NEUTRO } from '../lib/color'
 import {
   ETIQUETA_PRECIO,
   ETIQUETA_TARIFA,
@@ -18,6 +20,7 @@ import {
   rutaCategoria,
 } from '../lib/formato'
 import { useEntradaHero } from '../lib/useEntradaHero'
+import { useModo } from '../lib/useModo'
 import { useTitulo } from '../lib/useTitulo'
 import NoEncontrado from './NoEncontrado'
 import './Producto.css'
@@ -52,9 +55,19 @@ function VistaProducto({ categoria, producto }) {
   const cabeceraRef = useRef(null)
   useEntradaHero(cabeceraRef)
 
+  const [modo, cambiarModo] = useModo()
+  const [animarOferta, setAnimarOferta] = useState(false)
   const [colorElegido, setColorElegido] = useState(0)
+
   const tono = producto.colores[colorElegido]?.hex ?? TONO_NEUTRO
   const alquiler = producto.tarifasAlquiler
+
+  // Si el producto no se alquila, la página siempre muestra el modo "comprar"
+  // aunque la URL traiga ?modo=alquilar.
+  const modoMostrado = modo === 'alquilar' && alquiler ? 'alquilar' : 'comprar'
+
+  const claves = producto.especificacionesClave
+  const resto = producto.especificaciones.filter((especificacion) => !especificacion.clave)
 
   const relacionados = productosDeCategoria(categoria.slug)
     .filter((otro) => otro.id !== producto.id)
@@ -76,23 +89,12 @@ function VistaProducto({ categoria, producto }) {
           </div>
 
           <div className="producto__grid">
-            {/* Aquí irá el visor 3D interactivo */}
-            <div
-              className={`producto__visor ${
-                esColorClaro(tono) ? 'producto__visor--claro' : ''
-              }`}
-              style={{ '--tono': tono }}
-              data-entrada
-            >
-              <IconoCategoria
-                categoria={categoria}
-                grosor={1.2}
-                className="producto__visor-icono"
-              />
-              <p className="producto__visor-nota">
-                Visor 3D interactivo · próximamente
-              </p>
-            </div>
+            <Galeria
+              producto={producto}
+              categoria={categoria}
+              tono={tono}
+              disparadorRef={cabeceraRef}
+            />
 
             <div className="producto__info">
               <h1 className="producto__nombre" data-entrada>
@@ -102,84 +104,96 @@ function VistaProducto({ categoria, producto }) {
                 {producto.descripcion}
               </p>
 
-              {/* Precios */}
-              <div className="producto__precios" data-entrada>
-                {producto.disponibleCompra && (
-                  <div>
-                    <p className="producto__etiqueta">{ETIQUETA_PRECIO}</p>
-                    <p className="producto__precio">
-                      {formatearPrecio(producto.precioCompra)}
-                    </p>
-                  </div>
-                )}
-
-                {alquiler && (
-                  <div>
-                    <p className="producto__etiqueta">
-                      Alquiler · {ETIQUETA_TARIFA.toLowerCase()}
-                    </p>
-                    <dl className="producto__tarifas">
-                      <div>
-                        <dt>Por hora</dt>
-                        <dd>{formatearPrecio(alquiler.hora)}</dd>
-                      </div>
-                      <div>
-                        <dt>Por día</dt>
-                        <dd>{formatearPrecio(alquiler.dia)}</dd>
-                      </div>
-                      <div>
-                        <dt>Por semana</dt>
-                        <dd>{formatearPrecio(alquiler.semana)}</dd>
-                      </div>
-                    </dl>
-                  </div>
-                )}
+              {/* Comprar / Alquilar: el modo está en la URL (?modo=alquilar) */}
+              <div className="producto__modo" data-entrada>
+                <SelectorModo
+                  modo={modoMostrado}
+                  onCambiar={(nuevo) => {
+                    setAnimarOferta(true)
+                    cambiarModo(nuevo)
+                  }}
+                  alquilerDisponible={producto.disponibleAlquiler}
+                />
               </div>
 
-              {/* Color: solo si la fuente publica colores */}
+              {/* Precio de referencia o tarifas de ejemplo, según el modo */}
+              <div className="producto__precios" data-entrada>
+                <div
+                  key={modoMostrado}
+                  className={`producto__oferta ${
+                    animarOferta ? 'producto__oferta--cambio' : ''
+                  }`}
+                >
+                  {modoMostrado === 'alquilar' ? (
+                    <>
+                      <p className="producto__etiqueta">{ETIQUETA_TARIFA}</p>
+                      <dl className="producto__tarifas">
+                        <div>
+                          <dt>Por hora</dt>
+                          <dd>{formatearPrecio(alquiler.hora)}</dd>
+                        </div>
+                        <div>
+                          <dt>Por día</dt>
+                          <dd>{formatearPrecio(alquiler.dia)}</dd>
+                        </div>
+                        <div>
+                          <dt>Por semana</dt>
+                          <dd>{formatearPrecio(alquiler.semana)}</dd>
+                        </div>
+                      </dl>
+                    </>
+                  ) : (
+                    <>
+                      <p className="producto__etiqueta">{ETIQUETA_PRECIO}</p>
+                      <p className="producto__precio">
+                        {formatearPrecio(producto.precioCompra)}
+                      </p>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Lo que falta por confirmar, siempre a la vista */}
+              <div className="producto__confirmar" data-entrada>
+                {!producto.precioVerificado && <p>Precio por confirmar.</p>}
+                {modoMostrado === 'alquilar' && (
+                  <p>Las tarifas son valores de ejemplo: no son tarifas reales de MoviGo.</p>
+                )}
+                <p>Disponibilidad: {producto.disponibilidad.toLowerCase()}.</p>
+                <p>La compra y la reserva en línea todavía no están disponibles.</p>
+              </div>
+
+              {/* Color: sin foto tiñe el marcador; con foto solo informa */}
               {producto.colores.length > 0 && (
                 <div className="producto__color" data-entrada>
-                  <p className="producto__etiqueta">Color</p>
-                  <SelectorColor
-                    colores={producto.colores}
-                    activo={colorElegido}
-                    onElegir={setColorElegido}
-                    mostrarNombre
-                    tamano="grande"
-                    etiqueta={`Color de ${producto.nombre}`}
-                  />
+                  <p className="producto__etiqueta">
+                    {producto.vistas.length > 0 ? 'Colores' : 'Color'}
+                  </p>
+                  {producto.vistas.length > 0 ? (
+                    <p className="producto__colores">
+                      {producto.colores.map((color) => color.nombre).join(', ')}
+                    </p>
+                  ) : (
+                    <SelectorColor
+                      colores={producto.colores}
+                      activo={colorElegido}
+                      onElegir={setColorElegido}
+                      mostrarNombre
+                      tamano="grande"
+                      etiqueta={`Color de ${producto.nombre}`}
+                    />
+                  )}
                 </div>
               )}
-
-              {/* Acciones (todavía sin funcionalidad) */}
-              <div className="producto__acciones" data-entrada>
-                <button
-                  type="button"
-                  className="producto__boton producto__boton--lleno"
-                  disabled={!producto.disponibleCompra}
-                >
-                  Comprar
-                </button>
-                <button
-                  type="button"
-                  className="producto__boton producto__boton--borde"
-                  disabled={!producto.disponibleAlquiler}
-                >
-                  Alquilar
-                </button>
-              </div>
-
-              {/* Las tres especificaciones clave */}
-              <ul className="producto__destacados" data-entrada>
-                {producto.especificacionesClave.map((especificacion) => (
-                  <li key={especificacion.etiqueta}>
-                    <strong>{especificacion.etiqueta}:</strong>{' '}
-                    {formatearEspecificacion(especificacion)}
-                  </li>
-                ))}
-              </ul>
             </div>
           </div>
+
+          {/* Video opcional: sin video no se dibuja nada ni queda un hueco */}
+          {producto.video && (
+            <div className="producto__video">
+              <VideoProducto video={producto.video} nombre={producto.nombre} />
+            </div>
+          )}
         </div>
       </Seccion>
 
@@ -190,21 +204,42 @@ function VistaProducto({ categoria, producto }) {
         titulo="Todos los detalles."
         descripcion={`Lo que publica el fabricante sobre el ${producto.nombre}.`}
       >
-        <table className="producto__tabla">
-          <tbody>
-            {producto.especificaciones.map((especificacion) => (
-              <tr key={especificacion.etiqueta}>
-                <th scope="row">{especificacion.etiqueta}</th>
-                <td>
-                  {formatearEspecificacion(especificacion)}
-                  {especificacion.nota && (
-                    <small className="producto__nota">{especificacion.nota}</small>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {/* Las tres especificaciones clave, destacadas */}
+        <ul className="producto__clave" aria-label="Especificaciones clave">
+          {claves.map((especificacion) => (
+            <li key={especificacion.etiqueta} className="producto__clave-item">
+              <span className="producto__clave-valor">
+                {formatearEspecificacion(especificacion)}
+              </span>
+              <span className="producto__clave-etiqueta">{especificacion.etiqueta}</span>
+              {especificacion.nota && (
+                <small className="producto__nota">{especificacion.nota}</small>
+              )}
+            </li>
+          ))}
+        </ul>
+
+        {/* El resto, en una tabla */}
+        {resto.length > 0 && (
+          <table className="producto__tabla">
+            <caption className="solo-lectores">
+              Resto de las especificaciones de {producto.nombre}
+            </caption>
+            <tbody>
+              {resto.map((especificacion) => (
+                <tr key={especificacion.etiqueta}>
+                  <th scope="row">{especificacion.etiqueta}</th>
+                  <td>
+                    {formatearEspecificacion(especificacion)}
+                    {especificacion.nota && (
+                      <small className="producto__nota">{especificacion.nota}</small>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
 
         <p className="producto__fuente">
           Fuente de las especificaciones:{' '}
@@ -241,6 +276,7 @@ function VistaProducto({ categoria, producto }) {
                 producto={otro}
                 categoria={categoria}
                 indice={indice}
+                modo={modoMostrado}
               />
             ))}
           </div>

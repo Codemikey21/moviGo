@@ -23,6 +23,9 @@ dist-ssr
 *.sln
 *.sw?
 
+# Fotos originales sin optimizar (ver ASSETS.md); solo se versiona public/productos/
+public/productos-origen/
+
 # Configuracion local de Claude Code
 .claude/
 .impeccable/

@@ -38,7 +38,8 @@ function TarjetaCategoria({ categoria, indice = 0 }) {
 
         <p className="tarjeta-categoria__meta">
           {cantidad} {cantidad === 1 ? 'modelo' : 'modelos'}
-          {alquilerDesde && ` · Alquiler desde ${formatearPrecio(alquilerDesde)} / día`}
+          {alquilerDesde &&
+            ` · Tarifa de ejemplo de alquiler desde ${formatearPrecio(alquilerDesde)} / día`}
         </p>
 
         <div className="tarjeta-categoria__acciones">

@@ -2,20 +2,24 @@ import { Link } from 'react-router-dom'
 import HeroPagina from '../components/HeroPagina'
 import IconoCategoria from '../components/IconoCategoria'
 import Seccion from '../components/Seccion'
+import SelectorModo from '../components/SelectorModo'
 import TarjetaCategoria from '../components/TarjetaCategoria'
 import TarjetaProducto from '../components/TarjetaProducto'
 import { CATEGORIAS } from '../data/catalogo'
 import { buscarCategoria, productosMuestra, rutaCategoria } from '../lib/formato'
+import { useModo } from '../lib/useModo'
 import { useTitulo } from '../lib/useTitulo'
 import './Tienda.css'
 
 /**
  * Página principal de la tienda: todas las categorías y una muestra del catálogo.
  * Alterna secciones oscuras y claras para dar contraste.
+ * El modo Comprar / Alquilar (?modo=alquilar) se aplica a todas las tarjetas.
  */
 function Tienda() {
   useTitulo('Tienda')
 
+  const [modo, cambiarModo] = useModo()
   const muestra = productosMuestra()
 
   return (
@@ -60,6 +64,10 @@ function Tienda() {
         titulo="Un modelo de cada línea."
         descripcion="Una muestra del catálogo: el primer modelo de cada categoría."
       >
+        <div className="tienda__modo">
+          <SelectorModo modo={modo} onCambiar={cambiarModo} />
+        </div>
+
         <div className="grilla-productos">
           {muestra.map((producto, indice) => (
             <TarjetaProducto
@@ -67,6 +75,7 @@ function Tienda() {
               producto={producto}
               categoria={buscarCategoria(producto.categoria)}
               indice={indice}
+              modo={modo}
             />
           ))}
         </div>

@@ -40,13 +40,14 @@
   }
 }
 
-/* ---- Parte visual: el color elegido tiñe la tarjeta ---- */
+/* ---- Parte visual: foto (4:3) o ícono sobre el color elegido ---- */
 
 .tarjeta__visual {
   position: relative;
   display: grid;
   place-items: center;
-  aspect-ratio: 5 / 4;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
   background-color: var(--tono);
   background-image:
     radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.4), transparent 55%),
@@ -64,6 +65,33 @@
   width: 44%;
   height: auto;
   filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.25));
+}
+
+.tarjeta__imagen {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur-lenta) var(--ease-estandar);
+}
+
+/* Zoom suave al pasar el cursor o al enfocar la tarjeta con el teclado.
+   Sin "reducir movimiento": con él la foto queda quieta. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .tarjeta:hover .tarjeta__imagen {
+    transform: scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tarjeta:has(:focus-visible) .tarjeta__imagen {
+    transform: scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tarjeta__imagen {
+    transition: none;
+  }
 }
 
 /* ---- Cuerpo ---- */
@@ -133,6 +161,17 @@
   text-align: right;
 }
 
+/* ---- Datos por confirmar (mismo tratamiento en tarjeta y ficha) ---- */
+
+.tarjeta__confirmar {
+  color: var(--s-suave, var(--color-gris));
+  font-size: var(--texto-3);
+}
+
+.tarjeta__aviso {
+  margin-top: var(--espacio-1);
+}
+
 /* ---- Precios ---- */
 
 .tarjeta__precios {
@@ -151,6 +190,17 @@
 .tarjeta__precio {
   font-size: var(--texto-8);
   font-weight: 600;
+}
+
+.tarjeta__unidad {
+  color: var(--s-suave, var(--color-gris));
+  font-size: var(--texto-4);
+  font-weight: 400;
+}
+
+/* "No se alquila": más discreto que un precio */
+.tarjeta__precio--sin {
+  font-weight: 500;
 }
 
 .tarjeta__alquiler {

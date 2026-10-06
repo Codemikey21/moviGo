@@ -50,6 +50,12 @@
   gap: var(--espacio-fijo-20);
 }
 
+/* ---- Selector Comprar / Alquilar sobre la muestra del catálogo ---- */
+
+.tienda__modo {
+  margin-bottom: var(--espacio-6);
+}
+
 /* ---- Enlaces y botones de cierre ---- */
 
 .tienda__enlace-final {
