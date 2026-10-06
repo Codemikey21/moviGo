@@ -96,13 +96,27 @@
   }
 }
 
+/* Con movimiento reducido el menú aparece con un fundido corto y su contenido
+   queda siempre visible, sin subir de forma escalonada. */
 @media (prefers-reduced-motion: reduce) {
-  .menu-movil,
+  .menu-movil {
+    transition:
+      opacity 0.12s linear,
+      visibility 0s linear 0.12s;
+  }
+
+  .menu-movil--abierto {
+    transition-delay: 0s;
+  }
+
   .menu-movil__titulo,
   .menu-movil__lista li,
-  .menu-movil__pie {
+  .menu-movil__pie,
+  .menu-movil--abierto .menu-movil__titulo,
+  .menu-movil--abierto .menu-movil__lista li,
+  .menu-movil--abierto .menu-movil__pie {
+    opacity: 1;
     transform: none;
-    transition-duration: 0.01s;
-    transition-delay: 0s;
+    transition: none;
   }
 }

@@ -137,7 +137,7 @@ function VistaCategoria({ categoria }) {
   const etiquetaPrecio = modo === 'alquilar' ? 'Precio máximo por día' : 'Precio máximo'
 
   return (
-    <main style={{ '--acento': categoria.colorAcento }}>
+    <div style={{ '--acento': categoria.colorAcento }}>
       <HeroPagina
         eyebrow="Tienda"
         titulo={categoria.nombre}
@@ -261,7 +261,7 @@ function VistaCategoria({ categoria }) {
           })}
         </div>
       </Seccion>
-    </main>
+    </div>
   )
 }
 

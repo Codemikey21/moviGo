@@ -15,7 +15,7 @@ function NoEncontrado({ mensaje }) {
   useTitulo('Página no encontrada')
 
   return (
-    <main ref={contenedorRef} className="no-encontrado">
+    <div ref={contenedorRef} className="no-encontrado">
       <div className="no-encontrado__fondo" aria-hidden="true" />
 
       <div className="no-encontrado__interior">
@@ -55,7 +55,7 @@ function NoEncontrado({ mensaje }) {
           ))}
         </ul>
       </div>
-    </main>
+    </div>
   )
 }
 

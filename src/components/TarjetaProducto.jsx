@@ -79,6 +79,7 @@ function TarjetaProducto({ producto, categoria, indice = 0 }) {
             activo={elegido}
             onElegir={setElegido}
             onVista={setVista}
+            etiqueta={`Color de ${producto.nombre}`}
           />
 
           <h3 className="tarjeta__nombre">

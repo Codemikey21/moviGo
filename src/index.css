@@ -31,8 +31,13 @@
   --color-enlace-claro: #0066cc; /* enlace sobre fondo claro: 5,11:1 */
   --color-enlace-claro-hover: #004d99;
 
-  /* Anillo de foco: azul de marca fijo, no sigue al acento de la categoría */
-  --color-foco: #2997ff;
+  /* Anillo de foco. No sigue al acento de la categoría: depende de la superficie.
+     Sobre fondos oscuros (la base del sitio) se usa el azul claro de marca
+     (6,96:1 sobre negro); sobre fondos claros (#f5f5f7) un azul más profundo
+     (4,31:1 sobre #f5f5f7 y 4,70:1 sobre blanco). */
+  --color-foco: #0071e3;
+  --color-foco-oscuro: #2997ff;
+  --anillo-foco: var(--color-foco-oscuro);
 
   /* Mezcla del acento con la tinta cuando el acento se usa como TEXTO sobre
      fondo claro (el amarillo de Accesorios da 5,62:1 con este porcentaje) */
@@ -121,6 +126,7 @@
   --z-menu-movil: 99;
   --z-navbar: 100;
   --z-buscador: 200;
+  --z-saltar: 300;
 
   color-scheme: dark;
 }
@@ -186,8 +192,14 @@ button {
 
 /* Anillo de foco visible solo al navegar con teclado */
 :focus-visible {
-  outline: 2px solid var(--color-foco);
+  outline: 2px solid var(--anillo-foco);
   outline-offset: 3px;
+}
+
+/* Destinos de foco por código (contenido principal y títulos): se enfocan para
+   anunciar el cambio de página, no son controles, así que no llevan anillo */
+[tabindex='-1']:focus {
+  outline: none;
 }
 
 input,
@@ -213,6 +225,27 @@ canvas {
 #root {
   min-height: 100vh;
   min-height: 100svh;
+}
+
+/* Texto solo para lectores de pantalla: no se ve pero sí se lee y se anuncia */
+.solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  white-space: nowrap;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+}
+
+/* Con un diálogo abierto la página de fondo no se desplaza. El canal de la
+   barra de scroll se conserva para que el contenido no salte de lugar. */
+html.scroll-bloqueado {
+  overflow: hidden;
+  scrollbar-gutter: stable;
 }
 
 /* ==========================================================================

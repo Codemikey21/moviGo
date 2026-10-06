@@ -2,27 +2,32 @@ import { Link } from 'react-router-dom'
 import HeroPagina from '../components/HeroPagina'
 import Revelar from '../components/Revelar'
 import Seccion from '../components/Seccion'
-import { SERVICIOS } from '../data/servicios'
+import { EMPRESAS, SERVICIOS } from '../data/servicios'
 import { useTitulo } from '../lib/useTitulo'
 import NoEncontrado from './NoEncontrado'
 import './Servicio.css'
 
 /**
- * Plantilla de las páginas de servicios y ayuda: domicilios, alquiler,
- * mantenimiento, puntos de servicio y soporte. El contenido sale de
- * src/data/servicios.js; `clave` indica cuál se muestra.
+ * Plantilla de las páginas de servicios, ayuda y empresas: domicilios,
+ * alquiler, mantenimiento, puntos de servicio, soporte y las páginas
+ * provisionales de Empresas. El contenido sale de src/data/servicios.js;
+ * `clave` indica cuál se muestra.
  */
 function Servicio({ clave }) {
-  const servicio = SERVICIOS.find((s) => s.slug === clave)
+  const servicio = [...SERVICIOS, ...EMPRESAS].find((s) => s.slug === clave)
 
   useTitulo(servicio?.nombre)
 
   if (!servicio) return <NoEncontrado />
 
-  const grupo = servicio.ruta.startsWith('/servicios') ? 'Servicios' : 'Ayuda'
+  const grupo = servicio.ruta.startsWith('/servicios')
+    ? 'Servicios'
+    : servicio.ruta.startsWith('/empresas')
+      ? 'Empresas'
+      : 'Ayuda'
 
   return (
-    <main style={{ '--acento': servicio.colorAcento }}>
+    <div style={{ '--acento': servicio.colorAcento }}>
       <HeroPagina
         eyebrow={grupo}
         titulo={servicio.nombre}
@@ -75,7 +80,7 @@ function Servicio({ clave }) {
           </div>
         </Revelar>
       </Seccion>
-    </main>
+    </div>
   )
 }
 

@@ -1,0 +1,24 @@
+/* Oculto fuera de pantalla; aparece solo cuando recibe foco con el teclado */
+.saltar {
+  position: fixed;
+  top: var(--espacio-3);
+  left: var(--espacio-3);
+  z-index: var(--z-saltar);
+  padding: var(--espacio-3) var(--espacio-5);
+  border-radius: var(--radio-pildora);
+  background: var(--color-boton);
+  color: var(--color-blanco);
+  font-size: var(--texto-4);
+  font-weight: 600;
+  transform: translateY(-250%);
+}
+
+.saltar:focus-visible {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .saltar {
+    transition: transform var(--dur-rapida) var(--ease-salida);
+  }
+}

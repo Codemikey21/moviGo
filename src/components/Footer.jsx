@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { CATEGORIAS } from '../data/catalogo'
 import './Footer.css'
 
@@ -26,8 +26,8 @@ const COLUMNAS = [
     titulo: 'Empresas',
     enlaces: [
       { nombre: 'Portal empresarial', ruta: '/portal' },
-      { nombre: 'Domicilios para negocios', ruta: '/servicios/domicilios' },
-      { nombre: 'Alquiler para flotas', ruta: '/servicios/alquiler' },
+      { nombre: 'Domicilios para negocios', ruta: '/empresas/domicilios' },
+      { nombre: 'Alquiler para flotas', ruta: '/empresas/alquiler' },
     ],
   },
   {
@@ -68,9 +68,9 @@ function Footer() {
               <ul className="footer__lista">
                 {columna.enlaces.map((enlace) => (
                   <li key={enlace.nombre}>
-                    <Link to={enlace.ruta} className="footer__enlace">
+                    <NavLink to={enlace.ruta} end className="footer__enlace">
                       {enlace.nombre}
-                    </Link>
+                    </NavLink>
                   </li>
                 ))}
               </ul>

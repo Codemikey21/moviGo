@@ -25,7 +25,7 @@ function Tienda() {
   const paraDomicilios = productosParaDomicilio(4)
 
   return (
-    <main>
+    <div>
       <HeroPagina
         eyebrow="Tienda"
         titulo="Todo para moverte."
@@ -113,7 +113,7 @@ function Tienda() {
           </Link>
         </div>
       </Seccion>
-    </main>
+    </div>
   )
 }
 

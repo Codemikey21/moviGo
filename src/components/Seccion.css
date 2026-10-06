@@ -14,6 +14,7 @@
   --s-tarjeta-alta: var(--color-tinta);
   --s-borde: rgba(255, 255, 255, 0.1);
   --s-chip: rgba(255, 255, 255, 0.08);
+  --anillo-foco: var(--color-foco-oscuro);
 }
 
 /* Paleta del tono claro (#f5f5f7, como en las tiendas de Apple) */
@@ -25,6 +26,9 @@
   --s-tarjeta-alta: var(--color-blanco);
   --s-borde: rgba(0, 0, 0, 0.08);
   --s-chip: rgba(0, 0, 0, 0.05);
+
+  /* El anillo de foco usa el azul profundo, que contrasta sobre fondo claro */
+  --anillo-foco: var(--color-foco);
 
   /* Los controles nativos (select, rango…) se dibujan con tema claro */
   color-scheme: light;

@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import Lenis from 'lenis'
 import { gsap, ScrollTrigger } from '../lib/gsap'
+import { registrarLenis } from '../lib/lenisInstancia'
 
 /**
  * Activa el scroll suave de Lenis y lo sincroniza con GSAP ScrollTrigger.
@@ -26,6 +27,7 @@ function SmoothScroll() {
       autoRaf: false,
     })
     lenisRef.current = lenis
+    registrarLenis(lenis)
 
     // Cada vez que Lenis hace scroll, ScrollTrigger se actualiza.
     lenis.on('scroll', ScrollTrigger.update)
@@ -44,6 +46,7 @@ function SmoothScroll() {
       lenis.off('scroll', ScrollTrigger.update)
       lenis.destroy()
       lenisRef.current = null
+      registrarLenis(null)
     }
   }, [])
 

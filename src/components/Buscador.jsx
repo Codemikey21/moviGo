@@ -9,16 +9,26 @@ import {
   rutaCategoria,
   rutaProducto,
 } from '../lib/formato'
+import { useDialogoModal } from '../lib/useDialogoModal'
 import './Buscador.css'
 
+const ID_LISTA = 'buscador-lista'
+
 /**
- * Buscador a pantalla completa (se abre con Ctrl+K o Cmd+K desde la barra).
- * Muestra resultados en vivo de categorías y productos mientras se escribe.
+ * Buscador a pantalla completa (se abre con Ctrl+K o Cmd+K, o con el botón
+ * de la lupa). Muestra resultados en vivo de categorías y productos.
  *
- * Teclado: ↑ ↓ para moverse, Enter para abrir, Esc para cerrar.
+ * Es un diálogo modal con el patrón "combobox": el foco se queda en el campo
+ * de texto y la opción activa se indica con aria-activedescendant.
+ *
+ * Teclado: ↑ ↓ para moverse, Enter para abrir, Esc para cerrar (el foco vuelve
+ * al botón que lo abrió). Tab y Shift+Tab no salen del diálogo.
+ *
+ * @param disparadorRef  ref del botón de la lupa (respaldo para devolver el foco)
  */
-function Buscador({ abierto, onCerrar }) {
+function Buscador({ abierto, onCerrar, disparadorRef }) {
   const navegar = useNavigate()
+  const contenedorRef = useRef(null)
   const entradaRef = useRef(null)
 
   const [consulta, setConsulta] = useState('')
@@ -33,6 +43,15 @@ function Buscador({ abierto, onCerrar }) {
       setIndiceActivo(0)
     }
   }
+
+  useDialogoModal({
+    abierto,
+    obtenerZonas: () => [contenedorRef.current],
+    selectoresFondo: ['main', 'footer', '.navbar', '#menu-movil'],
+    alCerrar: onCerrar,
+    obtenerFocoInicial: () => entradaRef.current,
+    disparadorRef,
+  })
 
   // Grupos de resultados; sin texto se sugieren todas las categorías.
   const grupos = useMemo(() => {
@@ -83,22 +102,17 @@ function Buscador({ abierto, onCerrar }) {
   // Lista plana con todas las opciones, para recorrerlas con el teclado.
   const opciones = useMemo(() => grupos.flatMap((grupo) => grupo.items), [grupos])
 
-  // Al abrir, el cursor va directo al campo de texto.
-  useEffect(() => {
-    if (abierto) entradaRef.current?.focus()
-  }, [abierto])
+  // Texto que se anuncia a los lectores de pantalla al cambiar los resultados.
+  const textoBusqueda = consulta.trim()
+  const anuncio = !textoBusqueda
+    ? ''
+    : opciones.length === 0
+      ? 'Sin resultados'
+      : opciones.length === 1
+        ? '1 resultado'
+        : `${opciones.length} resultados`
 
-  // Esc cierra el buscador desde cualquier punto.
-  useEffect(() => {
-    if (!abierto) return
-
-    const alPresionar = (evento) => {
-      if (evento.key === 'Escape') onCerrar()
-    }
-    window.addEventListener('keydown', alPresionar)
-
-    return () => window.removeEventListener('keydown', alPresionar)
-  }, [abierto, onCerrar])
+  const idOpcionActiva = opciones.length > 0 ? `buscador-opcion-${indiceActivo}` : undefined
 
   // Mantiene visible la opción activa al recorrer la lista con el teclado.
   useEffect(() => {
@@ -133,6 +147,7 @@ function Buscador({ abierto, onCerrar }) {
 
   return (
     <div
+      ref={contenedorRef}
       className={`buscador ${abierto ? 'buscador--abierto' : ''}`}
       inert={!abierto}
       role="dialog"
@@ -161,6 +176,13 @@ function Buscador({ abierto, onCerrar }) {
           <input
             ref={entradaRef}
             type="text"
+            role="combobox"
+            aria-expanded={opciones.length > 0}
+            aria-controls={ID_LISTA}
+            aria-autocomplete="list"
+            aria-haspopup="listbox"
+            aria-activedescendant={idOpcionActiva}
+            aria-label="Buscar en la tienda"
             className="buscador__entrada"
             placeholder="Busca bicicletas, drones, cascos…"
             value={consulta}
@@ -168,10 +190,14 @@ function Buscador({ abierto, onCerrar }) {
             onKeyDown={alPresionarTecla}
             autoComplete="off"
             spellCheck="false"
-            aria-label="Buscar"
           />
 
-          <button type="button" className="buscador__cerrar" onClick={onCerrar}>
+          <button
+            type="button"
+            className="buscador__cerrar"
+            aria-label="Cerrar búsqueda (Esc)"
+            onClick={onCerrar}
+          >
             Esc
           </button>
         </div>
@@ -179,55 +205,68 @@ function Buscador({ abierto, onCerrar }) {
         <div className="buscador__resultados">
           {grupos.length === 0 && (
             <p className="buscador__vacio">
-              No encontramos resultados para “{consulta.trim()}”. Prueba con otra
+              No encontramos resultados para “{textoBusqueda}”. Prueba con otra
               palabra, por ejemplo “patineta” o “casco”.
             </p>
           )}
 
-          {grupos.map((grupo) => (
-            <section key={grupo.titulo} className="buscador__grupo">
-              <h2 className="buscador__titulo">{grupo.titulo}</h2>
+          <div id={ID_LISTA} role="listbox" aria-label="Resultados" className="buscador__lista">
+            {grupos.map((grupo, indiceGrupo) => (
+              <div
+                key={grupo.titulo}
+                role="group"
+                aria-labelledby={`buscador-grupo-${indiceGrupo}`}
+                className="buscador__grupo"
+              >
+                <div
+                  id={`buscador-grupo-${indiceGrupo}`}
+                  role="presentation"
+                  className="buscador__titulo"
+                >
+                  {grupo.titulo}
+                </div>
 
-              <ul role="listbox" className="buscador__lista">
                 {grupo.items.map((item) => {
                   posicion += 1
                   const miPosicion = posicion
                   const activo = miPosicion === indiceActivo
 
                   return (
-                    <li
+                    <Link
                       key={item.clave}
                       id={`buscador-opcion-${miPosicion}`}
                       role="option"
                       aria-selected={activo}
+                      to={item.ruta}
+                      className={`buscador__resultado ${
+                        activo ? 'buscador__resultado--activo' : ''
+                      }`}
+                      style={{ '--acento': item.categoria.colorAcento }}
+                      onClick={onCerrar}
+                      onMouseEnter={() => setIndiceActivo(miPosicion)}
+                      tabIndex={-1}
                     >
-                      <Link
-                        to={item.ruta}
-                        className={`buscador__resultado ${
-                          activo ? 'buscador__resultado--activo' : ''
-                        }`}
-                        style={{ '--acento': item.categoria.colorAcento }}
-                        onClick={onCerrar}
-                        onMouseEnter={() => setIndiceActivo(miPosicion)}
-                        tabIndex={-1}
-                      >
-                        <span className="buscador__icono">
-                          <IconoCategoria categoria={item.categoria} />
-                        </span>
-                        <span className="buscador__textos">
-                          <span className="buscador__nombre">{item.titulo}</span>
-                          <span className="buscador__detalle">{item.detalle}</span>
-                        </span>
-                        <span className="buscador__flecha" aria-hidden="true">
-                          ›
-                        </span>
-                      </Link>
-                    </li>
+                      <span className="buscador__icono">
+                        <IconoCategoria categoria={item.categoria} />
+                      </span>
+                      <span className="buscador__textos">
+                        <span className="buscador__nombre">{item.titulo}</span>
+                        <span className="buscador__detalle">{item.detalle}</span>
+                      </span>
+                      <span className="buscador__flecha" aria-hidden="true">
+                        ›
+                      </span>
+                    </Link>
                   )
                 })}
-              </ul>
-            </section>
-          ))}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Anuncia la cantidad de resultados a los lectores de pantalla */}
+        <div className="solo-lectores" role="status" aria-live="polite" aria-atomic="true">
+          {anuncio}
         </div>
 
         <p className="buscador__ayuda">

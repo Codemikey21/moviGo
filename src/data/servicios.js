@@ -244,3 +244,27 @@ export const SERVICIOS = [
     },
   },
 ]
+
+/**
+ * Páginas provisionales de la sección "Empresas".
+ * No tienen contenido propio todavía: reutilizan, sin cambios, el texto de los
+ * servicios que ya existen (domicilios y alquiler). Solo cambian el nombre y
+ * la ruta, para que el menú de Empresas lleve a una página con el mismo patrón
+ * que las demás páginas de servicio.
+ */
+const servicioBase = (slug) => SERVICIOS.find((servicio) => servicio.slug === slug)
+
+export const EMPRESAS = [
+  {
+    ...servicioBase('domicilios'),
+    slug: 'empresas-domicilios',
+    ruta: '/empresas/domicilios',
+    nombre: 'Domicilios para negocios',
+  },
+  {
+    ...servicioBase('alquiler'),
+    slug: 'empresas-alquiler',
+    ruta: '/empresas/alquiler',
+    nombre: 'Alquiler para flotas',
+  },
+]

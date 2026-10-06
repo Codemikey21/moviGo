@@ -55,8 +55,11 @@
   background: rgba(30, 30, 32, 0.9);
 }
 
+/* El campo no dibuja su propio contorno: el anillo de foco lo lleva el
+   contenedor, con el azul de foco (no el acento de la categoría) */
 .buscador__campo:focus-within {
-  border-color: var(--acento);
+  border-color: var(--color-foco-oscuro);
+  box-shadow: 0 0 0 1px var(--color-foco-oscuro);
 }
 
 .buscador__lupa {
@@ -144,6 +147,8 @@
 
 .buscador__resultado--activo {
   background: rgba(255, 255, 255, 0.09);
+  outline: 2px solid var(--color-foco-oscuro);
+  outline-offset: -2px;
 }
 
 .buscador__icono {
@@ -225,11 +230,23 @@
   }
 }
 
+/* Con movimiento reducido solo hay un fundido corto, sin desplazamiento.
+   La visibilidad cambia al instante (duración 0): un diálogo que aún figura
+   como oculto no puede recibir el foco al abrirse. */
 @media (prefers-reduced-motion: reduce) {
-  .buscador,
-  .buscador__panel {
-    transform: none;
-    transition-duration: 0.01s;
+  .buscador {
+    transition:
+      opacity 0.12s linear,
+      visibility 0s linear 0.12s;
+  }
+
+  .buscador--abierto {
     transition-delay: 0s;
+  }
+
+  .buscador__panel,
+  .buscador--abierto .buscador__panel {
+    transform: none;
+    transition: none;
   }
 }

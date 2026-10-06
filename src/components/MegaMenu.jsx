@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import IconoCategoria from './IconoCategoria'
 import { CATEGORIAS } from '../data/catalogo'
-import { SERVICIOS } from '../data/servicios'
+import { EMPRESAS, SERVICIOS } from '../data/servicios'
 import { productosDeCategoria, rutaCategoria, rutaProducto } from '../lib/formato'
 import './MegaMenu.css'
 
@@ -11,25 +11,45 @@ const GRUPOS_SERVICIOS = [
   { titulo: 'Ayuda', slugs: ['puntos-de-servicio', 'soporte'] },
 ]
 
+// Entradas del panel "Empresas": el portal y las dos páginas provisionales.
+const ENLACES_EMPRESAS = [
+  {
+    nombre: 'Portal empresarial',
+    ruta: '/portal',
+    resumen: 'Gestiona tu flota, tus entregas y tu facturación.',
+  },
+  ...EMPRESAS.map((servicio) => ({
+    nombre: servicio.nombre,
+    ruta: servicio.ruta,
+    resumen: servicio.resumen,
+  })),
+]
+
 /**
  * Panel grande desplegable bajo la barra de navegación (mega-menú).
- * Hay dos: "tienda" (categorías con sus productos destacados) y "servicios".
- * Siempre está montado para poder animar la entrada y la salida con CSS;
- * cerrado queda invisible e inerte (sin foco ni clics).
+ * Hay tres: "tienda" (categorías con sus productos destacados), "servicios"
+ * y "empresas". Siempre está montado para poder animar la entrada y la salida
+ * con CSS; cerrado queda invisible e inerte (sin foco ni clics).
+ *
+ * @param panelRef          ref al contenedor, que usa la barra para mover el foco
+ * @param disparadorId      id del botón que lo abre (lo nombra para lectores de pantalla)
+ * @param alPresionarTecla  teclado dentro del panel (Escape, Shift+Tab)
  */
-function MegaMenu({ tipo, abierto, onNavegar }) {
+function MegaMenu({ tipo, abierto, onNavegar, panelRef, disparadorId, alPresionarTecla }) {
   return (
     <div
+      ref={panelRef}
       id={`mega-${tipo}`}
+      role="group"
+      aria-labelledby={disparadorId}
       className={`mega ${abierto ? 'mega--abierto' : ''}`}
       inert={!abierto}
+      onKeyDown={alPresionarTecla}
     >
       <div className="mega__interior">
-        {tipo === 'tienda' ? (
-          <PanelTienda onNavegar={onNavegar} />
-        ) : (
-          <PanelServicios onNavegar={onNavegar} />
-        )}
+        {tipo === 'tienda' && <PanelTienda onNavegar={onNavegar} />}
+        {tipo === 'servicios' && <PanelServicios onNavegar={onNavegar} />}
+        {tipo === 'empresas' && <PanelEmpresas onNavegar={onNavegar} />}
       </div>
     </div>
   )
@@ -40,9 +60,9 @@ function PanelTienda({ onNavegar }) {
     <>
       <div className="mega__cabecera mega__item" style={{ '--i': 0 }}>
         <p className="mega__etiqueta">Explorar la tienda</p>
-        <Link to="/tienda" className="mega__ver-todo" onClick={onNavegar}>
+        <NavLink to="/tienda" end className="mega__ver-todo" onClick={onNavegar}>
           Ver toda la tienda ›
-        </Link>
+        </NavLink>
       </div>
 
       <div className="mega__columnas mega__columnas--tienda">
@@ -52,27 +72,29 @@ function PanelTienda({ onNavegar }) {
             className="mega__columna mega__item"
             style={{ '--i': indice + 1, '--acento': categoria.colorAcento }}
           >
-            <Link
+            <NavLink
               to={rutaCategoria(categoria)}
+              end
               className="mega__categoria"
               onClick={onNavegar}
             >
               <IconoCategoria categoria={categoria} className="mega__icono" />
               <span>{categoria.nombreCorto}</span>
-            </Link>
+            </NavLink>
 
             <ul className="mega__lista">
               {productosDeCategoria(categoria.slug)
                 .slice(0, 3)
                 .map((producto) => (
                   <li key={producto.id}>
-                    <Link
+                    <NavLink
                       to={rutaProducto(producto)}
+                      end
                       className="mega__enlace"
                       onClick={onNavegar}
                     >
                       {producto.nombre}
-                    </Link>
+                    </NavLink>
                   </li>
                 ))}
             </ul>
@@ -100,37 +122,43 @@ function PanelServicios({ onNavegar }) {
 
               return (
                 <li key={slug} className="mega__item" style={{ '--i': orden++ }}>
-                  <Link
+                  <NavLink
                     to={servicio.ruta}
+                    end
                     className="mega__servicio"
                     onClick={onNavegar}
                   >
                     <span className="mega__servicio-nombre">{servicio.nombre}</span>
                     <span className="mega__servicio-resumen">{servicio.resumen}</span>
-                  </Link>
+                  </NavLink>
                 </li>
               )
             })}
           </ul>
         </div>
       ))}
-
-      <div className="mega__columna">
-        <p className="mega__etiqueta mega__item" style={{ '--i': orden++ }}>
-          Empresas
-        </p>
-        <ul className="mega__lista">
-          <li className="mega__item" style={{ '--i': orden++ }}>
-            <Link to="/portal" className="mega__servicio" onClick={onNavegar}>
-              <span className="mega__servicio-nombre">Portal empresarial</span>
-              <span className="mega__servicio-resumen">
-                Gestiona tu flota, tus entregas y tu facturación.
-              </span>
-            </Link>
-          </li>
-        </ul>
-      </div>
     </div>
+  )
+}
+
+function PanelEmpresas({ onNavegar }) {
+  return (
+    <>
+      <p className="mega__etiqueta mega__item" style={{ '--i': 0 }}>
+        Empresas
+      </p>
+
+      <ul className="mega__columnas mega__columnas--empresas">
+        {ENLACES_EMPRESAS.map((enlace, indice) => (
+          <li key={enlace.ruta} className="mega__item" style={{ '--i': indice + 1 }}>
+            <NavLink to={enlace.ruta} end className="mega__servicio" onClick={onNavegar}>
+              <span className="mega__servicio-nombre">{enlace.nombre}</span>
+              <span className="mega__servicio-resumen">{enlace.resumen}</span>
+            </NavLink>
+          </li>
+        ))}
+      </ul>
+    </>
   )
 }
 

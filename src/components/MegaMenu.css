@@ -94,6 +94,11 @@
 }
 
 .mega__columnas--servicios {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--espacio-6) var(--espacio-7);
+}
+
+.mega__columnas--empresas {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--espacio-6) var(--espacio-7);
 }
@@ -172,11 +177,26 @@
   }
 }
 
+/* Con movimiento reducido el panel solo aparece con un fundido corto, sin
+   desplazarse. Los selectores repiten la especificidad de las reglas
+   originales para que ganen también con el panel abierto. */
 @media (prefers-reduced-motion: reduce) {
   .mega,
-  .mega__item {
+  .mega--abierto {
     transform: none;
-    transition-duration: 0.01s;
+    transition:
+      opacity 0.12s linear,
+      visibility 0s linear 0.12s;
+  }
+
+  .mega--abierto {
     transition-delay: 0s;
+  }
+
+  .mega__item,
+  .mega--abierto .mega__item {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }

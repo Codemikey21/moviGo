@@ -58,7 +58,7 @@ function VistaProducto({ categoria, producto }) {
   ]
 
   return (
-    <main style={{ '--acento': categoria.colorAcento }}>
+    <div style={{ '--acento': categoria.colorAcento }}>
       {/* ---- Cabecera oscura ---- */}
       <Seccion tono="oscuro" className="producto__cabecera">
         <div ref={cabeceraRef}>
@@ -141,6 +141,7 @@ function VistaProducto({ categoria, producto }) {
                   onElegir={setColorElegido}
                   mostrarNombre
                   tamano="grande"
+                  etiqueta={`Color de ${producto.nombre}`}
                 />
               </div>
 
@@ -215,7 +216,7 @@ function VistaProducto({ categoria, producto }) {
           </div>
         </Seccion>
       )}
-    </main>
+    </div>
   )
 }
 
