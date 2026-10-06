@@ -1,15 +1,18 @@
 import { useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import IconoCategoria from '../components/IconoCategoria'
-import Insignia from '../components/Insignia'
 import Migas from '../components/Migas'
 import Seccion from '../components/Seccion'
 import SelectorColor from '../components/SelectorColor'
 import TarjetaProducto from '../components/TarjetaProducto'
-import { esColorClaro } from '../lib/color'
+import { FECHA_CONSULTA } from '../data/catalogo'
+import { TONO_NEUTRO, esColorClaro } from '../lib/color'
 import {
+  ETIQUETA_PRECIO,
+  ETIQUETA_TARIFA,
   buscarCategoria,
   buscarProducto,
+  formatearEspecificacion,
   formatearPrecio,
   productosDeCategoria,
   rutaCategoria,
@@ -18,6 +21,12 @@ import { useEntradaHero } from '../lib/useEntradaHero'
 import { useTitulo } from '../lib/useTitulo'
 import NoEncontrado from './NoEncontrado'
 import './Producto.css'
+
+// "2026-10-06" → "6 de octubre de 2026"
+const FECHA_LARGA = new Intl.DateTimeFormat('es-CO', {
+  dateStyle: 'long',
+  timeZone: 'UTC',
+}).format(new Date(FECHA_CONSULTA))
 
 /**
  * Ruta /tienda/:categoria/:producto. Si la categoría o el producto no existen
@@ -44,8 +53,8 @@ function VistaProducto({ categoria, producto }) {
   useEntradaHero(cabeceraRef)
 
   const [colorElegido, setColorElegido] = useState(0)
-  const color = producto.colores[colorElegido]
-  const alquiler = producto.disponibleAlquiler ? producto.precioAlquiler : null
+  const tono = producto.colores[colorElegido]?.hex ?? TONO_NEUTRO
+  const alquiler = producto.tarifasAlquiler
 
   const relacionados = productosDeCategoria(categoria.slug)
     .filter((otro) => otro.id !== producto.id)
@@ -70,9 +79,9 @@ function VistaProducto({ categoria, producto }) {
             {/* Aquí irá el visor 3D interactivo */}
             <div
               className={`producto__visor ${
-                esColorClaro(color.hex) ? 'producto__visor--claro' : ''
+                esColorClaro(tono) ? 'producto__visor--claro' : ''
               }`}
-              style={{ '--tono': color.hex }}
+              style={{ '--tono': tono }}
               data-entrada
             >
               <IconoCategoria
@@ -86,34 +95,29 @@ function VistaProducto({ categoria, producto }) {
             </div>
 
             <div className="producto__info">
-              <div className="producto__insignia" data-entrada>
-                <Insignia texto={producto.insignia} />
-              </div>
-
               <h1 className="producto__nombre" data-entrada>
                 {producto.nombre}
               </h1>
-              <p className="producto__tagline" data-entrada>
-                {producto.tagline}
-              </p>
               <p className="producto__descripcion" data-entrada>
                 {producto.descripcion}
               </p>
 
               {/* Precios */}
               <div className="producto__precios" data-entrada>
-                {producto.disponibleVenta && (
+                {producto.disponibleCompra && (
                   <div>
-                    <p className="producto__etiqueta">Compra</p>
+                    <p className="producto__etiqueta">{ETIQUETA_PRECIO}</p>
                     <p className="producto__precio">
-                      {formatearPrecio(producto.precioVenta)}
+                      {formatearPrecio(producto.precioCompra)}
                     </p>
                   </div>
                 )}
 
                 {alquiler && (
                   <div>
-                    <p className="producto__etiqueta">Alquiler</p>
+                    <p className="producto__etiqueta">
+                      Alquiler · {ETIQUETA_TARIFA.toLowerCase()}
+                    </p>
                     <dl className="producto__tarifas">
                       <div>
                         <dt>Por hora</dt>
@@ -132,25 +136,27 @@ function VistaProducto({ categoria, producto }) {
                 )}
               </div>
 
-              {/* Color */}
-              <div className="producto__color" data-entrada>
-                <p className="producto__etiqueta">Color</p>
-                <SelectorColor
-                  colores={producto.colores}
-                  activo={colorElegido}
-                  onElegir={setColorElegido}
-                  mostrarNombre
-                  tamano="grande"
-                  etiqueta={`Color de ${producto.nombre}`}
-                />
-              </div>
+              {/* Color: solo si la fuente publica colores */}
+              {producto.colores.length > 0 && (
+                <div className="producto__color" data-entrada>
+                  <p className="producto__etiqueta">Color</p>
+                  <SelectorColor
+                    colores={producto.colores}
+                    activo={colorElegido}
+                    onElegir={setColorElegido}
+                    mostrarNombre
+                    tamano="grande"
+                    etiqueta={`Color de ${producto.nombre}`}
+                  />
+                </div>
+              )}
 
               {/* Acciones (todavía sin funcionalidad) */}
               <div className="producto__acciones" data-entrada>
                 <button
                   type="button"
                   className="producto__boton producto__boton--lleno"
-                  disabled={!producto.disponibleVenta}
+                  disabled={!producto.disponibleCompra}
                 >
                   Comprar
                 </button>
@@ -163,10 +169,13 @@ function VistaProducto({ categoria, producto }) {
                 </button>
               </div>
 
-              {/* Destacados */}
+              {/* Las tres especificaciones clave */}
               <ul className="producto__destacados" data-entrada>
-                {producto.destacados.map((destacado) => (
-                  <li key={destacado}>{destacado}</li>
+                {producto.especificacionesClave.map((especificacion) => (
+                  <li key={especificacion.etiqueta}>
+                    <strong>{especificacion.etiqueta}:</strong>{' '}
+                    {formatearEspecificacion(especificacion)}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -179,22 +188,43 @@ function VistaProducto({ categoria, producto }) {
         tono="claro"
         eyebrow="Especificaciones"
         titulo="Todos los detalles."
-        descripcion={`Lo que necesitas saber del ${producto.nombre} antes de elegirlo.`}
+        descripcion={`Lo que publica el fabricante sobre el ${producto.nombre}.`}
       >
         <table className="producto__tabla">
           <tbody>
             {producto.especificaciones.map((especificacion) => (
-              <tr key={especificacion.nombre}>
-                <th scope="row">{especificacion.nombre}</th>
-                <td>{especificacion.valor}</td>
+              <tr key={especificacion.etiqueta}>
+                <th scope="row">{especificacion.etiqueta}</th>
+                <td>
+                  {formatearEspecificacion(especificacion)}
+                  {especificacion.nota && (
+                    <small className="producto__nota">{especificacion.nota}</small>
+                  )}
+                </td>
               </tr>
             ))}
-            <tr>
-              <th scope="row">Uso en domicilios</th>
-              <td>{producto.usoDomicilio ? 'Sí, apto para repartos' : 'No recomendado'}</td>
-            </tr>
           </tbody>
         </table>
+
+        <p className="producto__fuente">
+          Fuente de las especificaciones:{' '}
+          <a href={producto.fuente} target="_blank" rel="noopener noreferrer">
+            ficha oficial
+            <span className="solo-lectores"> (se abre en una pestaña nueva)</span>
+          </a>
+          . Consultada el {FECHA_LARGA}.
+        </p>
+
+        {!producto.verificado && (
+          <p className="producto__fuente">
+            Algunos datos de este producto están pendientes de confirmar.
+          </p>
+        )}
+
+        <p className="producto__fuente">
+          Los precios son de referencia y las tarifas de alquiler son valores de
+          ejemplo: no son ofertas de MoviGo.
+        </p>
       </Seccion>
 
       {/* ---- Otros productos de la categoría (oscuro) ---- */}
@@ -202,7 +232,7 @@ function VistaProducto({ categoria, producto }) {
         <Seccion
           tono="oscuro"
           eyebrow={categoria.nombre}
-          titulo="También te puede interesar."
+          titulo="Más de esta categoría."
         >
           <div className="grilla-productos">
             {relacionados.map((otro, indice) => (

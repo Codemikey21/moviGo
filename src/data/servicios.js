@@ -1,8 +1,10 @@
 /**
  * Servicios y páginas de apoyo de MoviGo.
  *
- * Estas páginas aún no tienen funcionalidad, pero cada una describe con
- * detalle lo que ofrecerá. Los íconos son trazos SVG sobre un lienzo de 48 × 48.
+ * MoviGo es un proyecto académico y estos servicios todavía no funcionan: cada
+ * página describe lo que se planea ofrecer, sin cifras ni plazos. Los textos
+ * deben seguir siendo verdaderos mientras el servicio no exista. Los íconos son
+ * trazos SVG sobre un lienzo de 48 × 48.
  */
 
 const circulo = (cx, cy, r) =>
@@ -13,8 +15,8 @@ export const SERVICIOS = [
     slug: 'domicilios',
     ruta: '/servicios/domicilios',
     nombre: 'Domicilios',
-    tagline: 'Tus pedidos, en minutos.',
-    resumen: 'Entregas rápidas con seguimiento en tiempo real.',
+    tagline: 'Entregas con la misma flota.',
+    resumen: 'Domicilios con bicicletas, patinetas y motos.',
     colorAcento: '#ff9f0a',
     icono: [
       'M8 16 L24 8 L40 16 V32 L24 40 L8 32 Z',
@@ -22,38 +24,38 @@ export const SERVICIOS = [
       'M24 24 V40',
     ],
     descripcion:
-      'La misma flota con la que te mueves por la ciudad entrega tus pedidos. Conectamos a comercios y a clientes con repartidores en bicicleta, patineta, moto o dron, según la distancia y el tipo de carga.',
+      'MoviGo quiere hacer domicilios con los mismos vehículos que vende y alquila. El servicio está en construcción: esta página describe lo que se planea ofrecer.',
     ofrece: [
       {
-        titulo: 'Entregas en minutos',
+        titulo: 'La misma flota',
         texto:
-          'Asignamos automáticamente al repartidor y al vehículo más cercano y adecuado para cada pedido.',
+          'Los domicilios se harían con vehículos del catálogo, como bicicletas, patinetas y motos.',
       },
       {
-        titulo: 'Seguimiento en tiempo real',
+        titulo: 'Pedidos de comercios',
         texto:
-          'Quien envía y quien recibe ven el recorrido en el mapa y reciben avisos en cada etapa de la entrega.',
+          'Pensado para que los comercios soliciten entregas desde el portal empresarial.',
       },
       {
-        titulo: 'Para cada tipo de carga',
+        titulo: 'Seguimiento del pedido',
         texto:
-          'Desde documentos y comida hasta paquetes de varios kilos, con bolsas térmicas y cajas de reparto incluidas.',
+          'Se planea que quien envía y quien recibe puedan consultar el estado de la entrega.',
       },
       {
-        titulo: 'Prueba de entrega',
+        titulo: 'Registro de entregas',
         texto:
-          'Confirmación con código y foto para que cada pedido quede registrado y sin discusiones.',
+          'Cada entrega quedaría registrada para poder consultarla después.',
       },
     ],
     proximamente: {
       titulo: 'Estamos construyendo el servicio de domicilios',
       texto:
-        'Muy pronto podrás programar entregas desde la web, elegir el tipo de vehículo y pagar en línea. Los comercios podrán gestionar sus pedidos desde el portal empresarial.',
+        'Todavía no se pueden solicitar entregas. El servicio se conectará con el portal empresarial para que los comercios gestionen sus pedidos.',
       lista: [
-        'Solicitud de entregas inmediatas o programadas',
-        'Tarifa calculada por distancia y peso antes de confirmar',
-        'Mapa con la ubicación del repartidor en vivo',
-        'Historial de entregas y facturación para empresas',
+        'Solicitud de entregas desde la web',
+        'Tarifa calculada antes de confirmar',
+        'Seguimiento del pedido',
+        'Historial de entregas para empresas',
       ],
     },
   },
@@ -62,42 +64,42 @@ export const SERVICIOS = [
     ruta: '/servicios/alquiler',
     nombre: 'Alquiler',
     tagline: 'Úsalo cuando lo necesites.',
-    resumen: 'Por hora, por día o por semana, sin compromisos.',
+    resumen: 'Por hora, por día o por semana.',
     colorAcento: '#30d158',
     icono: [circulo(24, 24, 16), 'M24 14 V24 L31 28'],
     descripcion:
-      'Alquila cualquier vehículo de la flota por el tiempo que lo necesites, sin pagar el costo de comprarlo. Cada producto de la tienda muestra su tarifa por hora, por día y por semana.',
+      'Alquila los vehículos del catálogo por el tiempo que los necesites, sin comprarlos. Cada producto de la tienda muestra una tarifa de ejemplo por hora, por día y por semana; todavía no son tarifas reales.',
     ofrece: [
       {
-        titulo: 'Tarifas claras',
+        titulo: 'Tarifas por tiempo',
         texto:
-          'Precio por hora, por día y por semana en cada producto, sin cargos escondidos.',
+          'Una tarifa por hora, por día y por semana en cada producto que se pueda alquilar.',
       },
       {
-        titulo: 'Reserva y recoge',
+        titulo: 'Reserva y recogida',
         texto:
-          'Reserva en línea y recoge tu vehículo en el punto de servicio más cercano, o pide que te lo llevemos.',
+          'Se planea reservar en línea y recoger el vehículo en un punto de servicio.',
       },
       {
-        titulo: 'Equipo incluido',
+        titulo: 'Accesorios de seguridad',
         texto:
-          'Casco, luces y candado vienen con tu alquiler, y puedes añadir baterías extra si las necesitas.',
+          'El catálogo incluye cascos, luces y candados para completar el equipo.',
       },
       {
         titulo: 'Flotas para empresas',
         texto:
-          'Planes mensuales con descuento para negocios que necesitan varios vehículos al mismo tiempo.',
+          'Alquiler para negocios que necesitan varios vehículos, desde el portal empresarial.',
       },
     ],
     proximamente: {
-      titulo: 'El sistema de reservas llega muy pronto',
+      titulo: 'El sistema de reservas está en construcción',
       texto:
-        'Estamos terminando el proceso de reserva para que puedas elegir fecha, vehículo y punto de recogida en pocos pasos. Mientras tanto, puedes consultar las tarifas de alquiler en la página de cada producto.',
+        'Todavía no se puede reservar. Mientras tanto, puedes consultar las tarifas de ejemplo en la página de cada producto.',
       lista: [
         'Calendario de disponibilidad por vehículo',
         'Reserva por horas, días o semanas',
-        'Verificación de identidad desde el celular',
-        'Pago en línea y depósito reembolsable',
+        'Registro e identificación del usuario',
+        'Pago en línea',
       ],
     },
   },
@@ -106,7 +108,7 @@ export const SERVICIOS = [
     ruta: '/servicios/mantenimiento',
     nombre: 'Mantenimiento',
     tagline: 'Siempre listos para rodar.',
-    resumen: 'Revisiones y reparaciones con alertas automáticas.',
+    resumen: 'Revisión y cuidado de los vehículos.',
     colorAcento: '#2997ff',
     icono: [
       'M14 34 L30 18',
@@ -114,38 +116,38 @@ export const SERVICIOS = [
       circulo(12, 36, 3),
     ],
     descripcion:
-      'Cuidamos los vehículos de la flota y los tuyos. Un sistema de alertas revisa el uso de cada equipo y programa el mantenimiento antes de que aparezcan las fallas.',
+      'Cuidar los vehículos de la flota y los de los clientes es parte de la propuesta de MoviGo. El servicio está en construcción: esta página describe lo que se planea ofrecer.',
     ofrece: [
       {
-        titulo: 'Alertas automáticas',
+        titulo: 'Revisiones periódicas',
         texto:
-          'Avisamos cuando toca revisar frenos, llantas o batería, según los kilómetros y las horas de uso reales.',
+          'Revisión de frenos, llantas y batería de cada vehículo.',
       },
       {
-        titulo: 'Taller especializado',
+        titulo: 'Taller en los puntos de servicio',
         texto:
-          'Técnicos con experiencia en vehículos eléctricos y repuestos originales de cada línea.',
+          'Ajustes y reparaciones básicas en los puntos de servicio.',
       },
       {
-        titulo: 'Mantenimiento a domicilio',
+        titulo: 'Para flotas y empresas',
         texto:
-          'Para flotas y empresas, un técnico puede revisar los vehículos en tu bodega o punto de operación.',
+          'Mantenimiento de los vehículos de un negocio, coordinado desde el portal empresarial.',
       },
       {
-        titulo: 'Historial digital',
+        titulo: 'Historial de cada vehículo',
         texto:
-          'Cada revisión queda registrada en el historial del vehículo, útil para la garantía y la reventa.',
+          'Registro de las revisiones y reparaciones de cada vehículo.',
       },
     ],
     proximamente: {
       titulo: 'Agenda tu mantenimiento desde la web',
       texto:
-        'Estamos desarrollando el módulo para reservar cita en taller, recibir recordatorios y consultar el estado de salud de cada vehículo. Será parte del portal empresarial y de tu cuenta personal.',
+        'Todavía no se pueden agendar citas. Se está diseñando el módulo para reservar una cita en un punto de servicio y consultar el estado de cada vehículo.',
       lista: [
         'Agenda de citas en el punto de servicio',
-        'Panel con el estado de la batería, los frenos y las llantas',
-        'Notificaciones antes de cada revisión programada',
-        'Cotización de repuestos y reparaciones en línea',
+        'Estado de la batería, los frenos y las llantas',
+        'Recordatorios de revisión',
+        'Cotización de repuestos y reparaciones',
       ],
     },
   },
@@ -153,46 +155,46 @@ export const SERVICIOS = [
     slug: 'puntos-de-servicio',
     ruta: '/puntos-de-servicio',
     nombre: 'Puntos de servicio',
-    tagline: 'Siempre hay uno cerca.',
-    resumen: 'Recoge, devuelve, carga y repara en tu ciudad.',
+    tagline: 'Un lugar para recoger, devolver y consultar.',
+    resumen: 'Recoge, devuelve y recibe ayuda en tu ciudad.',
     colorAcento: '#bf5af2',
     icono: [
       'M24 42 C24 42 11 30 11 20 A13 13 0 0 1 37 20 C37 30 24 42 24 42 Z',
       circulo(24, 20, 5),
     ],
     descripcion:
-      'Una red de puntos para recoger y devolver tu vehículo, cambiar la batería, comprar accesorios y recibir ayuda de un asesor. Empezaremos por Bucaramanga y su área metropolitana.',
+      'MoviGo planea una red de puntos para recoger y devolver vehículos, comprar accesorios y recibir asesoría. Se empezaría por Bucaramanga y su área metropolitana. Todavía no hay ningún punto abierto.',
     ofrece: [
       {
         titulo: 'Recogida y devolución',
         texto:
-          'Recoge tu vehículo alquilado y devuélvelo en cualquier punto, aunque no sea el mismo donde lo tomaste.',
+          'Recoger un vehículo alquilado y devolverlo en uno de los puntos.',
       },
       {
-        titulo: 'Estaciones de carga',
+        titulo: 'Carga de baterías',
         texto:
-          'Carga tu batería o cámbiala por una completa en menos de dos minutos.',
+          'Se planea ofrecer carga de baterías para los vehículos eléctricos.',
       },
       {
         titulo: 'Asesoría en persona',
         texto:
-          'Prueba los vehículos antes de comprarlos y recibe orientación para elegir el que mejor se ajusta a tus rutas.',
+          'Conocer los vehículos antes de comprarlos y recibir orientación para elegir.',
       },
       {
-        titulo: 'Taller rápido',
+        titulo: 'Taller básico',
         texto:
-          'Ajustes, pinchazos y revisiones básicas mientras esperas, sin necesidad de cita.',
+          'Ajustes y revisiones sencillas de los vehículos.',
       },
     ],
     proximamente: {
       titulo: 'Un mapa con todos nuestros puntos',
       texto:
-        'Estamos preparando un mapa interactivo para que encuentres el punto más cercano, consultes su horario y veas en tiempo real cuántos vehículos y baterías tiene disponibles.',
+        'Cuando existan los puntos, se publicará un mapa para encontrar el más cercano y consultar su horario y sus servicios.',
       lista: [
         'Mapa con búsqueda por barrio y por cercanía',
-        'Horarios y servicios disponibles en cada punto',
-        'Disponibilidad de vehículos y baterías en vivo',
-        'Indicaciones para llegar a pie, en bicicleta o en carro',
+        'Horarios y servicios de cada punto',
+        'Disponibilidad de vehículos y baterías',
+        'Indicaciones para llegar',
       ],
     },
   },
@@ -201,45 +203,45 @@ export const SERVICIOS = [
     ruta: '/soporte',
     nombre: 'Soporte',
     tagline: 'Estamos para ayudarte.',
-    resumen: 'Respuestas rápidas, cuando las necesites.',
+    resumen: 'Ayuda con tus compras, alquileres y entregas.',
     colorAcento: '#40c8e0',
     icono: [
       'M8 12 H40 V30 H22 L14 38 V30 H8 Z',
       'M16 19 H32 M16 24 H27',
     ],
     descripcion:
-      'Un solo lugar para resolver dudas sobre tus compras, tus alquileres y tus entregas. Combinaremos guías paso a paso con atención de personas reales cuando lo necesites.',
+      'Un solo lugar para resolver dudas sobre compras, alquileres y entregas. Se planea combinar guías paso a paso con atención de una persona. El servicio todavía no está activo.',
     ofrece: [
       {
         titulo: 'Centro de ayuda',
         texto:
-          'Guías cortas para usar, cargar y cuidar cada tipo de vehículo, con vídeos y preguntas frecuentes.',
+          'Guías para usar, cargar y cuidar cada tipo de vehículo.',
       },
       {
-        titulo: 'Chat con un asesor',
+        titulo: 'Contacto con un asesor',
         texto:
-          'Escríbenos y recibe respuesta de nuestro equipo en horario extendido, todos los días.',
+          'Un canal para escribir al equipo de MoviGo.',
       },
       {
         titulo: 'Garantías y devoluciones',
         texto:
-          'Consulta el estado de tu garantía, solicita una devolución o abre un caso desde tu cuenta.',
+          'Consulta del estado de una garantía o de una devolución.',
       },
       {
-        titulo: 'Asistencia en ruta',
+        titulo: 'Ayuda en ruta',
         texto:
-          'Si tu vehículo alquilado falla en la calle, enviamos ayuda o un reemplazo al lugar donde estés.',
+          'Orientación cuando un vehículo alquilado presenta una falla.',
       },
     ],
     proximamente: {
       titulo: 'Tu centro de ayuda está en camino',
       texto:
-        'Estamos escribiendo las guías y conectando el chat de atención. Cuando esté listo, podrás abrir casos y seguir su avance desde tu cuenta, sin repetir tu historia a cada asesor.',
+        'Todavía no hay atención activa. Se están escribiendo las guías y definiendo el canal de contacto.',
       lista: [
-        'Buscador de ayuda con respuestas inmediatas',
-        'Chat en vivo con asesores',
+        'Buscador de ayuda',
+        'Contacto con un asesor',
         'Seguimiento de casos, garantías y devoluciones',
-        'Línea de asistencia en ruta para alquileres',
+        'Ayuda para vehículos alquilados',
       ],
     },
   },

@@ -145,13 +145,18 @@ function Hero() {
         </h1>
 
         <p className="hero__subtitulo">
-          Alquila, compra y entrega con una sola flota de movilidad ligera.
-          MoviGo conecta la ciudad con tus pedidos.
+          Venta y alquiler de vehículos de movilidad, domicilios con la misma
+          flota, puntos de servicio y un portal para empresas.
         </p>
 
-        <Link to="/portal" className="hero__boton">
-          Portal empresarial
-        </Link>
+        <div className="hero__acciones">
+          <Link to="/tienda" className="hero__boton">
+            Explorar la tienda
+          </Link>
+          <Link to="/portal" className="hero__boton hero__boton--borde">
+            Portal empresarial
+          </Link>
+        </div>
       </div>
 
       <div className="hero__indicador" aria-hidden="true">

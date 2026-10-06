@@ -56,7 +56,7 @@ export const CAPITULOS = [
     eyebrow: 'Movilidad ligera',
     titulo: 'Bicis, patinetas y patines.',
     texto:
-      'Elige el vehículo ideal por hora, por día o llévatelo para siempre.',
+      'Compra el vehículo que necesitas o alquílalo por horas, días o semanas.',
     lado: 'derecha',
     // El modelo gira y se desplaza al otro lado.
     modelo: {
@@ -72,9 +72,9 @@ export const CAPITULOS = [
   {
     id: 'mantenimiento',
     eyebrow: 'Siempre listos',
-    titulo: 'Mantenimiento inteligente.',
+    titulo: 'Mantenimiento de la flota.',
     texto:
-      'Alertas automáticas para que cada vehículo salga en perfecto estado.',
+      'Revisión y cuidado de cada vehículo para que esté listo cuando lo necesites.',
     lado: 'izquierda',
     // Vista explosionada: las piezas se separan, flotan y rotan lentamente.
     modelo: {
@@ -91,7 +91,7 @@ export const CAPITULOS = [
     id: 'domicilios',
     eyebrow: 'Domicilios',
     titulo: 'La misma flota, tus entregas.',
-    texto: 'Entregas en minutos con seguimiento en tiempo real.',
+    texto: 'Domicilios con bicicletas, patinetas y motos de la misma flota.',
     lado: 'derecha',
     // Las piezas se ensamblan de nuevo y el vehículo avanza girando.
     modelo: {

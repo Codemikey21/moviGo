@@ -66,26 +66,6 @@
   filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.25));
 }
 
-.tarjeta__insignia {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-}
-
-.tarjeta__etiqueta {
-  position: absolute;
-  right: var(--espacio-fijo-14);
-  bottom: var(--espacio-fijo-14);
-  padding: 3px var(--espacio-fijo-10);
-  border-radius: var(--radio-pildora);
-  background: rgba(0, 0, 0, 0.55);
-  color: var(--color-blanco);
-  font-size: var(--texto-1);
-  font-weight: 500;
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-}
-
 /* ---- Cuerpo ---- */
 
 .tarjeta__cuerpo {
@@ -105,6 +85,7 @@
 }
 
 .tarjeta__nombre {
+  overflow-wrap: anywhere;
   font-size: 1.4rem;
   font-weight: 700;
   letter-spacing: var(--tracking-subtitulo);
@@ -119,11 +100,40 @@
   z-index: 1;
 }
 
-.tarjeta__tagline {
-  color: var(--s-suave, var(--color-gris));
-  font-size: var(--texto-5);
+/* ---- Especificaciones clave ---- */
+
+.tarjeta__datos {
+  display: flex;
+  flex-direction: column;
+  margin: var(--espacio-2) 0 0;
+}
+
+.tarjeta__dato {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+  padding: 7px 0;
+  border-top: 1px solid var(--s-borde, var(--blanco-10));
+  font-size: var(--texto-4);
   line-height: var(--interlinea-compacta);
 }
+
+.tarjeta__dato dt {
+  flex: none;
+  max-width: 55%;
+  overflow-wrap: anywhere;
+  color: var(--s-suave, var(--color-gris));
+}
+
+.tarjeta__dato dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-weight: 500;
+  text-align: right;
+}
+
+/* ---- Precios ---- */
 
 .tarjeta__precios {
   display: flex;
@@ -131,6 +141,11 @@
   gap: 2px;
   margin-top: auto;
   padding-top: var(--espacio-4);
+}
+
+.tarjeta__precio-etiqueta {
+  color: var(--s-suave, var(--color-gris));
+  font-size: var(--texto-3);
 }
 
 .tarjeta__precio {

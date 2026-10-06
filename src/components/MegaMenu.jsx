@@ -16,7 +16,7 @@ const ENLACES_EMPRESAS = [
   {
     nombre: 'Portal empresarial',
     ruta: '/portal',
-    resumen: 'Gestiona tu flota, tus entregas y tu facturación.',
+    resumen: 'Un espacio para empresas, en construcción.',
   },
   ...EMPRESAS.map((servicio) => ({
     nombre: servicio.nombre,

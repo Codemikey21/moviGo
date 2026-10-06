@@ -26,7 +26,7 @@ const OPCIONES_ORDEN = [
   { valor: 'recomendado', texto: 'Recomendados' },
   { valor: 'precio-asc', texto: 'Precio: de menor a mayor' },
   { valor: 'precio-desc', texto: 'Precio: de mayor a menor' },
-  { valor: 'recientes', texto: 'Más recientes' },
+  { valor: 'nombre', texto: 'Nombre: de la A a la Z' },
 ]
 
 // Servicios que se sugieren al final de cada categoría.
@@ -34,11 +34,11 @@ const SERVICIOS_SUGERIDOS = ['alquiler', 'domicilios', 'mantenimiento']
 
 /**
  * Precio que se usa para filtrar y ordenar: en modo "alquilar" es la tarifa
- * por día; en los demás casos, el precio de venta.
+ * de ejemplo por día; en los demás casos, el precio de referencia de compra.
  */
 function precioDe(producto, modo) {
-  if (modo === 'alquilar') return producto.precioAlquiler.dia
-  return producto.precioVenta ?? producto.precioAlquiler?.dia ?? 0
+  if (modo === 'alquilar') return producto.tarifasAlquiler.dia
+  return producto.precioCompra ?? producto.tarifasAlquiler?.dia ?? 0
 }
 
 // Paso del control de precio según el orden de magnitud de los valores.
@@ -55,8 +55,8 @@ function ordenar(productos, orden, modo) {
     copia.sort((a, b) => precioDe(a, modo) - precioDe(b, modo))
   } else if (orden === 'precio-desc') {
     copia.sort((a, b) => precioDe(b, modo) - precioDe(a, modo))
-  } else if (orden === 'recientes') {
-    copia.sort((a, b) => b.fechaLanzamiento.localeCompare(a.fechaLanzamiento))
+  } else if (orden === 'nombre') {
+    copia.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'))
   }
 
   return copia
@@ -103,7 +103,7 @@ function VistaCategoria({ categoria }) {
 
   // Productos que cumplen el modo elegido.
   const porModo = productos.filter((producto) => {
-    if (modo === 'comprar') return producto.disponibleVenta
+    if (modo === 'comprar') return producto.disponibleCompra
     if (modo === 'alquilar') return producto.disponibleAlquiler
     return true
   })
@@ -134,7 +134,8 @@ function VistaCategoria({ categoria }) {
     cambiarModo('todos')
   }
 
-  const etiquetaPrecio = modo === 'alquilar' ? 'Precio máximo por día' : 'Precio máximo'
+  const etiquetaPrecio =
+    modo === 'alquilar' ? 'Tarifa de ejemplo máxima por día' : 'Precio de referencia máximo'
 
   return (
     <div style={{ '--acento': categoria.colorAcento }}>
@@ -146,9 +147,10 @@ function VistaCategoria({ categoria }) {
         categoria={categoria}
       >
         <p className="categoria__datos">
-          {productos.length} {productos.length === 1 ? 'modelo' : 'modelos'} · Desde{' '}
-          {formatearPrecio(precioMinimo)}
-          {alquilerDesde && ` · Alquiler desde ${formatearPrecio(alquilerDesde)} / día`}
+          {productos.length} {productos.length === 1 ? 'modelo' : 'modelos'} · Precio de
+          referencia desde {formatearPrecio(precioMinimo)}
+          {alquilerDesde &&
+            ` · Tarifa de ejemplo de alquiler desde ${formatearPrecio(alquilerDesde)} / día`}
         </p>
       </HeroPagina>
 

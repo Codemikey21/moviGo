@@ -102,9 +102,18 @@
   line-height: var(--interlinea-compacta);
 }
 
+.hero__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-fijo-14);
+}
+
 .hero__boton {
   display: inline-block;
   padding: var(--espacio-fijo-14) var(--espacio-6);
+  border: 1px solid transparent;
   border-radius: var(--radio-pildora);
   background: var(--color-boton);
   color: var(--color-blanco);
@@ -112,6 +121,7 @@
   font-weight: 500;
   transition:
     background-color var(--dur-media) var(--ease-estandar),
+    border-color var(--dur-media) var(--ease-estandar),
     box-shadow var(--dur-media) var(--ease-estandar),
     transform var(--dur-media) var(--ease-estandar);
 }
@@ -119,6 +129,18 @@
 .hero__boton:hover {
   background: var(--color-boton-hover);
   box-shadow: 0 10px 40px rgba(41, 151, 255, 0.4);
+}
+
+/* Botón secundario: solo contorno */
+.hero__boton--borde {
+  border-color: var(--blanco-30);
+  background: transparent;
+}
+
+.hero__boton--borde:hover {
+  border-color: var(--color-blanco);
+  background: var(--blanco-10);
+  box-shadow: none;
 }
 
 .hero__boton:active {

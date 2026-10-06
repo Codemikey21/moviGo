@@ -12,3 +12,6 @@ export function luminancia(hex) {
 export function esColorClaro(hex) {
   return luminancia(hex) > 0.6
 }
+
+// Tono de fondo para los productos cuya fuente no publica colores.
+export const TONO_NEUTRO = '#3a3a3e'

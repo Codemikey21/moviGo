@@ -60,24 +60,12 @@
 
 /* ---- Información ---- */
 
-.producto__insignia {
-  min-height: 26px;
-  margin-bottom: var(--espacio-fijo-14);
-}
-
 .producto__nombre {
-  font-size: clamp(min(2.4rem, 11vw), 5.4vw, 4.2rem);
+  overflow-wrap: anywhere;
+  font-size: clamp(min(2.2rem, 10vw), 4.6vw, 3.6rem);
   font-weight: 700;
-  line-height: 1;
+  line-height: 1.02;
   letter-spacing: -0.04em;
-}
-
-.producto__tagline {
-  margin-top: var(--espacio-3);
-  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
-  font-weight: 500;
-  letter-spacing: var(--tracking-subtitulo);
-  color: var(--acento);
 }
 
 .producto__descripcion {
@@ -188,7 +176,7 @@
   border-color: var(--color-blanco);
 }
 
-/* ---- Lista de destacados ---- */
+/* ---- Lista de especificaciones clave ---- */
 
 .producto__destacados {
   display: flex;
@@ -199,6 +187,7 @@
 
 .producto__destacados li {
   position: relative;
+  overflow-wrap: anywhere;
   padding-left: var(--espacio-6);
   line-height: var(--interlinea-compacta);
 }
@@ -244,6 +233,36 @@
 .producto__tabla td {
   font-size: var(--texto-7);
   font-weight: 500;
+}
+
+/* Aclaración bajo el valor de una especificación */
+.producto__nota {
+  display: block;
+  margin-top: var(--espacio-1);
+  color: var(--s-suave);
+  font-size: var(--texto-4);
+  font-weight: 400;
+  line-height: var(--interlinea-compacta);
+}
+
+/* ---- Fuente y avisos bajo la tabla ---- */
+
+.producto__fuente {
+  max-width: 880px;
+  margin-top: var(--espacio-4);
+  color: var(--s-suave);
+  font-size: var(--texto-4);
+  line-height: var(--interlinea-cuerpo);
+}
+
+.producto__fuente a {
+  color: var(--color-enlace-claro);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.producto__fuente a:hover {
+  color: var(--color-enlace-claro-hover);
 }
 
 /* ---- Pantallas pequeñas ---- */

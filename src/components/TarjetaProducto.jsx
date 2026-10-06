@@ -1,11 +1,16 @@
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import IconoCategoria from './IconoCategoria'
-import Insignia from './Insignia'
 import Revelar from './Revelar'
 import SelectorColor from './SelectorColor'
-import { esColorClaro } from '../lib/color'
-import { formatearPrecio, rutaProducto } from '../lib/formato'
+import { TONO_NEUTRO, esColorClaro } from '../lib/color'
+import {
+  ETIQUETA_PRECIO,
+  ETIQUETA_TARIFA,
+  formatearEspecificacion,
+  formatearPrecio,
+  rutaProducto,
+} from '../lib/formato'
 import './TarjetaProducto.css'
 
 // Inclinación máxima de la tarjeta al seguir el mouse (grados).
@@ -13,8 +18,10 @@ const INCLINACION_MAXIMA = 6
 
 /**
  * Tarjeta de producto para las cuadrículas de la tienda.
+ * - Muestra el precio de referencia y las tres especificaciones clave.
  * - Al pasar el mouse se eleva y se inclina siguiendo el cursor.
- * - Al pasar por un color, la parte superior de la tarjeta cambia de tono.
+ * - Si el producto tiene varios colores, al pasar por uno la parte superior de
+ *   la tarjeta cambia de tono; si no tiene colores publicados usa un tono neutro.
  * Toda la tarjeta es clicable (enlace extendido sobre el nombre).
  */
 function TarjetaProducto({ producto, categoria, indice = 0 }) {
@@ -22,8 +29,8 @@ function TarjetaProducto({ producto, categoria, indice = 0 }) {
   const [elegido, setElegido] = useState(0)
   const [vista, setVista] = useState(null)
 
-  const color = producto.colores[vista ?? elegido]
-  const alquiler = producto.disponibleAlquiler ? producto.precioAlquiler : null
+  const tono = producto.colores[vista ?? elegido]?.hex ?? TONO_NEUTRO
+  const alquiler = producto.tarifasAlquiler
 
   const alMoverPuntero = (evento) => {
     // En pantallas táctiles no se inclina.
@@ -49,13 +56,13 @@ function TarjetaProducto({ producto, categoria, indice = 0 }) {
       <article
         ref={tarjetaRef}
         className="tarjeta"
-        style={{ '--acento': categoria.colorAcento, '--tono': color.hex }}
+        style={{ '--acento': categoria.colorAcento, '--tono': tono }}
         onPointerMove={alMoverPuntero}
         onPointerLeave={alSalirPuntero}
       >
         <div
           className={`tarjeta__visual ${
-            esColorClaro(color.hex) ? 'tarjeta__visual--claro' : ''
+            esColorClaro(tono) ? 'tarjeta__visual--claro' : ''
           }`}
         >
           <IconoCategoria
@@ -63,42 +70,46 @@ function TarjetaProducto({ producto, categoria, indice = 0 }) {
             grosor={1.4}
             className="tarjeta__icono"
           />
-
-          <div className="tarjeta__insignia">
-            <Insignia texto={producto.insignia} />
-          </div>
-
-          {producto.usoDomicilio && (
-            <span className="tarjeta__etiqueta">Apto para domicilios</span>
-          )}
         </div>
 
         <div className="tarjeta__cuerpo">
-          <SelectorColor
-            colores={producto.colores}
-            activo={elegido}
-            onElegir={setElegido}
-            onVista={setVista}
-            etiqueta={`Color de ${producto.nombre}`}
-          />
+          {producto.colores.length > 1 && (
+            <SelectorColor
+              colores={producto.colores}
+              activo={elegido}
+              onElegir={setElegido}
+              onVista={setVista}
+              etiqueta={`Color de ${producto.nombre}`}
+            />
+          )}
 
           <h3 className="tarjeta__nombre">
             <Link to={rutaProducto(producto)} className="tarjeta__enlace">
               {producto.nombre}
             </Link>
           </h3>
-          <p className="tarjeta__tagline">{producto.tagline}</p>
+
+          <dl className="tarjeta__datos">
+            {producto.especificacionesClave.map((especificacion) => (
+              <div key={especificacion.etiqueta} className="tarjeta__dato">
+                <dt>{especificacion.etiqueta}</dt>
+                <dd>{formatearEspecificacion(especificacion)}</dd>
+              </div>
+            ))}
+          </dl>
 
           <div className="tarjeta__precios">
+            <p className="tarjeta__precio-etiqueta">{ETIQUETA_PRECIO}</p>
             <p className="tarjeta__precio">
-              {producto.disponibleVenta
-                ? formatearPrecio(producto.precioVenta)
+              {producto.disponibleCompra
+                ? formatearPrecio(producto.precioCompra)
                 : 'Solo alquiler'}
             </p>
 
             {alquiler && (
               <p className="tarjeta__alquiler">
-                Alquiler desde {formatearPrecio(alquiler.dia)} / día
+                Alquiler desde {formatearPrecio(alquiler.dia)} / día (
+                {ETIQUETA_TARIFA.toLowerCase()})
               </p>
             )}
           </div>

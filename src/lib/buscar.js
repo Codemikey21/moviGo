@@ -63,7 +63,6 @@ export function buscarEnCatalogo(consulta, limiteProductos = 8) {
       puntaje: puntuar(palabras, [
         normalizar(producto.nombre),
         normalizar(categoria.nombre),
-        normalizar(producto.tagline),
         normalizar(producto.descripcion),
       ]),
     }

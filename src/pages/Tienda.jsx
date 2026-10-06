@@ -5,31 +5,25 @@ import Seccion from '../components/Seccion'
 import TarjetaCategoria from '../components/TarjetaCategoria'
 import TarjetaProducto from '../components/TarjetaProducto'
 import { CATEGORIAS } from '../data/catalogo'
-import {
-  buscarCategoria,
-  productosConInsignia,
-  productosParaDomicilio,
-  rutaCategoria,
-} from '../lib/formato'
+import { buscarCategoria, productosMuestra, rutaCategoria } from '../lib/formato'
 import { useTitulo } from '../lib/useTitulo'
 import './Tienda.css'
 
 /**
- * Página principal de la tienda: todas las categorías y los destacados.
+ * Página principal de la tienda: todas las categorías y una muestra del catálogo.
  * Alterna secciones oscuras y claras para dar contraste.
  */
 function Tienda() {
   useTitulo('Tienda')
 
-  const destacados = productosConInsignia(6)
-  const paraDomicilios = productosParaDomicilio(4)
+  const muestra = productosMuestra()
 
   return (
     <div>
       <HeroPagina
         eyebrow="Tienda"
         titulo="Todo para moverte."
-        descripcion="Bicicletas, patinetas, patines, drones, motos y carros eléctricos, más los accesorios para completarlos. Cómpralos o alquílalos por horas, días o semanas."
+        descripcion="Bicicletas, patinetas, patines, drones, motos y carros, más accesorios para completarlos. Compara especificaciones y precios de referencia de marcas con presencia en Colombia."
       >
         <ul className="tienda__chips">
           {CATEGORIAS.map((categoria) => (
@@ -51,7 +45,7 @@ function Tienda() {
         tono="claro"
         eyebrow="Categorías"
         titulo="Elige tu forma de moverte."
-        descripcion="Siete líneas de producto, todas eléctricas o pensadas para la ciudad. Entra a una para ver sus modelos, colores y tarifas."
+        descripcion="Siete líneas de producto. Entra a una para ver sus modelos, especificaciones y precios de referencia."
       >
         <div className="tienda__categorias">
           {CATEGORIAS.map((categoria, indice) => (
@@ -62,12 +56,12 @@ function Tienda() {
 
       <Seccion
         tono="oscuro"
-        eyebrow="Destacados"
-        titulo="Lo más nuevo y lo más pedido."
-        descripcion="Los lanzamientos recientes y los productos que más eligen nuestros clientes."
+        eyebrow="Catálogo"
+        titulo="Un modelo de cada línea."
+        descripcion="Una muestra del catálogo: el primer modelo de cada categoría."
       >
         <div className="grilla-productos">
-          {destacados.map((producto, indice) => (
+          {muestra.map((producto, indice) => (
             <TarjetaProducto
               key={producto.id}
               producto={producto}
@@ -81,22 +75,12 @@ function Tienda() {
       <Seccion
         tono="claro"
         eyebrow="Para tu negocio"
-        titulo="Listos para domicilios."
-        descripcion="Vehículos y accesorios preparados para repartir: carga reforzada, baterías de larga duración y bolsas térmicas."
+        titulo="Domicilios y portal empresarial."
+        descripcion="MoviGo planea hacer domicilios con la misma flota que vende y alquila, y ofrecer a las empresas un portal propio. Los dos servicios están en construcción."
       >
-        <div className="grilla-productos">
-          {paraDomicilios.map((producto, indice) => (
-            <TarjetaProducto
-              key={producto.id}
-              producto={producto}
-              categoria={buscarCategoria(producto.categoria)}
-              indice={indice}
-            />
-          ))}
-        </div>
-
         <p className="tienda__enlace-final">
           <Link to="/servicios/domicilios">Conoce el servicio de domicilios ›</Link>
+          <Link to="/portal">Portal empresarial ›</Link>
         </p>
       </Seccion>
 
@@ -105,11 +89,11 @@ function Tienda() {
         alineacion="centro"
         eyebrow="Alquiler"
         titulo="¿No quieres comprar? Alquila."
-        descripcion="Cada producto muestra su tarifa por hora, por día y por semana. Úsalo cuando lo necesites, sin pagar el costo de tenerlo."
+        descripcion="Cada producto muestra una tarifa de ejemplo por hora, por día y por semana. Todavía no son tarifas reales de MoviGo."
       >
         <div className="tienda__cta">
           <Link to="/servicios/alquiler" className="tienda__boton">
-            Cómo funciona el alquiler
+            Cómo funcionará el alquiler
           </Link>
         </div>
       </Seccion>

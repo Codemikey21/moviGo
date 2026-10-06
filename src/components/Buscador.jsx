@@ -4,6 +4,7 @@ import IconoCategoria from './IconoCategoria'
 import { CATEGORIAS } from '../data/catalogo'
 import { buscarEnCatalogo } from '../lib/buscar'
 import {
+  ETIQUETA_PRECIO,
   buscarCategoria,
   formatearPrecio,
   rutaCategoria,
@@ -81,8 +82,8 @@ function Buscador({ abierto, onCerrar, disparadorRef }) {
         titulo: 'Productos',
         items: productos.map((producto) => {
           const categoria = buscarCategoria(producto.categoria)
-          const precio = producto.disponibleVenta
-            ? formatearPrecio(producto.precioVenta)
+          const precio = producto.disponibleCompra
+            ? `${formatearPrecio(producto.precioCompra)} · ${ETIQUETA_PRECIO}`
             : 'Solo alquiler'
 
           return {

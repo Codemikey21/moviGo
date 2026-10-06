@@ -80,8 +80,8 @@ function Footer() {
 
         <div className="footer__pie">
           <p>
-            Proyecto académico — Universidad Autónoma de Bucaramanga. Los
-            productos, precios y servicios que ves son ficticios.
+            MoviGo es un proyecto académico de la UNAB. Las marcas y los modelos
+            pertenecen a sus respectivos dueños. Precios de referencia en COP.
           </p>
           <p>Copyright © {anio} MoviGo. Todos los derechos reservados.</p>
         </div>
