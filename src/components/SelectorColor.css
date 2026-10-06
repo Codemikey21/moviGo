@@ -1,7 +1,7 @@
 .selector-color {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: var(--espacio-fijo-14);
 }
 
 /* Medidas del grupo: tamaño visible del punto y separación entre puntos.
@@ -29,7 +29,7 @@
   border: 1px solid rgba(128, 128, 128, 0.45);
   border-radius: var(--radio-circulo);
   background: var(--punto);
-  transition: transform 0.2s ease;
+  transition: transform var(--dur-rapida) var(--ease-estandar);
 }
 
 /* Área clicable (≥ 24 px; 44 px en pantallas táctiles). No cambia lo que se ve. */
@@ -50,7 +50,7 @@
   inset: -5px;
   border: 2px solid transparent;
   border-radius: var(--radio-circulo);
-  transition: border-color 0.2s ease;
+  transition: border-color var(--dur-rapida) var(--ease-estandar);
   pointer-events: none;
 }
 

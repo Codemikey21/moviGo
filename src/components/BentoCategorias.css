@@ -2,7 +2,7 @@
 .bento {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 20px;
+  gap: var(--espacio-fijo-20);
 }
 
 .bento__celda {
@@ -29,7 +29,7 @@
   padding: clamp(24px, 3vw, 40px);
   overflow: hidden;
   isolation: isolate;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--blanco-8);
   border-radius: 32px;
   background:
     radial-gradient(
@@ -38,7 +38,7 @@
       #0b0b0d 62%
     ),
     #0b0b0d;
-  transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition: transform var(--dur-entrada) var(--ease-entrada);
 }
 
 /* Foco de luz que sigue al cursor */
@@ -53,7 +53,7 @@
     transparent 60%
   );
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transition: opacity var(--dur-entrada) var(--ease-estandar);
 }
 
 .bento__tarjeta:hover::before {
@@ -82,13 +82,13 @@
   color: var(--acento);
   opacity: 0.32;
   transition:
-    opacity 0.6s ease,
-    transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+    opacity 0.6s var(--ease-estandar),
+    transform 0.6s var(--ease-entrada);
   pointer-events: none;
 }
 
 .bento__cantidad {
-  margin-bottom: 10px;
+  margin-bottom: var(--espacio-fijo-10);
   color: var(--acento);
   font-size: var(--texto-3);
   font-weight: 600;
@@ -128,14 +128,14 @@
 }
 
 .bento__boton {
-  padding: 10px 22px;
+  padding: var(--espacio-fijo-10) var(--espacio-fijo-22);
   border-radius: var(--radio-pildora);
   font-size: var(--texto-5);
   font-weight: 500;
   transition:
-    background-color 0.25s ease,
-    border-color 0.25s ease,
-    transform 0.2s ease;
+    background-color var(--dur-media) var(--ease-estandar),
+    border-color var(--dur-media) var(--ease-estandar),
+    transform var(--dur-rapida) var(--ease-estandar);
 }
 
 /* Pantallas táctiles: 44 px de alto */

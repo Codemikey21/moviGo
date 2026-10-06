@@ -12,8 +12,8 @@
   --s-suave: var(--color-gris);
   --s-tarjeta: #151517;
   --s-tarjeta-alta: var(--color-tinta);
-  --s-borde: rgba(255, 255, 255, 0.1);
-  --s-chip: rgba(255, 255, 255, 0.08);
+  --s-borde: var(--blanco-10);
+  --s-chip: var(--blanco-8);
   --anillo-foco: var(--color-foco-oscuro);
 }
 
@@ -52,7 +52,7 @@
 }
 
 .seccion__eyebrow {
-  margin-bottom: 14px;
+  margin-bottom: var(--espacio-fijo-14);
   color: var(--s-suave);
   font-size: var(--texto-4);
   font-weight: 600;
@@ -68,7 +68,7 @@
 }
 
 .seccion__descripcion {
-  margin-top: 18px;
+  margin-top: var(--espacio-fijo-18);
   color: var(--s-suave);
   font-size: clamp(1.0625rem, 1.6vw, 1.3125rem);
   line-height: var(--interlinea-cuerpo);

@@ -1,9 +1,8 @@
-import { Suspense, useRef } from 'react'
+import { useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { ContactShadows, Environment, Lightformer } from '@react-three/drei'
 import { MathUtils } from 'three'
 import Vehiculo3D from './Vehiculo3D'
-import LimiteDeError from './LimiteDeError'
 import { CAPITULOS, ESTADO_INICIAL } from '../lib/capitulos'
 import { estadoPorProgreso } from '../lib/interpolar'
 import './Escena3D.css'
@@ -25,13 +24,15 @@ const FOV = 35
 const TANGENTE_FOV = Math.tan(MathUtils.degToRad(FOV / 2))
 
 /**
- * Entorno de respaldo construido con luces de estudio (Lightformer).
- * No descarga nada, así que funciona sin internet. Se muestra mientras carga
- * el entorno "city" y también si esa descarga falla.
+ * Entorno de reflejos construido con luces de estudio (Lightformer).
+ * Es procedural: no descarga nada, así que la escena es idéntica con o sin
+ * internet y la página no depende de ningún servidor externo.
+ * La intensidad (1,25) está calibrada para que el brillo medio del modelo sea
+ * el mismo que tenía con el entorno HDR "city" que se usaba antes.
  */
-function EntornoRespaldo() {
+function EntornoLocal() {
   return (
-    <Environment resolution={256}>
+    <Environment resolution={256} environmentIntensity={1.25}>
       <Lightformer form="rect" intensity={2.4} position={[0, 6, 0]} scale={[12, 12, 1]} rotation-x={Math.PI / 2} />
       <Lightformer form="rect" intensity={3} position={[-6, 2, 5]} scale={[6, 4, 1]} />
       <Lightformer form="rect" intensity={2} position={[6, 3, -4]} scale={[5, 5, 1]} />
@@ -132,20 +133,12 @@ function Escena3D({ progresoRef, estatico, esMovil, visible }) {
       camera={{ fov: FOV, position: [0, ALTURA_CAMARA, 10], near: 0.1, far: 80 }}
       gl={{ antialias: true, powerPreference: 'high-performance' }}
     >
-      {/* Luces de respaldo: siempre activas, aportan volumen aunque falle el entorno */}
+      {/* Luces directas: aportan volumen; el entorno aporta los reflejos */}
       <ambientLight intensity={0.35} />
       <directionalLight position={[4, 6, 5]} intensity={1.6} />
       <directionalLight position={[-5, 3, -4]} intensity={2.2} color="#2997ff" />
 
-      {/* Reflejos: entorno "city"; si tarda o falla, entorno de respaldo local */}
-      <LimiteDeError
-        fallback={<EntornoRespaldo />}
-        mensaje="No se pudo cargar el entorno HDR; se usa iluminación de respaldo."
-      >
-        <Suspense fallback={<EntornoRespaldo />}>
-          <Environment preset="city" />
-        </Suspense>
-      </LimiteDeError>
+      <EntornoLocal />
 
       <ModeloAnimado
         progresoRef={progresoRef}

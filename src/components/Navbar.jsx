@@ -3,10 +3,8 @@ import { NavLink, useLocation } from 'react-router-dom'
 import Buscador from './Buscador'
 import MegaMenu from './MegaMenu'
 import MenuMovil from './MenuMovil'
+import { RETRASO_CIERRE_MENU } from '../lib/movimiento'
 import './Navbar.css'
-
-// Pausa antes de cerrar el mega-menú al sacar el mouse, para evitar parpadeos.
-const RETRASO_CIERRE = 160
 
 // Elementos con los que se navega dentro de un panel.
 const SELECTOR_ENLACE = 'a[href]'
@@ -87,7 +85,7 @@ function Navbar() {
           panelesRef.current[id]?.contains(activo))
 
       if (!tecladoEnElMenu) setMenuAbierto(null)
-    }, RETRASO_CIERRE)
+    }, RETRASO_CIERRE_MENU)
   }
 
   const enfocarPrimeroDelPanel = (id) => {

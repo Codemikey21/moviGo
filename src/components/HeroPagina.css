@@ -50,7 +50,7 @@
 }
 
 .hero-pagina__eyebrow {
-  margin-bottom: 18px;
+  margin-bottom: var(--espacio-fijo-18);
   color: var(--acento);
   font-size: var(--texto-5);
   font-weight: 600;
@@ -80,7 +80,7 @@
 }
 
 .hero-pagina__extra {
-  margin-top: 36px;
+  margin-top: var(--espacio-fijo-36);
 }
 
 @media (max-width: 48em) {

@@ -19,6 +19,6 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .saltar {
-    transition: transform var(--dur-rapida) var(--ease-salida);
+    transition: transform var(--dur-rapida) var(--ease-entrada);
   }
 }

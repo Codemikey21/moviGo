@@ -43,9 +43,24 @@
      fondo claro (el amarillo de Accesorios da 5,62:1 con este porcentaje) */
   --mezcla-acento-texto: 40%;
 
+  /* Mezcla del acento con la tinta cuando el acento se usa como GRÁFICO sobre
+     fondo claro (relleno y perilla del control de precio): ≥3:1 contra #f5f5f7
+     con todos los acentos (el amarillo de Accesorios da 3,44:1, el criterio
+     1.4.11 pide 3:1). Es más vivo que la mezcla de texto, que pide 4,5:1. */
+  --mezcla-acento-grafico: 55%;
+
+  /* Blanco translúcido sobre fondos oscuros: bordes y rellenos sutiles
+     (el número es el porcentaje de opacidad) */
+  --blanco-8: rgba(255, 255, 255, 0.08);
+  --blanco-10: rgba(255, 255, 255, 0.1);
+  --blanco-16: rgba(255, 255, 255, 0.16);
+  --blanco-30: rgba(255, 255, 255, 0.3);
+
   /* ---- Tipografía ---- */
-  --fuente-principal: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, sans-serif;
+  /* Inter autoalojada (src/fuentes.css). "Inter Fallback" es Arial con las
+     métricas de Inter, para que el texto no salte al cargar la fuente. */
+  --fuente-principal: 'Inter', 'Inter Fallback', -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
   /* Escala de tamaños de texto (1 = 11 px … 8 = 18 px con la fuente base de 16 px) */
   --texto-1: 0.6875rem;
@@ -88,6 +103,17 @@
   --contenedor: 1240px;
   --gutter: clamp(20px, 4vw, 40px);
 
+  /* Espaciado fijo en px: valores intermedios repetidos en varios componentes.
+     A diferencia de la escala --espacio-N (rem), no crece con el tamaño de
+     texto del usuario. */
+  --espacio-fijo-10: 10px;
+  --espacio-fijo-14: 14px;
+  --espacio-fijo-18: 18px;
+  --espacio-fijo-20: 20px;
+  --espacio-fijo-22: 22px;
+  --espacio-fijo-28: 28px;
+  --espacio-fijo-36: 36px;
+
   /* ---- Layout ---- */
   --altura-navbar: 64px;
 
@@ -109,17 +135,18 @@
   --sombra-elevada: 0 24px 50px rgba(0, 0, 0, 0.12); /* sobre claro */
   --sombra-flotante: 0 28px 60px rgba(0, 0, 0, 0.3); /* sobre oscuro */
 
-  /* ---- Movimiento ---- */
-  --dur-instante: 100ms;
-  --dur-rapida: 160ms;
-  --dur-media: 280ms;
-  --dur-lenta: 450ms;
-  --dur-escena: 700ms;
-  --ease-salida: cubic-bezier(0.16, 1, 0.3, 1); /* llegadas: desacelera */
-  --ease-retiro: cubic-bezier(0.4, 0, 1, 1); /* salidas: acelera */
-  --ease-ambos: cubic-bezier(0.65, 0, 0.35, 1);
-  --escalon: 40ms;
-  --escalon-max: 280ms;
+  /* ---- Movimiento ----
+     Los mismos valores están en src/lib/movimiento.js para el código JS:
+     si cambias uno aquí, cámbialo allí. */
+  --dur-instante: 120ms; /* fundido corto con movimiento reducido */
+  --dur-rapida: 200ms; /* color, borde y pequeños desplazamientos al pasar el puntero */
+  --dur-media: 250ms; /* cambio de estado habitual */
+  --dur-lenta: 350ms; /* paneles, menús y tarjetas */
+  --dur-entrada: 400ms; /* llegada de paneles y capas */
+  --escalon: 45ms; /* retraso entre elementos de una lista que entra */
+  --ease-estandar: ease; /* cambios de color y de estado */
+  --ease-entrada: cubic-bezier(0.2, 0.7, 0.2, 1); /* llegadas: desacelera */
+  --ease-ambos: cubic-bezier(0.65, 0, 0.35, 1); /* ida y vuelta, movimiento continuo */
 
   /* ---- Capas ---- */
   --z-filtros: 20;

@@ -8,7 +8,7 @@
   max-height: calc(100vh - var(--altura-navbar));
   max-height: calc(100svh - var(--altura-navbar));
   overflow-y: auto;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--blanco-8);
   background: rgba(12, 12, 14, 0.82);
   -webkit-backdrop-filter: saturate(180%) blur(30px);
   backdrop-filter: saturate(180%) blur(30px);
@@ -18,9 +18,9 @@
   opacity: 0;
   transform: translateY(-12px);
   transition:
-    opacity var(--dur-media) ease,
-    transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1),
-    visibility 0s linear 0.4s;
+    opacity var(--dur-media) var(--ease-estandar),
+    transform var(--dur-entrada) var(--ease-entrada),
+    visibility 0s linear var(--dur-entrada);
 }
 
 .mega--abierto {
@@ -41,26 +41,26 @@
   opacity: 0;
   transform: translateY(10px);
   transition:
-    opacity 0.3s ease,
-    transform 0.3s ease;
+    opacity 0.3s var(--ease-estandar),
+    transform 0.3s var(--ease-estandar);
 }
 
 .mega--abierto .mega__item {
   opacity: 1;
   transform: none;
   transition-duration: 0.5s;
-  transition-delay: calc(var(--i, 0) * 45ms + 80ms);
+  transition-delay: calc(var(--i, 0) * var(--escalon) + 80ms);
 }
 
 .mega__cabecera {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 28px;
+  margin-bottom: var(--espacio-fijo-28);
 }
 
 .mega__etiqueta {
-  margin-bottom: 14px;
+  margin-bottom: var(--espacio-fijo-14);
   color: var(--color-gris);
   font-size: var(--texto-3);
   font-weight: 600;
@@ -75,7 +75,7 @@
 .mega__ver-todo {
   color: var(--acento);
   font-size: var(--texto-5);
-  transition: color 0.2s ease;
+  transition: color var(--dur-rapida) var(--ease-estandar);
 }
 
 .mega__ver-todo:hover {
@@ -86,7 +86,7 @@
 
 .mega__columnas {
   display: grid;
-  gap: 28px var(--espacio-5);
+  gap: var(--espacio-fijo-28) var(--espacio-5);
 }
 
 .mega__columnas--tienda {
@@ -106,8 +106,8 @@
 .mega__categoria {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 14px;
+  gap: var(--espacio-fijo-10);
+  margin-bottom: var(--espacio-fijo-14);
   color: var(--color-texto);
   font-size: var(--texto-7);
   font-weight: 600;
@@ -130,7 +130,7 @@
   color: var(--color-gris);
   font-size: var(--texto-4);
   line-height: 1.35;
-  transition: color 0.2s ease;
+  transition: color var(--dur-rapida) var(--ease-estandar);
 }
 
 .mega__enlace:hover {
@@ -149,7 +149,7 @@
   font-size: 1.375rem;
   font-weight: 600;
   letter-spacing: var(--tracking-subtitulo);
-  transition: color 0.2s ease;
+  transition: color var(--dur-rapida) var(--ease-estandar);
 }
 
 .mega__servicio:hover .mega__servicio-nombre {
@@ -185,8 +185,8 @@
   .mega--abierto {
     transform: none;
     transition:
-      opacity 0.12s linear,
-      visibility 0s linear 0.12s;
+      opacity var(--dur-instante) linear,
+      visibility 0s linear var(--dur-instante);
   }
 
   .mega--abierto {

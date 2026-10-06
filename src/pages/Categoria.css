@@ -28,7 +28,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--espacio-4) 36px;
+  gap: var(--espacio-4) var(--espacio-fijo-36);
   max-width: var(--contenedor);
   margin: 0 auto;
   padding: var(--espacio-4) var(--gutter);
@@ -46,7 +46,7 @@
 
 .categoria__modo {
   flex: 1 1 auto;
-  padding: 7px 20px;
+  padding: 7px var(--espacio-fijo-20);
   border: none;
   border-radius: var(--radio-pildora);
   background: transparent;
@@ -54,9 +54,9 @@
   font-size: var(--texto-5);
   font-weight: 500;
   transition:
-    background-color 0.25s ease,
-    color 0.25s ease,
-    box-shadow 0.25s ease;
+    background-color var(--dur-media) var(--ease-estandar),
+    color var(--dur-media) var(--ease-estandar),
+    box-shadow var(--dur-media) var(--ease-estandar);
 }
 
 .categoria__modo--activo {
@@ -84,8 +84,15 @@
   color: var(--s-texto);
 }
 
-/* Control de rango propio: el tramo elegido se rellena con el color de la categoría */
+/* Control de rango propio: el tramo elegido se rellena con el color de la
+   categoría, mezclado con la tinta para que contraste al menos 3:1 contra el
+   fondo claro (criterio 1.4.11) con cualquier acento: el amarillo puro daba 1,3:1. */
 .categoria__precio input {
+  --color-grafico: color-mix(
+    in srgb,
+    var(--acento) var(--mezcla-acento-grafico),
+    var(--color-tinta)
+  );
   width: 100%;
   height: var(--area-minima);
   margin: -1px 0; /* conserva la altura de diseño de 22 px */
@@ -100,7 +107,7 @@
   border-radius: 2px;
   background: linear-gradient(
     to right,
-    var(--acento) var(--relleno),
+    var(--color-grafico) var(--relleno),
     rgba(0, 0, 0, 0.14) var(--relleno)
   );
 }
@@ -110,7 +117,7 @@
   border-radius: 2px;
   background: linear-gradient(
     to right,
-    var(--acento) var(--relleno),
+    var(--color-grafico) var(--relleno),
     rgba(0, 0, 0, 0.14) var(--relleno)
   );
 }
@@ -119,7 +126,7 @@
   width: 20px;
   height: 20px;
   margin-top: -8px;
-  border: 2px solid var(--acento);
+  border: 2px solid var(--color-grafico);
   border-radius: var(--radio-circulo);
   background: var(--color-blanco);
   box-shadow: var(--sombra-control);
@@ -130,7 +137,7 @@
 .categoria__precio input::-moz-range-thumb {
   width: 16px;
   height: 16px;
-  border: 2px solid var(--acento);
+  border: 2px solid var(--color-grafico);
   border-radius: var(--radio-circulo);
   background: var(--color-blanco);
   box-shadow: var(--sombra-control);
@@ -143,7 +150,7 @@
 
 .categoria__orden select {
   max-width: 100%;
-  padding: 6px 10px;
+  padding: 6px var(--espacio-fijo-10);
   border: 1px solid var(--s-borde);
   border-radius: 10px;
   background: var(--color-blanco);
@@ -169,7 +176,7 @@
 }
 
 .categoria__conteo {
-  margin: 28px 0 20px;
+  margin: var(--espacio-fijo-28) 0 var(--espacio-fijo-20);
   color: var(--s-suave);
   font-size: var(--texto-5);
 }
@@ -177,7 +184,7 @@
 /* ---- Estado vacío ---- */
 
 .categoria__vacio {
-  padding: var(--espacio-8) 20px;
+  padding: var(--espacio-8) var(--espacio-fijo-20);
   border: 1px dashed var(--s-borde);
   border-radius: var(--radio-lg);
   color: var(--s-suave);
@@ -186,7 +193,7 @@
 
 .categoria__vacio button {
   margin-top: var(--espacio-4);
-  padding: 10px var(--espacio-5);
+  padding: var(--espacio-fijo-10) var(--espacio-5);
   border: none;
   border-radius: var(--radio-pildora);
   background: var(--s-texto);
@@ -199,7 +206,7 @@
 .categoria__servicios {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+  gap: var(--espacio-fijo-20);
 }
 
 .categoria__servicio-envoltorio {
@@ -210,7 +217,7 @@
   position: relative;
   display: block;
   height: 100%;
-  padding: var(--espacio-6) 28px;
+  padding: var(--espacio-6) var(--espacio-fijo-28);
   border: 1px solid var(--s-borde);
   border-radius: var(--radio-lg);
   background:
@@ -221,8 +228,8 @@
     ),
     var(--s-tarjeta);
   transition:
-    transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
-    border-color 0.3s ease;
+    transform var(--dur-lenta) var(--ease-entrada),
+    border-color 0.3s var(--ease-estandar);
 }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
@@ -235,7 +242,7 @@
 .categoria__servicio-icono {
   width: 44px;
   height: 44px;
-  margin-bottom: 22px;
+  margin-bottom: var(--espacio-fijo-22);
   color: var(--acento);
 }
 
@@ -254,7 +261,7 @@
 .categoria__servicio span {
   position: absolute;
   right: 26px;
-  bottom: 22px;
+  bottom: var(--espacio-fijo-22);
   color: var(--acento);
   font-size: 1.6rem;
 }

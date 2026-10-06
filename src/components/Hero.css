@@ -96,7 +96,7 @@
 
 .hero__subtitulo {
   max-width: 40rem;
-  margin: 28px auto var(--espacio-6);
+  margin: var(--espacio-fijo-28) auto var(--espacio-6);
   color: var(--color-gris);
   font-size: clamp(1.0625rem, 1.7vw, 1.5rem);
   line-height: var(--interlinea-compacta);
@@ -104,16 +104,16 @@
 
 .hero__boton {
   display: inline-block;
-  padding: 14px var(--espacio-6);
+  padding: var(--espacio-fijo-14) var(--espacio-6);
   border-radius: var(--radio-pildora);
   background: var(--color-boton);
   color: var(--color-blanco);
   font-size: var(--texto-7);
   font-weight: 500;
   transition:
-    background-color 0.25s ease,
-    box-shadow 0.25s ease,
-    transform 0.25s ease;
+    background-color var(--dur-media) var(--ease-estandar),
+    box-shadow var(--dur-media) var(--ease-estandar),
+    transform var(--dur-media) var(--ease-estandar);
 }
 
 .hero__boton:hover {
@@ -131,7 +131,7 @@
 
 .hero__indicador {
   position: absolute;
-  bottom: 28px;
+  bottom: var(--espacio-fijo-28);
   left: 0;
   right: 0;
   z-index: 1;
@@ -155,7 +155,7 @@
   width: 1px;
   height: 44px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.16);
+  background: var(--blanco-16);
 }
 
 /* Destello que baja por la línea */

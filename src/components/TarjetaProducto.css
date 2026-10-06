@@ -13,15 +13,15 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  border: 1px solid var(--s-borde, rgba(255, 255, 255, 0.1));
+  border: 1px solid var(--s-borde, var(--blanco-10));
   border-radius: var(--radio-lg);
   background: var(--s-tarjeta, #151517);
   color: var(--s-texto, var(--color-texto));
   transform: perspective(900px) rotateX(var(--giro-x)) rotateY(var(--giro-y))
     translateY(var(--elevacion));
   transition:
-    transform 0.25s ease-out,
-    box-shadow 0.35s ease;
+    transform var(--dur-media) ease-out,
+    box-shadow var(--dur-lenta) var(--ease-estandar);
   will-change: transform;
 }
 
@@ -52,7 +52,7 @@
     radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.4), transparent 55%),
     linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.3));
   color: rgba(255, 255, 255, 0.9);
-  transition: background-color var(--dur-lenta) ease;
+  transition: background-color var(--dur-lenta) var(--ease-estandar);
 }
 
 /* Sobre colores claros el ícono se oscurece para que se vea */
@@ -74,9 +74,9 @@
 
 .tarjeta__etiqueta {
   position: absolute;
-  right: 14px;
-  bottom: 14px;
-  padding: 3px 10px;
+  right: var(--espacio-fijo-14);
+  bottom: var(--espacio-fijo-14);
+  padding: 3px var(--espacio-fijo-10);
   border-radius: var(--radio-pildora);
   background: rgba(0, 0, 0, 0.55);
   color: var(--color-blanco);
@@ -93,7 +93,7 @@
   flex: 1;
   flex-direction: column;
   gap: 6px;
-  padding: 20px var(--espacio-5) 26px;
+  padding: var(--espacio-fijo-20) var(--espacio-5) 26px;
 }
 
 /* Los puntos de color quedan por encima del enlace extendido */

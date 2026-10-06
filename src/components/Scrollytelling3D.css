@@ -67,7 +67,7 @@
 }
 
 .scrolly__eyebrow {
-  margin-bottom: 14px;
+  margin-bottom: var(--espacio-fijo-14);
   color: var(--acento);
   font-size: var(--texto-3);
   font-weight: 600;
@@ -84,7 +84,7 @@
 }
 
 .scrolly__parrafo {
-  margin-top: 20px;
+  margin-top: var(--espacio-fijo-20);
   color: var(--color-gris);
   font-size: clamp(1.0625rem, 1.5vw, 1.3125rem);
   line-height: var(--interlinea-cuerpo);
@@ -114,7 +114,7 @@
   bottom: 0;
   left: 3.5px;
   width: 1px;
-  background: rgba(255, 255, 255, 0.16);
+  background: var(--blanco-16);
 }
 
 .scrolly__relleno {
@@ -135,9 +135,9 @@
   border-radius: var(--radio-circulo);
   background: var(--color-fondo);
   transition:
-    transform 0.35s ease,
-    background-color 0.35s ease,
-    border-color 0.35s ease;
+    transform var(--dur-lenta) var(--ease-estandar),
+    background-color var(--dur-lenta) var(--ease-estandar),
+    border-color var(--dur-lenta) var(--ease-estandar);
 }
 
 .scrolly__punto--visto {
@@ -177,7 +177,7 @@
   }
 
   .scrolly__parrafo {
-    margin-top: 14px;
+    margin-top: var(--espacio-fijo-14);
   }
 
   .scrolly__progreso {

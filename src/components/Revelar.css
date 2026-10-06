@@ -3,8 +3,8 @@
   opacity: 0;
   transform: translateY(36px);
   transition:
-    opacity 0.9s ease,
-    transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+    opacity 0.9s var(--ease-estandar),
+    transform 0.9s var(--ease-entrada);
   transition-delay: calc(var(--retraso, 0) * 90ms);
 }
 

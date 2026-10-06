@@ -11,7 +11,10 @@
 }
 
 .pagina__titulo {
-  font-size: clamp(2rem, 6vw, 4rem);
+  /* El mínimo no pasa del 10 % del ancho: con el texto al 200 % las palabras
+     largas siguen cabiendo. Con el texto normal el tamaño es el de siempre. */
+  font-size: clamp(min(2rem, 10vw), 6vw, 4rem);
+  overflow-wrap: anywhere;
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.1;

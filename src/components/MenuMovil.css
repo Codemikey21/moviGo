@@ -12,8 +12,8 @@
   visibility: hidden;
   opacity: 0;
   transition:
-    opacity 0.35s ease,
-    visibility 0s linear 0.35s;
+    opacity var(--dur-lenta) var(--ease-estandar),
+    visibility 0s linear var(--dur-lenta);
 }
 
 .menu-movil--abierto {
@@ -25,7 +25,7 @@
 .menu-movil__contenido {
   max-width: 560px;
   margin: 0 auto;
-  padding: calc(var(--altura-navbar) + 24px) 28px var(--espacio-7);
+  padding: calc(var(--altura-navbar) + 24px) var(--espacio-fijo-28) var(--espacio-7);
 }
 
 /* Cada título y enlace entra subiendo, escalonado por --i */
@@ -35,8 +35,8 @@
   opacity: 0;
   transform: translateY(18px);
   transition:
-    opacity 0.25s ease,
-    transform 0.25s ease;
+    opacity var(--dur-media) var(--ease-estandar),
+    transform var(--dur-media) var(--ease-estandar);
 }
 
 .menu-movil--abierto .menu-movil__titulo,
@@ -45,11 +45,11 @@
   opacity: 1;
   transform: none;
   transition-duration: 0.55s;
-  transition-delay: calc(var(--i, 0) * 45ms + 120ms);
+  transition-delay: calc(var(--i, 0) * var(--escalon) + 120ms);
 }
 
 .menu-movil__titulo {
-  margin: 28px 0 var(--espacio-2);
+  margin: var(--espacio-fijo-28) 0 var(--espacio-2);
   color: var(--color-gris);
   font-size: var(--texto-3);
   font-weight: 600;
@@ -75,12 +75,12 @@
 }
 
 .menu-movil__pie {
-  margin-top: 36px;
+  margin-top: var(--espacio-fijo-36);
 }
 
 .menu-movil__boton {
   width: 100%;
-  padding: 14px 20px;
+  padding: var(--espacio-fijo-14) var(--espacio-fijo-20);
   border: none;
   border-radius: var(--radio-pildora);
   background: var(--color-boton);
@@ -101,8 +101,8 @@
 @media (prefers-reduced-motion: reduce) {
   .menu-movil {
     transition:
-      opacity 0.12s linear,
-      visibility 0s linear 0.12s;
+      opacity var(--dur-instante) linear,
+      visibility 0s linear var(--dur-instante);
   }
 
   .menu-movil--abierto {

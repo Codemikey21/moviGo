@@ -2,7 +2,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--espacio-1) 10px;
+  gap: var(--espacio-1) var(--espacio-fijo-10);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -12,7 +12,7 @@
 .migas__item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--espacio-fijo-10);
 }
 
 /* Separador entre elementos */
@@ -25,7 +25,7 @@
 .migas__enlace {
   position: relative;
   color: var(--s-suave, var(--color-gris));
-  transition: color 0.2s ease;
+  transition: color var(--dur-rapida) var(--ease-estandar);
 }
 
 /* Área clicable ampliada (≥ 24 px de alto) sin cambiar el diseño visible */

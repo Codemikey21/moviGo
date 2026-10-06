@@ -7,14 +7,14 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: var(--espacio-6) 28px 28px;
+  padding: var(--espacio-6) var(--espacio-fijo-28) var(--espacio-fijo-28);
   border: 1px solid var(--s-borde);
   border-radius: var(--radio-lg);
   background: var(--s-tarjeta);
   color: var(--s-texto);
   transition:
-    transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
-    box-shadow 0.35s ease;
+    transform var(--dur-lenta) var(--ease-entrada),
+    box-shadow var(--dur-lenta) var(--ease-estandar);
 }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
@@ -55,7 +55,7 @@
 }
 
 .tarjeta-categoria__descripcion {
-  margin-top: 10px;
+  margin-top: var(--espacio-fijo-10);
   color: var(--s-suave);
   line-height: var(--interlinea-cuerpo);
 }
@@ -70,16 +70,16 @@
   position: relative;
   z-index: 2;
   display: flex;
-  gap: 20px;
+  gap: var(--espacio-fijo-20);
   margin-top: auto;
-  padding-top: 22px;
+  padding-top: var(--espacio-fijo-22);
   font-weight: 500;
 }
 
 .tarjeta-categoria__acciones a {
   position: relative;
   color: color-mix(in srgb, var(--acento) var(--mezcla-acento-texto), var(--color-tinta));
-  transition: color 0.2s ease;
+  transition: color var(--dur-rapida) var(--ease-estandar);
 }
 
 /* Área clicable ampliada (≥ 24 px de alto) sin cambiar el diseño visible */

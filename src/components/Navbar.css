@@ -17,13 +17,13 @@
   background: rgba(12, 12, 14, 0.86);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   backdrop-filter: saturate(180%) blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--blanco-8);
 }
 
 .navbar__contenido {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: var(--espacio-fijo-20);
   height: 100%;
   max-width: 1320px;
   margin: 0 auto;
@@ -58,7 +58,7 @@
   font-size: var(--texto-3);
   font-weight: 400;
   white-space: nowrap;
-  transition: color 0.25s ease;
+  transition: color var(--dur-media) var(--ease-estandar);
 }
 
 .navbar__enlace:hover,
@@ -92,12 +92,12 @@
   background: none;
   color: var(--color-gris);
   transition:
-    color 0.25s ease,
-    background-color 0.25s ease;
+    color var(--dur-media) var(--ease-estandar),
+    background-color var(--dur-media) var(--ease-estandar);
 }
 
 .navbar__icono:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--blanco-8);
   color: var(--color-texto);
 }
 
@@ -125,7 +125,7 @@
 
 .navbar__boton {
   margin-left: var(--espacio-2);
-  padding: var(--espacio-2) 20px;
+  padding: var(--espacio-2) var(--espacio-fijo-20);
   border: none;
   border-radius: var(--radio-pildora);
   background: var(--color-boton);
@@ -133,8 +133,8 @@
   font-size: var(--texto-4);
   font-weight: 500;
   transition:
-    background-color 0.25s ease,
-    transform 0.25s ease;
+    background-color var(--dur-media) var(--ease-estandar),
+    transform var(--dur-media) var(--ease-estandar);
 }
 
 .navbar__boton:hover {
@@ -166,8 +166,8 @@
   border-radius: 2px;
   background: var(--color-texto);
   transition:
-    transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
-    top 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transform var(--dur-lenta) var(--ease-entrada),
+    top var(--dur-lenta) var(--ease-entrada);
 }
 
 .navbar__hamburguesa span:first-child {
@@ -200,8 +200,8 @@
   visibility: hidden;
   pointer-events: none;
   transition:
-    opacity 0.35s ease,
-    visibility 0s linear 0.35s;
+    opacity var(--dur-lenta) var(--ease-estandar),
+    visibility 0s linear var(--dur-lenta);
 }
 
 .navbar__velo--visible {
@@ -232,12 +232,27 @@
 
 @media (max-width: 35em) {
   .navbar__contenido {
-    padding: 0 var(--espacio-3) 0 18px;
+    padding: 0 var(--espacio-3) 0 var(--espacio-fijo-18);
   }
 
   /* "Ingresar" pasa al menú de pantalla completa */
   .navbar__boton {
     display: none;
+  }
+}
+
+/* Pantalla angosta con el texto muy ampliado (320 px con el texto al 200 %
+   son solo 10 em): el logo cede espacio y los márgenes se reducen para que
+   la barra quepa sin quitar ninguna acción. Los botones conservan su tamaño y
+   la separación que evita que sus áreas táctiles de 44 px se solapen. */
+@media (max-width: 14em) {
+  .navbar__contenido {
+    gap: var(--espacio-1);
+    padding: 0 var(--espacio-1) 0 var(--espacio-2);
+  }
+
+  .navbar__logo {
+    font-size: 1rem;
   }
 }
 

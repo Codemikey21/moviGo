@@ -1,6 +1,6 @@
 .footer {
   padding: clamp(48px, 7vw, 80px) 0 var(--espacio-6);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--blanco-8);
   background: var(--color-fondo-elevado);
   color: var(--color-gris);
   font-size: var(--texto-3);
@@ -13,8 +13,8 @@
 }
 
 .footer__lema {
-  padding-bottom: 28px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: var(--espacio-fijo-28);
+  border-bottom: 1px solid var(--blanco-10);
   font-size: var(--texto-7);
 }
 
@@ -25,12 +25,12 @@
 .footer__columnas {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 36px var(--espacio-5);
-  padding: 36px 0 44px;
+  gap: var(--espacio-fijo-36) var(--espacio-5);
+  padding: var(--espacio-fijo-36) 0 44px;
 }
 
 .footer__titulo {
-  margin-bottom: 14px;
+  margin-bottom: var(--espacio-fijo-14);
   color: var(--color-texto);
   font-size: var(--texto-3);
   font-weight: 600;
@@ -40,14 +40,14 @@
 .footer__lista {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--espacio-fijo-10);
 }
 
 .footer__enlace {
   position: relative;
   overflow-wrap: anywhere;
   color: var(--color-gris);
-  transition: color 0.2s ease;
+  transition: color var(--dur-rapida) var(--ease-estandar);
 }
 
 /* Área clicable ampliada (≥ 24 px de alto) sin cambiar el diseño visible */
@@ -65,9 +65,9 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 10px var(--espacio-6);
+  gap: var(--espacio-fijo-10) var(--espacio-6);
   padding-top: var(--espacio-5);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--blanco-10);
   line-height: var(--interlinea-texto);
 }
 
