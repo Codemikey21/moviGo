@@ -4,31 +4,54 @@
   gap: 14px;
 }
 
+/* Medidas del grupo: tamaño visible del punto y separación entre puntos.
+   El área clicable de cada punto es igual al paso (tamaño + separación),
+   así que las áreas de dos puntos vecinos nunca se solapan. */
 .selector-color__puntos {
+  --punto-tam: 18px;
+  --punto-sep: var(--espacio-2);
+
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--punto-sep);
+}
+
+.selector-color--grande .selector-color__puntos {
+  --punto-tam: 28px;
+  --punto-sep: 14px;
 }
 
 .selector-color__punto {
   position: relative;
-  width: 18px;
-  height: 18px;
+  width: var(--punto-tam);
+  height: var(--punto-tam);
   padding: 0;
   border: 1px solid rgba(128, 128, 128, 0.45);
-  border-radius: 50%;
+  border-radius: var(--radio-circulo);
   background: var(--punto);
   transition: transform 0.2s ease;
 }
 
-/* Anillo exterior del color elegido */
+/* Área clicable (≥ 24 px; 44 px en pantallas táctiles). No cambia lo que se ve. */
+.selector-color__punto::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--punto-tam) + var(--punto-sep));
+  height: calc(var(--punto-tam) + var(--punto-sep));
+  transform: translate(-50%, -50%);
+}
+
+/* Anillo exterior del color elegido: solo decorativo, no recibe clics */
 .selector-color__punto::after {
   content: '';
   position: absolute;
   inset: -5px;
   border: 2px solid transparent;
-  border-radius: 50%;
+  border-radius: var(--radio-circulo);
   transition: border-color 0.2s ease;
+  pointer-events: none;
 }
 
 .selector-color__punto:hover {
@@ -39,18 +62,20 @@
   border-color: var(--s-texto, var(--color-texto));
 }
 
-.selector-color--grande .selector-color__punto {
-  width: 28px;
-  height: 28px;
-}
-
-.selector-color--grande .selector-color__puntos {
-  gap: 14px;
-}
-
 .selector-color__nombre {
   color: var(--s-suave, var(--color-gris));
-  font-size: 0.9375rem;
+  font-size: var(--texto-5);
+}
+
+/* Pantallas táctiles: más aire entre puntos para llegar a 44 px de área por punto */
+@media (pointer: coarse) {
+  .selector-color__puntos {
+    --punto-sep: 26px; /* 18 + 26 = 44 */
+  }
+
+  .selector-color--grande .selector-color__puntos {
+    --punto-sep: 16px; /* 28 + 16 = 44 */
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

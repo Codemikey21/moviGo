@@ -4,9 +4,10 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
+  min-height: 100svh;
 
   /* Abajo se reserva espacio para el indicador "Desliza para descubrir" */
-  padding: var(--altura-navbar) 24px 112px;
+  padding: var(--altura-navbar) var(--espacio-5) 112px;
   text-align: center;
 }
 
@@ -30,7 +31,7 @@
   width: 80vmax;
   height: 80vmax;
   margin: -40vmax 0 0 -40vmax;
-  border-radius: 50%;
+  border-radius: var(--radio-circulo);
   background: radial-gradient(
     circle,
     rgba(41, 151, 255, 0.3) 0%,
@@ -53,10 +54,10 @@
 
 .hero__titulo {
   /* Limitado también por la altura para que todo quepa en 100vh */
-  font-size: clamp(3.2rem, min(12.5vw, 14vh), 10rem);
+  font-size: clamp(min(3.2rem, 14vw), min(12.5vw, 14vh), 10rem);
   font-weight: 700;
   line-height: 0.98;
-  letter-spacing: -0.045em;
+  letter-spacing: var(--tracking-display);
 }
 
 /* Máscara: recorta cada línea para que el texto "suba" desde abajo.
@@ -79,7 +80,7 @@
 }
 
 .hero__linea:nth-child(1) .hero__linea-texto {
-  --degradado-inicio: #ffffff;
+  --degradado-inicio: var(--color-blanco);
   --degradado-fin: #dcdce0;
 }
 
@@ -90,24 +91,24 @@
 
 .hero__linea:nth-child(3) .hero__linea-texto {
   --degradado-inicio: #adadb2;
-  --degradado-fin: #86868b;
+  --degradado-fin: var(--color-gris);
 }
 
 .hero__subtitulo {
   max-width: 40rem;
-  margin: 28px auto 32px;
+  margin: 28px auto var(--espacio-6);
   color: var(--color-gris);
   font-size: clamp(1.0625rem, 1.7vw, 1.5rem);
-  line-height: 1.4;
+  line-height: var(--interlinea-compacta);
 }
 
 .hero__boton {
   display: inline-block;
-  padding: 14px 32px;
-  border-radius: 980px;
-  background: var(--color-acento);
-  color: #ffffff;
-  font-size: 1.0625rem;
+  padding: 14px var(--espacio-6);
+  border-radius: var(--radio-pildora);
+  background: var(--color-boton);
+  color: var(--color-blanco);
+  font-size: var(--texto-7);
   font-weight: 500;
   transition:
     background-color 0.25s ease,
@@ -116,7 +117,7 @@
 }
 
 .hero__boton:hover {
-  background: #4aa8ff;
+  background: var(--color-boton-hover);
   box-shadow: 0 10px 40px rgba(41, 151, 255, 0.4);
 }
 
@@ -131,21 +132,20 @@
 .hero__indicador {
   position: absolute;
   bottom: 28px;
-  left: 50%;
+  left: 0;
+  right: 0;
   z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  width: 14rem;
-  margin-left: -7rem;
+  gap: var(--espacio-3);
   pointer-events: none;
 }
 
 .hero__indicador-texto {
   color: var(--color-gris);
   white-space: nowrap;
-  font-size: 0.8125rem;
+  font-size: var(--texto-3);
   letter-spacing: 0.04em;
   animation: hero-pulso 2.6s ease-in-out infinite;
 }
@@ -167,7 +167,7 @@
   width: 100%;
   height: 50%;
   background: linear-gradient(to bottom, transparent, var(--color-texto));
-  animation: hero-deslizar 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  animation: hero-deslizar 2.2s var(--ease-ambos) infinite;
 }
 
 @keyframes hero-deslizar {

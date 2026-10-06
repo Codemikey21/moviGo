@@ -5,7 +5,8 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: calc(var(--altura-navbar) + 24px) 24px 24px;
+  min-height: 100svh;
+  padding: calc(var(--altura-navbar) + 24px) var(--espacio-5) var(--espacio-5);
   text-align: center;
 }
 

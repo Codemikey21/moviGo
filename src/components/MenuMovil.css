@@ -2,7 +2,7 @@
 .menu-movil {
   position: fixed;
   inset: 0;
-  z-index: 99;
+  z-index: var(--z-menu-movil);
   overflow-y: auto;
   overscroll-behavior: contain;
   background: rgba(0, 0, 0, 0.94);
@@ -25,7 +25,7 @@
 .menu-movil__contenido {
   max-width: 560px;
   margin: 0 auto;
-  padding: calc(var(--altura-navbar) + 24px) 28px 48px;
+  padding: calc(var(--altura-navbar) + 24px) 28px var(--espacio-7);
 }
 
 /* Cada título y enlace entra subiendo, escalonado por --i */
@@ -49,11 +49,11 @@
 }
 
 .menu-movil__titulo {
-  margin: 28px 0 8px;
+  margin: 28px 0 var(--espacio-2);
   color: var(--color-gris);
-  font-size: 0.8125rem;
+  font-size: var(--texto-3);
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--tracking-etiqueta);
   text-transform: uppercase;
 }
 
@@ -63,7 +63,7 @@
 
 .menu-movil__enlace {
   display: block;
-  padding: 8px 0;
+  padding: var(--espacio-2) 0;
   color: var(--color-texto);
   font-size: clamp(1.5rem, 6vw, 2rem);
   font-weight: 600;
@@ -71,7 +71,7 @@
 }
 
 .menu-movil__enlace:active {
-  color: var(--color-acento);
+  color: var(--acento);
 }
 
 .menu-movil__pie {
@@ -82,15 +82,15 @@
   width: 100%;
   padding: 14px 20px;
   border: none;
-  border-radius: 980px;
-  background: var(--color-acento);
-  color: #ffffff;
-  font-size: 1.0625rem;
+  border-radius: var(--radio-pildora);
+  background: var(--color-boton);
+  color: var(--color-blanco);
+  font-size: var(--texto-7);
   font-weight: 500;
 }
 
 /* El menú solo existe en pantallas pequeñas */
-@media (min-width: 1101px) {
+@media (min-width: 68.8125em) {
   .menu-movil {
     display: none;
   }

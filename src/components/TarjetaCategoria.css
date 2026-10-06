@@ -7,9 +7,9 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 32px 28px 28px;
+  padding: var(--espacio-6) 28px 28px;
   border: 1px solid var(--s-borde);
-  border-radius: 28px;
+  border-radius: var(--radio-lg);
   background: var(--s-tarjeta);
   color: var(--s-texto);
   transition:
@@ -20,7 +20,7 @@
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .tarjeta-categoria:hover {
     transform: translateY(-6px);
-    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--sombra-elevada);
   }
 }
 
@@ -29,8 +29,8 @@
   place-items: center;
   width: 64px;
   height: 64px;
-  margin-bottom: 24px;
-  border-radius: 20px;
+  margin-bottom: var(--espacio-5);
+  border-radius: var(--radio-md);
   background: color-mix(in srgb, var(--acento) 18%, transparent);
   color: color-mix(in srgb, var(--acento) 60%, var(--s-texto));
 }
@@ -43,7 +43,7 @@
 .tarjeta-categoria__nombre {
   font-size: 1.5rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--tracking-subtitulo);
 }
 
 /* Enlace extendido: toda la tarjeta lleva a la categoría */
@@ -57,13 +57,13 @@
 .tarjeta-categoria__descripcion {
   margin-top: 10px;
   color: var(--s-suave);
-  line-height: 1.45;
+  line-height: var(--interlinea-cuerpo);
 }
 
 .tarjeta-categoria__meta {
-  margin-top: 16px;
+  margin-top: var(--espacio-4);
   color: var(--s-suave);
-  font-size: 0.875rem;
+  font-size: var(--texto-4);
 }
 
 .tarjeta-categoria__acciones {
@@ -77,10 +77,24 @@
 }
 
 .tarjeta-categoria__acciones a {
-  color: color-mix(in srgb, var(--acento) 55%, var(--s-texto));
-  transition: opacity 0.2s ease;
+  position: relative;
+  color: color-mix(in srgb, var(--acento) var(--mezcla-acento-texto), var(--color-tinta));
+  transition: color 0.2s ease;
+}
+
+/* Área clicable ampliada (≥ 24 px de alto) sin cambiar el diseño visible */
+.tarjeta-categoria__acciones a::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
 }
 
 .tarjeta-categoria__acciones a:hover {
-  opacity: 0.7;
+  color: color-mix(in srgb, var(--acento) 25%, var(--color-tinta));
+}
+
+@media (pointer: coarse) {
+  .tarjeta-categoria__acciones a::before {
+    inset: -10px -8px;
+  }
 }

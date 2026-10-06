@@ -10,13 +10,13 @@
 .tienda__chip {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 18px 8px 12px;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) 18px var(--espacio-2) var(--espacio-3);
   border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 980px;
+  border-radius: var(--radio-pildora);
   background: rgba(255, 255, 255, 0.05);
   color: var(--color-texto);
-  font-size: 0.9375rem;
+  font-size: var(--texto-5);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   transition:
@@ -27,6 +27,13 @@
 .tienda__chip:hover {
   border-color: var(--acento);
   background: color-mix(in srgb, var(--acento) 20%, transparent);
+}
+
+/* Pantallas táctiles: 44 px de alto */
+@media (pointer: coarse) {
+  .tienda__chip {
+    min-height: var(--area-tactil);
+  }
 }
 
 .tienda__chip-icono {
@@ -47,17 +54,17 @@
 
 .tienda__enlace-final {
   margin-top: 40px;
-  font-size: 1.125rem;
+  font-size: var(--texto-8);
   font-weight: 500;
 }
 
 .tienda__enlace-final a {
-  color: #0071e3;
-  transition: opacity 0.2s ease;
+  color: var(--color-enlace-claro);
+  transition: color 0.2s ease;
 }
 
 .tienda__enlace-final a:hover {
-  opacity: 0.7;
+  color: var(--color-enlace-claro-hover);
 }
 
 .tienda__cta {
@@ -66,15 +73,15 @@
 }
 
 .tienda__boton {
-  padding: 14px 32px;
-  border-radius: 980px;
-  background: var(--color-acento);
-  color: #ffffff;
-  font-size: 1.0625rem;
+  padding: 14px var(--espacio-6);
+  border-radius: var(--radio-pildora);
+  background: var(--color-boton);
+  color: var(--color-blanco);
+  font-size: var(--texto-7);
   font-weight: 500;
   transition: background-color 0.25s ease;
 }
 
 .tienda__boton:hover {
-  background: #4aa8ff;
+  background: var(--color-boton-hover);
 }

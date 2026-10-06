@@ -4,7 +4,7 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 100;
+  z-index: var(--z-navbar);
 }
 
 /* La barra tiene el efecto vidrio. Los mega-menús NO son hijos de ella, para
@@ -27,14 +27,14 @@
   height: 100%;
   max-width: 1320px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--espacio-5);
 }
 
 .navbar__logo {
   flex: none;
   font-size: 1.25rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--tracking-subtitulo);
   color: var(--color-texto);
 }
 
@@ -50,12 +50,12 @@
 
 .navbar__enlace {
   display: block;
-  padding: 8px 0;
-  line-height: 1.5;
+  padding: var(--espacio-2) 0;
+  line-height: var(--interlinea-texto);
   border: none;
   background: none;
   color: var(--color-gris);
-  font-size: 0.8125rem;
+  font-size: var(--texto-3);
   font-weight: 400;
   white-space: nowrap;
   transition: color 0.25s ease;
@@ -72,7 +72,7 @@
   display: flex;
   flex: none;
   align-items: center;
-  gap: 4px;
+  gap: var(--espacio-1);
   margin-left: auto;
 }
 
@@ -88,7 +88,7 @@
   height: 40px;
   padding: 0;
   border: none;
-  border-radius: 50%;
+  border-radius: var(--radio-circulo);
   background: none;
   color: var(--color-gris);
   transition:
@@ -113,24 +113,24 @@
   right: 1px;
   min-width: 16px;
   height: 16px;
-  padding: 0 4px;
+  padding: 0 var(--espacio-1);
   border-radius: 8px;
-  background: var(--color-acento);
-  color: #ffffff;
-  font-size: 0.6875rem;
+  background: var(--color-boton);
+  color: var(--color-blanco);
+  font-size: var(--texto-1);
   font-weight: 600;
   line-height: 16px;
   text-align: center;
 }
 
 .navbar__boton {
-  margin-left: 8px;
-  padding: 8px 20px;
+  margin-left: var(--espacio-2);
+  padding: var(--espacio-2) 20px;
   border: none;
-  border-radius: 980px;
-  background: var(--color-acento);
-  color: #ffffff;
-  font-size: 0.875rem;
+  border-radius: var(--radio-pildora);
+  background: var(--color-boton);
+  color: var(--color-blanco);
+  font-size: var(--texto-4);
   font-weight: 500;
   transition:
     background-color 0.25s ease,
@@ -138,7 +138,7 @@
 }
 
 .navbar__boton:hover {
-  background: #4aa8ff;
+  background: var(--color-boton-hover);
 }
 
 .navbar__boton:active {
@@ -152,7 +152,7 @@
   display: none;
   width: 40px;
   height: 40px;
-  margin-left: 4px;
+  margin-left: var(--espacio-1);
   padding: 0;
   border: none;
   background: none;
@@ -212,7 +212,7 @@
 
 /* ---- Tablet y móvil ---- */
 
-@media (max-width: 1100px) {
+@media (max-width: 68.75em) {
   .navbar__enlaces {
     display: none;
   }
@@ -230,14 +230,60 @@
   }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 35em) {
   .navbar__contenido {
-    padding: 0 12px 0 18px;
+    padding: 0 var(--espacio-3) 0 18px;
   }
 
   /* "Ingresar" pasa al menú de pantalla completa */
   .navbar__boton {
     display: none;
+  }
+}
+
+/* ---- Pantallas táctiles ----
+   El diseño visible no cambia: el área clicable crece hasta 44 px con un
+   pseudoelemento transparente. Las áreas de botones vecinos no se solapan. */
+
+@media (pointer: coarse) {
+  .navbar__icono::before,
+  .navbar__hamburguesa::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+  }
+
+  .navbar__logo,
+  .navbar__enlace,
+  .navbar__boton {
+    position: relative;
+  }
+
+  .navbar__logo::before,
+  .navbar__enlace::before,
+  .navbar__boton::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+  }
+
+  .navbar__logo::before {
+    top: -7px;
+    bottom: -7px;
+  }
+
+  /* Palabras cortas (Motos, Carros): también se ensancha el área, sin tocar a las vecinas */
+  .navbar__enlace::before {
+    top: -5px;
+    right: -4px;
+    bottom: -5px;
+    left: -4px;
+  }
+
+  .navbar__boton::before {
+    top: -4px;
+    bottom: -4px;
   }
 }
 

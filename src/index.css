@@ -1,20 +1,126 @@
 /* ==========================================================================
-   Variables globales
+   Variables globales (sistema de diseño de MoviGo)
+   Todo valor repetido del sitio sale de aquí. Los componentes usan variables;
+   cuando un valor no encaja en ningún token se deja suelto en su archivo.
    ========================================================================== */
 
 :root {
-  /* Colores */
-  --color-fondo: #000000;
-  --color-texto: #f5f5f7;
-  --color-gris: #86868b;
-  --color-acento: #2997ff;
+  /* ---- Color: primitivos ---- */
+  --color-negro: #000000;
+  --color-blanco: #ffffff;
+  --color-tinta: #1d1d1f; /* texto principal sobre fondos claros */
+  --color-claro: #f5f5f7; /* fondo de las secciones claras */
+  --color-fondo-elevado: #0c0c0e; /* footer y superficies sobre negro */
 
-  /* Tipografía */
+  /* ---- Color: roles ---- */
+  --color-fondo: var(--color-negro);
+  --color-texto: #f5f5f7;
+  --color-gris: #86868b; /* texto secundario sobre negro: 5,8:1 */
+  --color-gris-medio: #a1a1a6; /* texto secundario sobre oscuro, más claro */
+  --color-gris-claro: #6e6e73; /* texto secundario sobre #f5f5f7: 4,66:1 */
+  --color-gris-vidrio: #48484a; /* texto secundario sobre vidrio claro translúcido: ≥4,5:1 sobre cualquier fondo */
+  --color-sobre-acento: var(--color-negro); /* texto sobre rellenos de color de acento */
+
+  /* Acento: azul de marca por defecto. Cada categoría o servicio lo redefine
+     localmente con style="--acento: #..." sobre su contenedor. */
+  --acento: #2997ff;
+
+  /* Acción primaria: texto blanco sobre #0071e3 = 4,70:1 (AA). El hover oscurece. */
+  --color-boton: #0071e3;
+  --color-boton-hover: #0066cc; /* 5,57:1 */
+  --color-enlace-claro: #0066cc; /* enlace sobre fondo claro: 5,11:1 */
+  --color-enlace-claro-hover: #004d99;
+
+  /* Anillo de foco: azul de marca fijo, no sigue al acento de la categoría */
+  --color-foco: #2997ff;
+
+  /* Mezcla del acento con la tinta cuando el acento se usa como TEXTO sobre
+     fondo claro (el amarillo de Accesorios da 5,62:1 con este porcentaje) */
+  --mezcla-acento-texto: 40%;
+
+  /* ---- Tipografía ---- */
   --fuente-principal: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, sans-serif;
 
-  /* Layout */
+  /* Escala de tamaños de texto (1 = 11 px … 8 = 18 px con la fuente base de 16 px) */
+  --texto-1: 0.6875rem;
+  --texto-2: 0.75rem;
+  --texto-3: 0.8125rem;
+  --texto-4: 0.875rem;
+  --texto-5: 0.9375rem;
+  --texto-6: 1rem; /* cuerpo */
+  --texto-7: 1.0625rem;
+  --texto-8: 1.125rem;
+
+  /* Títulos con tamaño fluido (para trabajo nuevo; los existentes conservan su clamp propio) */
+  --titulo-4: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+  --titulo-3: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+  --titulo-2: clamp(2rem, 1.3rem + 2.6vw, 3.5rem);
+  --titulo-1: clamp(2.75rem, 1.6rem + 5vw, 6rem);
+  --display: clamp(3.25rem, 1.5rem + 8vw, 9rem);
+
+  --tracking-display: -0.045em;
+  --tracking-titulo: -0.035em;
+  --tracking-subtitulo: -0.02em;
+  --tracking-etiqueta: 0.1em;
+  --tracking-eyebrow: 0.12em;
+
+  --interlinea-texto: 1.5;
+  --interlinea-cuerpo: 1.45;
+  --interlinea-compacta: 1.4;
+
+  /* ---- Espaciado (base 4 px; en rem para que crezca con el texto) ---- */
+  --espacio-1: 0.25rem;
+  --espacio-2: 0.5rem;
+  --espacio-3: 0.75rem;
+  --espacio-4: 1rem;
+  --espacio-5: 1.5rem;
+  --espacio-6: 2rem;
+  --espacio-7: 3rem;
+  --espacio-8: 4rem;
+  --espacio-9: 6rem;
+  --seccion-y: clamp(4rem, 9vw, 7.5rem);
+  --contenedor: 1240px;
+  --gutter: clamp(20px, 4vw, 40px);
+
+  /* ---- Layout ---- */
   --altura-navbar: 64px;
+
+  /* ---- Objetivos táctiles (WCAG 2.2 AA mínimo 24; ideal 44 en pantallas táctiles) ---- */
+  --area-minima: 24px;
+  --area-tactil: 44px;
+
+  /* ---- Radios ---- */
+  --radio-sm: 12px;
+  --radio-md: 20px;
+  --radio-lg: 28px;
+  --radio-xl: 36px;
+  --radio-pildora: 980px;
+  --radio-circulo: 50%;
+
+  /* ---- Sombras ---- */
+  --sombra-reposo: 0 1px 4px rgba(0, 0, 0, 0.15);
+  --sombra-control: 0 1px 4px rgba(0, 0, 0, 0.25);
+  --sombra-elevada: 0 24px 50px rgba(0, 0, 0, 0.12); /* sobre claro */
+  --sombra-flotante: 0 28px 60px rgba(0, 0, 0, 0.3); /* sobre oscuro */
+
+  /* ---- Movimiento ---- */
+  --dur-instante: 100ms;
+  --dur-rapida: 160ms;
+  --dur-media: 280ms;
+  --dur-lenta: 450ms;
+  --dur-escena: 700ms;
+  --ease-salida: cubic-bezier(0.16, 1, 0.3, 1); /* llegadas: desacelera */
+  --ease-retiro: cubic-bezier(0.4, 0, 1, 1); /* salidas: acelera */
+  --ease-ambos: cubic-bezier(0.65, 0, 0.35, 1);
+  --escalon: 40ms;
+  --escalon-max: 280ms;
+
+  /* ---- Capas ---- */
+  --z-filtros: 20;
+  --z-menu-movil: 99;
+  --z-navbar: 100;
+  --z-buscador: 200;
 
   color-scheme: dark;
 }
@@ -36,11 +142,14 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100svh;
   background-color: var(--color-fondo);
   color: var(--color-texto);
   font-family: var(--fuente-principal);
-  font-size: 16px;
-  line-height: 1.5;
+
+  /* En rem para respetar el tamaño de fuente que el usuario elige en su navegador */
+  font-size: var(--texto-6);
+  line-height: var(--interlinea-texto);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -54,6 +163,7 @@ h5,
 h6,
 p {
   margin: 0;
+  overflow-wrap: break-word;
 }
 
 a {
@@ -76,7 +186,7 @@ button {
 
 /* Anillo de foco visible solo al navegar con teclado */
 :focus-visible {
-  outline: 2px solid var(--color-acento);
+  outline: 2px solid var(--color-foco);
   outline-offset: 3px;
 }
 
@@ -102,6 +212,7 @@ canvas {
 
 #root {
   min-height: 100vh;
+  min-height: 100svh;
 }
 
 /* ==========================================================================

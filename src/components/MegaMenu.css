@@ -6,6 +6,7 @@
   right: 0;
   z-index: 1;
   max-height: calc(100vh - var(--altura-navbar));
+  max-height: calc(100svh - var(--altura-navbar));
   overflow-y: auto;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(12, 12, 14, 0.82);
@@ -17,7 +18,7 @@
   opacity: 0;
   transform: translateY(-12px);
   transition:
-    opacity 0.28s ease,
+    opacity var(--dur-media) ease,
     transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1),
     visibility 0s linear 0.4s;
 }
@@ -32,7 +33,7 @@
 .mega__interior {
   max-width: 1320px;
   margin: 0 auto;
-  padding: 32px 24px 44px;
+  padding: var(--espacio-6) var(--espacio-5) 44px;
 }
 
 /* Cada elemento entra con un pequeño retraso según su posición (--i) */
@@ -61,9 +62,9 @@
 .mega__etiqueta {
   margin-bottom: 14px;
   color: var(--color-gris);
-  font-size: 0.8125rem;
+  font-size: var(--texto-3);
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--tracking-etiqueta);
   text-transform: uppercase;
 }
 
@@ -72,20 +73,20 @@
 }
 
 .mega__ver-todo {
-  color: var(--color-acento);
-  font-size: 0.9375rem;
-  transition: opacity 0.2s ease;
+  color: var(--acento);
+  font-size: var(--texto-5);
+  transition: color 0.2s ease;
 }
 
 .mega__ver-todo:hover {
-  opacity: 0.75;
+  color: color-mix(in srgb, var(--acento) 70%, var(--color-blanco));
 }
 
 /* ---- Columnas ---- */
 
 .mega__columnas {
   display: grid;
-  gap: 28px 24px;
+  gap: 28px var(--espacio-5);
 }
 
 .mega__columnas--tienda {
@@ -94,7 +95,7 @@
 
 .mega__columnas--servicios {
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 32px 48px;
+  gap: var(--espacio-6) var(--espacio-7);
 }
 
 .mega__categoria {
@@ -103,7 +104,7 @@
   gap: 10px;
   margin-bottom: 14px;
   color: var(--color-texto);
-  font-size: 1.0625rem;
+  font-size: var(--texto-7);
   font-weight: 600;
 }
 
@@ -117,12 +118,12 @@
 .mega__lista {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--espacio-2);
 }
 
 .mega__enlace {
   color: var(--color-gris);
-  font-size: 0.875rem;
+  font-size: var(--texto-4);
   line-height: 1.35;
   transition: color 0.2s ease;
 }
@@ -134,7 +135,7 @@
 /* Enlaces de servicios: nombre + resumen */
 .mega__servicio {
   display: block;
-  padding: 4px 0;
+  padding: var(--espacio-1) 0;
 }
 
 .mega__servicio-nombre {
@@ -142,30 +143,30 @@
   color: var(--color-texto);
   font-size: 1.375rem;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--tracking-subtitulo);
   transition: color 0.2s ease;
 }
 
 .mega__servicio:hover .mega__servicio-nombre {
-  color: var(--color-acento);
+  color: var(--acento);
 }
 
 .mega__servicio-resumen {
   display: block;
   margin-top: 2px;
   color: var(--color-gris);
-  font-size: 0.875rem;
+  font-size: var(--texto-4);
 }
 
 /* Pantallas medianas: la tienda pasa a 4 columnas */
-@media (max-width: 1280px) {
+@media (max-width: 80em) {
   .mega__columnas--tienda {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
 /* En móvil y tablet se usa el menú de pantalla completa */
-@media (max-width: 1100px) {
+@media (max-width: 68.75em) {
   .mega {
     display: none;
   }

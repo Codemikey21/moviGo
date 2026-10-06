@@ -1,6 +1,6 @@
 .categoria__datos {
   color: var(--acento);
-  font-size: 1rem;
+  font-size: var(--texto-6);
   font-weight: 500;
 }
 
@@ -11,9 +11,13 @@
 }
 
 .categoria__filtros {
+  /* La barra es translúcida y deja pasar el contenido de detrás (a veces oscuro):
+     su texto secundario usa un gris más fuerte para mantener ≥4,5:1 sobre cualquier fondo */
+  --s-suave: var(--color-gris-vidrio);
+
   position: sticky;
   top: var(--altura-navbar);
-  z-index: 20;
+  z-index: var(--z-filtros);
   border-bottom: 1px solid var(--s-borde);
   background: rgba(245, 245, 247, 0.82);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
@@ -24,27 +28,30 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 16px 36px;
-  max-width: 1240px;
+  gap: var(--espacio-4) 36px;
+  max-width: var(--contenedor);
   margin: 0 auto;
-  padding: 16px clamp(20px, 4vw, 40px);
+  padding: var(--espacio-4) var(--gutter);
 }
 
 /* Control segmentado: Todos / Comprar / Alquilar */
 .categoria__modos {
   display: inline-flex;
+  flex-wrap: wrap;
+  max-width: 100%;
   padding: 3px;
-  border-radius: 980px;
+  border-radius: var(--radio-pildora);
   background: rgba(0, 0, 0, 0.07);
 }
 
 .categoria__modo {
+  flex: 1 1 auto;
   padding: 7px 20px;
   border: none;
-  border-radius: 980px;
+  border-radius: var(--radio-pildora);
   background: transparent;
   color: var(--s-suave);
-  font-size: 0.9375rem;
+  font-size: var(--texto-5);
   font-weight: 500;
   transition:
     background-color 0.25s ease,
@@ -53,18 +60,18 @@
 }
 
 .categoria__modo--activo {
-  background: #ffffff;
+  background: var(--color-blanco);
   color: var(--s-texto);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--sombra-reposo);
 }
 
 .categoria__precio,
 .categoria__orden {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--espacio-1);
   color: var(--s-suave);
-  font-size: 0.8125rem;
+  font-size: var(--texto-3);
 }
 
 .categoria__precio {
@@ -80,8 +87,8 @@
 /* Control de rango propio: el tramo elegido se rellena con el color de la categoría */
 .categoria__precio input {
   width: 100%;
-  height: 22px;
-  margin: 0;
+  height: var(--area-minima);
+  margin: -1px 0; /* conserva la altura de diseño de 22 px */
   background: transparent;
   cursor: pointer;
   -webkit-appearance: none;
@@ -113,9 +120,9 @@
   height: 20px;
   margin-top: -8px;
   border: 2px solid var(--acento);
-  border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  border-radius: var(--radio-circulo);
+  background: var(--color-blanco);
+  box-shadow: var(--sombra-control);
   -webkit-appearance: none;
   appearance: none;
 }
@@ -124,46 +131,64 @@
   width: 16px;
   height: 16px;
   border: 2px solid var(--acento);
-  border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  border-radius: var(--radio-circulo);
+  background: var(--color-blanco);
+  box-shadow: var(--sombra-control);
 }
 
 .categoria__orden {
+  max-width: 100%;
   margin-left: auto;
 }
 
 .categoria__orden select {
+  max-width: 100%;
   padding: 6px 10px;
   border: 1px solid var(--s-borde);
   border-radius: 10px;
-  background: #ffffff;
+  background: var(--color-blanco);
   color: var(--s-texto);
   font: inherit;
-  font-size: 0.9375rem;
+  font-size: var(--texto-5);
+}
+
+/* Pantallas táctiles: los controles llegan a 44 px de alto */
+@media (pointer: coarse) {
+  .categoria__modo {
+    min-height: var(--area-tactil);
+  }
+
+  .categoria__orden select {
+    min-height: var(--area-tactil);
+  }
+
+  .categoria__precio input {
+    height: var(--area-tactil);
+    margin: -11px 0;
+  }
 }
 
 .categoria__conteo {
   margin: 28px 0 20px;
   color: var(--s-suave);
-  font-size: 0.9375rem;
+  font-size: var(--texto-5);
 }
 
 /* ---- Estado vacío ---- */
 
 .categoria__vacio {
-  padding: 64px 20px;
+  padding: var(--espacio-8) 20px;
   border: 1px dashed var(--s-borde);
-  border-radius: 28px;
+  border-radius: var(--radio-lg);
   color: var(--s-suave);
   text-align: center;
 }
 
 .categoria__vacio button {
-  margin-top: 16px;
-  padding: 10px 24px;
+  margin-top: var(--espacio-4);
+  padding: 10px var(--espacio-5);
   border: none;
-  border-radius: 980px;
+  border-radius: var(--radio-pildora);
   background: var(--s-texto);
   color: var(--s-fondo);
   font-weight: 500;
@@ -185,9 +210,9 @@
   position: relative;
   display: block;
   height: 100%;
-  padding: 32px 28px;
+  padding: var(--espacio-6) 28px;
   border: 1px solid var(--s-borde);
-  border-radius: 28px;
+  border-radius: var(--radio-lg);
   background:
     radial-gradient(
       ellipse 90% 80% at 100% 0%,
@@ -217,13 +242,13 @@
 .categoria__servicio h3 {
   font-size: 1.4rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--tracking-subtitulo);
 }
 
 .categoria__servicio p {
-  margin-top: 8px;
+  margin-top: var(--espacio-2);
   color: var(--s-suave);
-  line-height: 1.45;
+  line-height: var(--interlinea-cuerpo);
 }
 
 .categoria__servicio span {
@@ -234,9 +259,9 @@
   font-size: 1.6rem;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 53.75em) {
   .categoria__servicios {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .categoria__orden {

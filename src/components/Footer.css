@@ -1,21 +1,21 @@
 .footer {
-  padding: clamp(48px, 7vw, 80px) 0 32px;
+  padding: clamp(48px, 7vw, 80px) 0 var(--espacio-6);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  background: #0c0c0e;
+  background: var(--color-fondo-elevado);
   color: var(--color-gris);
-  font-size: 0.8125rem;
+  font-size: var(--texto-3);
 }
 
 .footer__interior {
-  max-width: 1240px;
+  max-width: var(--contenedor);
   margin: 0 auto;
-  padding: 0 clamp(20px, 4vw, 40px);
+  padding: 0 var(--gutter);
 }
 
 .footer__lema {
   padding-bottom: 28px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  font-size: 1.0625rem;
+  font-size: var(--texto-7);
 }
 
 .footer__lema strong {
@@ -25,14 +25,14 @@
 .footer__columnas {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 36px 24px;
+  gap: 36px var(--espacio-5);
   padding: 36px 0 44px;
 }
 
 .footer__titulo {
   margin-bottom: 14px;
   color: var(--color-texto);
-  font-size: 0.8125rem;
+  font-size: var(--texto-3);
   font-weight: 600;
   letter-spacing: 0.02em;
 }
@@ -44,8 +44,17 @@
 }
 
 .footer__enlace {
+  position: relative;
+  overflow-wrap: anywhere;
   color: var(--color-gris);
   transition: color 0.2s ease;
+}
+
+/* Área clicable ampliada (≥ 24 px de alto) sin cambiar el diseño visible */
+.footer__enlace::before {
+  content: '';
+  position: absolute;
+  inset: -4px 0;
 }
 
 .footer__enlace:hover {
@@ -56,19 +65,36 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 10px 32px;
-  padding-top: 24px;
+  gap: 10px var(--espacio-6);
+  padding-top: var(--espacio-5);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  line-height: 1.5;
+  line-height: var(--interlinea-texto);
 }
 
-@media (max-width: 900px) {
+/* Pantallas táctiles: cada enlace ocupa 44 px de alto */
+@media (pointer: coarse) {
+  .footer__lista {
+    gap: 0;
+  }
+
+  .footer__enlace {
+    display: flex;
+    align-items: center;
+    min-height: var(--area-tactil);
+  }
+
+  .footer__enlace::before {
+    display: none;
+  }
+}
+
+@media (max-width: 56.25em) {
   .footer__columnas {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 35em) {
   .footer__columnas {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

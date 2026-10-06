@@ -3,7 +3,7 @@
 .servicio__grilla {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
+  gap: var(--espacio-5);
 }
 
 .servicio__envoltorio {
@@ -14,17 +14,17 @@
   height: 100%;
   padding: clamp(28px, 4vw, 44px);
   border: 1px solid var(--s-borde);
-  border-radius: 28px;
+  border-radius: var(--radio-lg);
   background: var(--s-tarjeta);
 }
 
 .servicio__numero {
   display: block;
   margin-bottom: 28px;
-  color: color-mix(in srgb, var(--acento) 60%, var(--s-texto));
-  font-size: 0.9375rem;
+  color: color-mix(in srgb, var(--acento) var(--mezcla-acento-texto), var(--color-tinta));
+  font-size: var(--texto-5);
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--tracking-etiqueta);
 }
 
 .servicio__titulo {
@@ -35,10 +35,10 @@
 }
 
 .servicio__texto {
-  margin-top: 12px;
+  margin-top: var(--espacio-3);
   color: var(--s-suave);
-  font-size: 1.0625rem;
-  line-height: 1.5;
+  font-size: var(--texto-7);
+  line-height: var(--interlinea-texto);
 }
 
 /* ---- Bloque "Próximamente" ---- */
@@ -50,7 +50,7 @@
   padding: clamp(32px, 6vw, 72px);
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--acento) 40%, transparent);
-  border-radius: 36px;
+  border-radius: var(--radio-xl);
   background:
     radial-gradient(
       ellipse 80% 90% at 100% 0%,
@@ -63,20 +63,20 @@
 .servicio__etiqueta {
   display: inline-block;
   padding: 5px 14px;
-  border-radius: 980px;
+  border-radius: var(--radio-pildora);
   background: var(--acento);
-  color: #000000;
-  font-size: 0.8125rem;
+  color: var(--color-sobre-acento);
+  font-size: var(--texto-3);
   font-weight: 600;
   letter-spacing: 0.04em;
 }
 
 .servicio__proximamente-titulo {
-  margin-top: 24px;
+  margin-top: var(--espacio-5);
   font-size: clamp(1.9rem, 4.4vw, 3rem);
   font-weight: 700;
   line-height: 1.08;
-  letter-spacing: -0.035em;
+  letter-spacing: var(--tracking-titulo);
 }
 
 .servicio__proximamente-texto {
@@ -84,21 +84,21 @@
   margin-top: 18px;
   color: var(--s-suave);
   font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
-  line-height: 1.5;
+  line-height: var(--interlinea-texto);
 }
 
 .servicio__lista {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px 32px;
-  margin-top: 32px;
+  gap: 14px var(--espacio-6);
+  margin-top: var(--espacio-6);
 }
 
 /* Marca de verificación antes de cada elemento */
 .servicio__elemento {
   position: relative;
   padding-left: 30px;
-  line-height: 1.4;
+  line-height: var(--interlinea-compacta);
 }
 
 .servicio__elemento::before {
@@ -121,8 +121,8 @@
 }
 
 .servicio__boton {
-  padding: 12px 26px;
-  border-radius: 980px;
+  padding: var(--espacio-3) 26px;
+  border-radius: var(--radio-pildora);
   font-weight: 500;
   transition:
     background-color 0.25s ease,
@@ -131,11 +131,11 @@
 
 .servicio__boton--lleno {
   background: var(--acento);
-  color: #000000;
+  color: var(--color-sobre-acento);
 }
 
 .servicio__boton--lleno:hover {
-  background: color-mix(in srgb, var(--acento) 80%, #ffffff);
+  background: color-mix(in srgb, var(--acento) 80%, var(--color-blanco));
 }
 
 .servicio__boton--borde {
@@ -143,10 +143,10 @@
 }
 
 .servicio__boton--borde:hover {
-  border-color: #ffffff;
+  border-color: var(--color-blanco);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .servicio__grilla,
   .servicio__lista {
     grid-template-columns: 1fr;

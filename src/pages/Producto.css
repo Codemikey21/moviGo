@@ -8,7 +8,7 @@
       color-mix(in srgb, var(--acento) 24%, transparent),
       transparent 70%
     ),
-    #000000;
+    var(--color-fondo);
 }
 
 .producto__grid {
@@ -28,7 +28,7 @@
   place-items: center;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  border-radius: 36px;
+  border-radius: var(--radio-xl);
   background-color: var(--tono);
   background-image:
     radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.45), transparent 55%),
@@ -52,7 +52,7 @@
   bottom: 22px;
   left: 0;
   right: 0;
-  font-size: 0.8125rem;
+  font-size: var(--texto-3);
   letter-spacing: 0.04em;
   text-align: center;
   opacity: 0.75;
@@ -66,42 +66,42 @@
 }
 
 .producto__nombre {
-  font-size: clamp(2.4rem, 5.4vw, 4.2rem);
+  font-size: clamp(min(2.4rem, 11vw), 5.4vw, 4.2rem);
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.04em;
 }
 
 .producto__tagline {
-  margin-top: 12px;
+  margin-top: var(--espacio-3);
   font-size: clamp(1.25rem, 2.2vw, 1.6rem);
   font-weight: 500;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--tracking-subtitulo);
   color: var(--acento);
 }
 
 .producto__descripcion {
   margin-top: 20px;
   color: var(--s-suave);
-  font-size: 1.0625rem;
+  font-size: var(--texto-7);
   line-height: 1.55;
 }
 
 .producto__etiqueta {
-  margin-bottom: 8px;
+  margin-bottom: var(--espacio-2);
   color: var(--s-suave);
-  font-size: 0.8125rem;
+  font-size: var(--texto-3);
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--tracking-etiqueta);
   text-transform: uppercase;
 }
 
 .producto__precios {
   display: flex;
   flex-wrap: wrap;
-  gap: 24px 48px;
-  margin-top: 32px;
-  padding: 24px 0;
+  gap: var(--espacio-5) var(--espacio-7);
+  margin-top: var(--espacio-6);
+  padding: var(--espacio-5) 0;
   border-top: 1px solid var(--s-borde);
   border-bottom: 1px solid var(--s-borde);
 }
@@ -114,18 +114,19 @@
 
 .producto__tarifas {
   display: flex;
-  gap: 24px;
+  flex-wrap: wrap;
+  gap: var(--espacio-2) var(--espacio-5);
   margin: 0;
 }
 
 .producto__tarifas dt {
   color: var(--s-suave);
-  font-size: 0.875rem;
+  font-size: var(--texto-4);
 }
 
 .producto__tarifas dd {
   margin: 2px 0 0;
-  font-size: 1.125rem;
+  font-size: var(--texto-8);
   font-weight: 600;
 }
 
@@ -141,15 +142,15 @@
   display: flex;
   flex-wrap: wrap;
   gap: 14px;
-  margin-top: 32px;
+  margin-top: var(--espacio-6);
 }
 
 .producto__boton {
   flex: 1;
-  min-width: 150px;
+  min-width: min(100%, 150px);
   padding: 15px 28px;
-  border-radius: 980px;
-  font-size: 1.0625rem;
+  border-radius: var(--radio-pildora);
+  font-size: var(--texto-7);
   font-weight: 600;
   transition:
     background-color 0.25s ease,
@@ -170,11 +171,11 @@
 .producto__boton--lleno {
   border: 1px solid var(--acento);
   background: var(--acento);
-  color: #000000;
+  color: var(--color-sobre-acento);
 }
 
 .producto__boton--lleno:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--acento) 80%, #ffffff);
+  background: color-mix(in srgb, var(--acento) 80%, var(--color-blanco));
 }
 
 .producto__boton--borde {
@@ -184,7 +185,7 @@
 }
 
 .producto__boton--borde:hover:not(:disabled) {
-  border-color: #ffffff;
+  border-color: var(--color-blanco);
 }
 
 /* ---- Lista de destacados ---- */
@@ -192,14 +193,14 @@
 .producto__destacados {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--espacio-3);
   margin-top: 36px;
 }
 
 .producto__destacados li {
   position: relative;
-  padding-left: 32px;
-  line-height: 1.4;
+  padding-left: var(--espacio-6);
+  line-height: var(--interlinea-compacta);
 }
 
 /* Marca de verificación */
@@ -225,6 +226,7 @@
 
 .producto__tabla th,
 .producto__tabla td {
+  overflow-wrap: anywhere;
   padding: 20px 0;
   border-bottom: 1px solid var(--s-borde);
   text-align: left;
@@ -233,20 +235,20 @@
 
 .producto__tabla th {
   width: 38%;
-  padding-right: 24px;
+  padding-right: var(--espacio-5);
   color: var(--s-suave);
-  font-size: 1rem;
+  font-size: var(--texto-6);
   font-weight: 500;
 }
 
 .producto__tabla td {
-  font-size: 1.0625rem;
+  font-size: var(--texto-7);
   font-weight: 500;
 }
 
 /* ---- Pantallas pequeñas ---- */
 
-@media (max-width: 900px) {
+@media (max-width: 56.25em) {
   .producto__grid {
     grid-template-columns: 1fr;
   }
@@ -258,7 +260,7 @@
   }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 35em) {
   .producto__tabla th {
     width: 44%;
   }

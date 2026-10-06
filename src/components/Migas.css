@@ -2,11 +2,11 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 4px 10px;
+  gap: var(--espacio-1) 10px;
   margin: 0;
   padding: 0;
   list-style: none;
-  font-size: 0.875rem;
+  font-size: var(--texto-4);
 }
 
 .migas__item {
@@ -23,8 +23,28 @@
 }
 
 .migas__enlace {
+  position: relative;
   color: var(--s-suave, var(--color-gris));
   transition: color 0.2s ease;
+}
+
+/* Área clicable ampliada (≥ 24 px de alto) sin cambiar el diseño visible */
+.migas__enlace::before {
+  content: '';
+  position: absolute;
+  inset: -4px -2px;
+}
+
+@media (pointer: coarse) {
+  .migas__enlace {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--area-tactil);
+  }
+
+  .migas__enlace::before {
+    display: none;
+  }
 }
 
 .migas__enlace:hover {

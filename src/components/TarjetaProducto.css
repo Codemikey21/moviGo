@@ -14,7 +14,7 @@
   height: 100%;
   overflow: hidden;
   border: 1px solid var(--s-borde, rgba(255, 255, 255, 0.1));
-  border-radius: 28px;
+  border-radius: var(--radio-lg);
   background: var(--s-tarjeta, #151517);
   color: var(--s-texto, var(--color-texto));
   transform: perspective(900px) rotateX(var(--giro-x)) rotateY(var(--giro-y))
@@ -29,7 +29,7 @@
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .tarjeta:hover {
     --elevacion: -8px;
-    box-shadow: 0 28px 60px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--sombra-flotante);
   }
 }
 
@@ -52,7 +52,7 @@
     radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.4), transparent 55%),
     linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.3));
   color: rgba(255, 255, 255, 0.9);
-  transition: background-color 0.45s ease;
+  transition: background-color var(--dur-lenta) ease;
 }
 
 /* Sobre colores claros el ícono se oscurece para que se vea */
@@ -77,10 +77,10 @@
   right: 14px;
   bottom: 14px;
   padding: 3px 10px;
-  border-radius: 980px;
+  border-radius: var(--radio-pildora);
   background: rgba(0, 0, 0, 0.55);
-  color: #ffffff;
-  font-size: 0.6875rem;
+  color: var(--color-blanco);
+  font-size: var(--texto-1);
   font-weight: 500;
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
@@ -93,21 +93,21 @@
   flex: 1;
   flex-direction: column;
   gap: 6px;
-  padding: 20px 24px 26px;
+  padding: 20px var(--espacio-5) 26px;
 }
 
 /* Los puntos de color quedan por encima del enlace extendido */
 .tarjeta__cuerpo .selector-color {
   position: relative;
   z-index: 2;
-  margin-bottom: 12px;
+  margin-bottom: var(--espacio-3);
   padding-left: 5px;
 }
 
 .tarjeta__nombre {
   font-size: 1.4rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--tracking-subtitulo);
   line-height: 1.15;
 }
 
@@ -121,8 +121,8 @@
 
 .tarjeta__tagline {
   color: var(--s-suave, var(--color-gris));
-  font-size: 0.9375rem;
-  line-height: 1.4;
+  font-size: var(--texto-5);
+  line-height: var(--interlinea-compacta);
 }
 
 .tarjeta__precios {
@@ -130,17 +130,17 @@
   flex-direction: column;
   gap: 2px;
   margin-top: auto;
-  padding-top: 16px;
+  padding-top: var(--espacio-4);
 }
 
 .tarjeta__precio {
-  font-size: 1.125rem;
+  font-size: var(--texto-8);
   font-weight: 600;
 }
 
 .tarjeta__alquiler {
   color: var(--s-suave, var(--color-gris));
-  font-size: 0.875rem;
+  font-size: var(--texto-4);
 }
 
 /* ---- Cuadrícula que contiene las tarjetas (se usa en varias páginas) ---- */
@@ -148,5 +148,5 @@
 .grilla-productos {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
-  gap: 24px;
+  gap: var(--espacio-5);
 }

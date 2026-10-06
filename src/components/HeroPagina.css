@@ -3,9 +3,10 @@
   display: flex;
   align-items: center;
   min-height: min(78vh, 680px);
+  min-height: min(78svh, 680px);
   padding: calc(var(--altura-navbar) + 56px) 0 72px;
   overflow: hidden;
-  background: #000000;
+  background: var(--color-fondo);
   color: var(--color-texto);
 }
 
@@ -24,7 +25,7 @@
       color-mix(in srgb, var(--acento) 24%, transparent),
       transparent 70%
     ),
-    #000000;
+    var(--color-fondo);
 }
 
 /* Ícono gigante y tenue a la derecha */
@@ -43,15 +44,15 @@
 .hero-pagina__interior {
   position: relative;
   width: 100%;
-  max-width: 1240px;
+  max-width: var(--contenedor);
   margin: 0 auto;
-  padding: 0 clamp(20px, 4vw, 40px);
+  padding: 0 var(--gutter);
 }
 
 .hero-pagina__eyebrow {
   margin-bottom: 18px;
   color: var(--acento);
-  font-size: 0.9375rem;
+  font-size: var(--texto-5);
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -59,11 +60,11 @@
 
 .hero-pagina__titulo {
   max-width: 14ch;
-  font-size: clamp(2.8rem, 8vw, 6.5rem);
+  font-size: clamp(min(2.8rem, 12vw), 8vw, 6.5rem);
   font-weight: 700;
   line-height: 0.98;
-  letter-spacing: -0.045em;
-  background: linear-gradient(180deg, #ffffff 30%, #a1a1a6);
+  letter-spacing: var(--tracking-display);
+  background: linear-gradient(180deg, var(--color-blanco) 30%, var(--color-gris-medio));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -72,17 +73,17 @@
 
 .hero-pagina__descripcion {
   max-width: 36rem;
-  margin-top: 24px;
-  color: #a1a1a6;
+  margin-top: var(--espacio-5);
+  color: var(--color-gris-medio);
   font-size: clamp(1.0625rem, 1.8vw, 1.4rem);
-  line-height: 1.45;
+  line-height: var(--interlinea-cuerpo);
 }
 
 .hero-pagina__extra {
   margin-top: 36px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .hero-pagina {
     min-height: 0;
     padding-bottom: 56px;
