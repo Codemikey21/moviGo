@@ -1,0 +1,151 @@
+/* El color de fondo de la sección sigue a la categoría elegida: al registrar la
+   variable como color, el navegador la anima en lugar de cambiarla de golpe. */
+@property --acento-fondo {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #2997ff;
+}
+
+.seccion.explora {
+  --acento-fondo: #2997ff;
+
+  padding-bottom: var(--espacio-8);
+  background:
+    radial-gradient(
+      110% 44% at 50% 0%,
+      color-mix(in srgb, var(--acento-fondo) 30%, #000) 0%,
+      transparent 72%
+    ),
+    radial-gradient(
+      70% 36% at 50% 100%,
+      color-mix(in srgb, var(--acento-fondo) 14%, #000) 0%,
+      transparent 80%
+    ),
+    var(--s-fondo);
+  transition: --acento-fondo 0.7s var(--ease-estandar);
+}
+
+/* Contenido ancho: aprovecha las pantallas grandes en lugar de quedar en 1240 px */
+.explora .seccion__interior {
+  max-width: var(--contenedor-ancho);
+}
+
+.explora .seccion__eyebrow {
+  font-size: var(--texto-5);
+}
+
+.explora .seccion__cabecera {
+  margin-bottom: clamp(24px, 3vw, 40px);
+}
+
+/* ==========================================================================
+   Panel de productos de la categoría elegida
+   ========================================================================== */
+
+.panel {
+  margin-top: var(--espacio-fijo-10);
+}
+
+/* En pantallas anchas los modelos caben en una fila y la zona reserva la altura del
+   panel más alto que se haya mostrado (--reserva la fija el script y solo crece):
+   al cambiar de categoría el resto de la página no se mueve. En pantallas angostas
+   los modelos van apilados y la altura sigue al contenido. */
+@media (min-width: 70em) {
+  .panel__zona {
+    min-height: var(--reserva, 0);
+  }
+}
+
+.panel__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--espacio-2) var(--espacio-5);
+  margin-bottom: var(--espacio-5);
+  animation: panel-entra var(--dur-lenta) var(--ease-entrada) both;
+}
+
+.panel__titulo {
+  font-size: clamp(1.625rem, 1.2rem + 1.4vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: var(--tracking-titulo);
+}
+
+.panel__conteo {
+  color: var(--color-gris-medio);
+  font-weight: 500;
+}
+
+.panel__enlace {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--area-tactil);
+  color: color-mix(in srgb, var(--acento) 65%, var(--color-blanco));
+  font-size: var(--texto-7);
+  font-weight: 500;
+}
+
+.panel__enlace:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+@keyframes panel-entra {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Cuadrícula de modelos: se adapta al ancho y, en pantallas anchas, son 4 columnas
+   fijas para que las categorías de hasta 4 modelos queden siempre en una sola fila */
+.panel__rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  gap: var(--espacio-5);
+}
+
+@media (min-width: 70em) {
+  .panel__rejilla {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Entrada escalonada: Revelar escalona de 0 a 2; la cuarta tarjeta entra después */
+.panel__rejilla > .tarjeta-envoltorio:nth-child(4) {
+  transition-delay: calc(3 * 90ms);
+}
+
+/* Texto de las tarjetas de producto: nada baja de 15 px y los nombres van más grandes */
+.explora .tarjeta__nombre {
+  font-size: clamp(1.5rem, 1.2rem + 0.8vw, 1.875rem);
+}
+
+.explora .tarjeta__dato,
+.explora .tarjeta__precio-etiqueta,
+.explora .tarjeta__confirmar,
+.explora .tarjeta__alquiler,
+.explora .tarjeta__unidad {
+  font-size: var(--texto-5);
+}
+
+.explora .tarjeta__precio {
+  font-size: 1.375rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seccion.explora {
+    transition: none;
+  }
+
+  .panel__cabecera {
+    animation: none;
+  }
+}

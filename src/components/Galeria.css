@@ -8,7 +8,8 @@
   gap: var(--espacio-fijo-14);
 }
 
-/* Marco 4:3 con tamaño fijo: la foto no cambia su altura al cargar (sin saltos). */
+/* Marco con proporción fija (la fija el componente en línea, según la primera
+   vista; 4:3 si no hay foto): la foto no cambia su altura al cargar (sin saltos). */
 .galeria__marco {
   position: relative;
   aspect-ratio: 4 / 3;
@@ -18,6 +19,12 @@
   background-image:
     radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.45), transparent 55%),
     linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.35));
+}
+
+/* Con foto: fondo neutro. Se ve donde la foto no llena el marco (ver lib/imagen.js). */
+.galeria__marco--foto {
+  background-color: var(--color-fondo-foto);
+  background-image: none;
 }
 
 /* El anillo de foco va en el marco: el botón de dentro queda recortado por el marco */
@@ -52,7 +59,16 @@
 .galeria__imagen {
   width: 100%;
   height: 100%;
+}
+
+/* La foto llena el marco solo si su proporción difiere menos del 10 %; si no,
+   se ve completa. La decisión la toma el componente. */
+.galeria__imagen--cubrir {
   object-fit: cover;
+}
+
+.galeria__imagen--contener {
+  object-fit: contain;
 }
 
 /* Ícono decorativo: indica que la foto se puede ampliar */

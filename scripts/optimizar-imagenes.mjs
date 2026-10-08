@@ -9,14 +9,24 @@
  * Qué hace:
  *  1. Lee public/productos-origen/ (no se versiona; ver .gitignore). Los archivos
  *     deben llamarse <categoria>-<slug>-<idVista>.<ext>, por ejemplo
- *     patinetas-niu-kqi3-pro-lateral.jpg. Valida que la categoría, el producto
- *     y la vista existan en el catálogo y avisa de los que no.
- *  2. Genera WebP de 4:3 (1600 × 1200) en public/productos/ con el nombre
- *     <categoria>-<slug>-<idVista>.webp, bajando la calidad hasta que cada
- *     archivo pese 200 KB o menos.
+ *     patinetas-xiaomi-electric-scooter-4-ultra-lateral.png. Valida que la
+ *     categoría, el producto y la vista existan en el catálogo y avisa de los
+ *     que no. Las subcarpetas se ignoran.
+ *  2. Genera WebP en public/productos/ SIN recortar: conserva la proporción de
+ *     la foto original y no la amplía.
+ *        <categoria>-<slug>-<idVista>.webp      hasta 1600 px de ancho (≤ 200 KB)
+ *        <categoria>-<slug>-<idVista>-sm.webp   800 px de ancho (≤ 100 KB), solo si
+ *                                               la foto es más ancha que 800 px
+ *     La calidad baja por pasos hasta cumplir el peso máximo.
  *  3. Escribe src/data/medios.generado.json con las vistas y los videos que
- *     realmente existen en public/productos/. El catálogo lo lee para armar
- *     `vistas` y `video`, así que no hay que editar los productos a mano.
+ *     realmente existen en public/productos/: ancho y alto de cada vista, su
+ *     copia pequeña y los créditos (marca y URL de la fuente). El catálogo lo
+ *     lee para armar `vistas` y `video`.
+ *
+ * Créditos: se toman de fuentes.csv (columnas archivo, url_fuente y
+ * titular_o_marca), que se busca en public/productos-origen/ y en
+ * public/productos-origen/alternativas/. Si el CSV no está, se conservan los
+ * créditos que ya tenía el manifiesto.
  *
  * Videos: public/productos/video/<slug>.mp4 (hasta 5 MB) más
  * <slug>-poster.webp. Este script no los convierte: solo los valida y los
@@ -34,15 +44,84 @@ const ORIGEN = join(RAIZ, 'public', 'productos-origen')
 const DESTINO = join(RAIZ, 'public', 'productos')
 const VIDEOS = join(DESTINO, 'video')
 const MANIFIESTO = join(RAIZ, 'src', 'data', 'medios.generado.json')
+const CSV_FUENTES = [join(ORIGEN, 'fuentes.csv'), join(ORIGEN, 'alternativas', 'fuentes.csv')]
 
 const EXTENSIONES = ['.jpg', '.jpeg', '.png', '.webp', '.tif', '.tiff', '.avif']
-const LIMITE_BYTES = 200 * 1024
+const LIMITE_GRANDE = 200 * 1024
+const LIMITE_PEQUENO = 100 * 1024
 const LIMITE_VIDEO_BYTES = 5 * 1024 * 1024
 const CALIDADES = [88, 82, 76, 70, 64, 58, 52, 46, 40, 34]
-const PROPORCION = IMAGEN.ancho / IMAGEN.alto
-const TOLERANCIA_PROPORCION = 0.12
+const SUFIJO_PEQUENO = '-sm'
 
 const kb = (bytes) => `${(bytes / 1024).toFixed(0)} KB`
+
+// ---------------------------------------------------------------------------
+// CSV (con comillas, comas y saltos de línea dentro de los campos)
+// ---------------------------------------------------------------------------
+
+function leerCsv(ruta) {
+  const texto = readFileSync(ruta, 'utf8').replace(/^\uFEFF/, '')
+  const filas = []
+  let fila = []
+  let campo = ''
+  let entreComillas = false
+
+  for (let i = 0; i < texto.length; i += 1) {
+    const c = texto[i]
+
+    if (entreComillas) {
+      if (c === '"' && texto[i + 1] === '"') {
+        campo += '"'
+        i += 1
+      } else if (c === '"') {
+        entreComillas = false
+      } else {
+        campo += c
+      }
+    } else if (c === '"') {
+      entreComillas = true
+    } else if (c === ',') {
+      fila.push(campo)
+      campo = ''
+    } else if (c === '\n' || c === '\r') {
+      if (c === '\r' && texto[i + 1] === '\n') i += 1
+      fila.push(campo)
+      filas.push(fila)
+      fila = []
+      campo = ''
+    } else {
+      campo += c
+    }
+  }
+  if (campo !== '' || fila.length > 0) {
+    fila.push(campo)
+    filas.push(fila)
+  }
+
+  const [encabezado, ...datos] = filas
+  return datos
+    .filter((f) => f.some((valor) => valor !== ''))
+    .map((f) => Object.fromEntries(encabezado.map((nombre, i) => [nombre, f[i] ?? ''])))
+}
+
+/** Mapa nombre-sin-extensión → { marca, fuente } con los créditos de los CSV. */
+function leerCreditos() {
+  const creditos = new Map()
+
+  for (const ruta of CSV_FUENTES) {
+    if (!existsSync(ruta)) continue
+
+    for (const fila of leerCsv(ruta)) {
+      if (!fila.archivo) continue
+      creditos.set(basename(fila.archivo, extname(fila.archivo)), {
+        marca: fila.titular_o_marca || null,
+        fuente: fila.url_fuente || null,
+      })
+    }
+  }
+
+  return creditos
+}
 
 // ---------------------------------------------------------------------------
 // Nombres: <categoria>-<slug>-<idVista>
@@ -89,7 +168,25 @@ function interpretar(base) {
 // Imágenes
 // ---------------------------------------------------------------------------
 
-/** Convierte una foto a WebP 4:3 y baja la calidad hasta pesar <= 200 KB. */
+/** Codifica a WebP con el ancho indicado y baja la calidad hasta cumplir el límite. */
+async function codificar(archivo, ancho, limite) {
+  let ultima = null
+
+  for (const calidad of CALIDADES) {
+    const { data, info } = await sharp(archivo)
+      .rotate()
+      .resize({ width: ancho, withoutEnlargement: true })
+      .webp({ quality: calidad, effort: 5 })
+      .toBuffer({ resolveWithObject: true })
+
+    ultima = { buffer: data, ancho: info.width, alto: info.height, calidad }
+    if (data.length <= limite) return { ...ultima, cumple: true }
+  }
+
+  return { ...ultima, cumple: false }
+}
+
+/** Convierte una foto: copia grande y, si hace falta, copia pequeña. Sin recortar. */
 async function convertir(archivo) {
   const avisos = []
   const meta = await sharp(archivo).metadata()
@@ -99,27 +196,24 @@ async function convertir(archivo) {
   const ancho = girada ? meta.height : meta.width
   const alto = girada ? meta.width : meta.height
 
-  if (ancho < IMAGEN.ancho || alto < IMAGEN.alto) {
-    avisos.push(`es más pequeña (${ancho}×${alto}) que ${IMAGEN.ancho}×${IMAGEN.alto}: se amplía y puede verse borrosa`)
-  }
-  if (Math.abs(ancho / alto / PROPORCION - 1) > TOLERANCIA_PROPORCION) {
-    avisos.push(`proporción ${(ancho / alto).toFixed(2)} (se espera 4:3): se recorta al centro`)
+  if (ancho < IMAGEN.anchoMaximo) {
+    avisos.push(`mide ${ancho}×${alto}: es más angosta que ${IMAGEN.anchoMaximo} px y se conserva sin ampliar`)
   }
 
-  let ultima = null
-  for (const calidad of CALIDADES) {
-    const buffer = await sharp(archivo)
-      .rotate()
-      .resize(IMAGEN.ancho, IMAGEN.alto, { fit: 'cover', position: 'centre' })
-      .webp({ quality: calidad, effort: 5 })
-      .toBuffer()
-
-    ultima = { buffer, calidad }
-    if (buffer.length <= LIMITE_BYTES) return { ...ultima, avisos }
+  const grande = await codificar(archivo, IMAGEN.anchoMaximo, LIMITE_GRANDE)
+  if (!grande.cumple) {
+    avisos.push(`pesa ${kb(grande.buffer.length)} incluso con calidad ${grande.calidad} (límite ${kb(LIMITE_GRANDE)})`)
   }
 
-  avisos.push(`pesa ${kb(ultima.buffer.length)} incluso con calidad ${ultima.calidad} (límite ${kb(LIMITE_BYTES)})`)
-  return { ...ultima, avisos }
+  let pequena = null
+  if (grande.ancho > IMAGEN.anchoPequeno) {
+    pequena = await codificar(archivo, IMAGEN.anchoPequeno, LIMITE_PEQUENO)
+    if (!pequena.cumple) {
+      avisos.push(`la copia pequeña pesa ${kb(pequena.buffer.length)} (límite ${kb(LIMITE_PEQUENO)})`)
+    }
+  }
+
+  return { grande, pequena, avisos }
 }
 
 async function procesarOrigen() {
@@ -133,10 +227,12 @@ async function procesarOrigen() {
 
   const archivos = readdirSync(ORIGEN)
     .filter((nombre) => statSync(join(ORIGEN, nombre)).isFile())
+    // Los .csv y .md de la carpeta son documentación (fuentes, videos, informes), no fotos.
+    .filter((nombre) => !/\.(csv|md)$/i.test(nombre))
     .sort()
 
   if (archivos.length === 0) {
-    console.log('public/productos-origen/ está vacía. Solo se actualiza el manifiesto.\n')
+    console.log('public/productos-origen/ no tiene fotos. Solo se actualiza el manifiesto.\n')
     return resultado
   }
 
@@ -156,12 +252,13 @@ async function procesarOrigen() {
     }
 
     const { producto, vista } = interpretado
-    const salida = `${producto.categoria}-${producto.slug}-${vista.id}.webp`
+    const base = `${producto.categoria}-${producto.slug}-${vista.id}`
 
     try {
-      const { buffer, calidad, avisos } = await convertir(join(ORIGEN, nombre))
-      writeFileSync(join(DESTINO, salida), buffer)
-      resultado.procesadas.push({ nombre, salida, calidad, bytes: buffer.length, avisos })
+      const { grande, pequena, avisos } = await convertir(join(ORIGEN, nombre))
+      writeFileSync(join(DESTINO, `${base}.webp`), grande.buffer)
+      if (pequena) writeFileSync(join(DESTINO, `${base}${SUFIJO_PEQUENO}.webp`), pequena.buffer)
+      resultado.procesadas.push({ nombre, base, grande, pequena, avisos })
     } catch (error) {
       resultado.fallidas.push({ nombre, motivo: error.message })
     }
@@ -174,24 +271,59 @@ async function procesarOrigen() {
 // Manifiesto
 // ---------------------------------------------------------------------------
 
+function leerManifiestoPrevio() {
+  try {
+    return JSON.parse(readFileSync(MANIFIESTO, 'utf8'))
+  } catch {
+    return { vistas: {}, videos: {} }
+  }
+}
+
 /** Revisa lo que hay en public/productos/ y arma el manifiesto. */
-function armarManifiesto() {
+async function armarManifiesto() {
   const avisos = []
-  const presentes = new Map() // "categoria/slug" → Set de ids de vista
+  const previo = leerManifiestoPrevio()
+  const creditos = leerCreditos()
+  const presentes = new Map() // "categoria/slug" → Map(idVista → { ancho, alto, pequeno })
 
   if (existsSync(DESTINO)) {
-    for (const nombre of readdirSync(DESTINO).sort()) {
-      if (extname(nombre).toLowerCase() !== '.webp') continue
+    const nombres = readdirSync(DESTINO).filter((n) => extname(n).toLowerCase() === '.webp').sort()
+    const pequenas = new Set(nombres.filter((n) => n.endsWith(`${SUFIJO_PEQUENO}.webp`)))
 
-      const interpretado = interpretar(basename(nombre, '.webp'))
+    for (const nombre of nombres) {
+      if (pequenas.has(nombre)) continue
+
+      const base = basename(nombre, '.webp')
+      const interpretado = interpretar(base)
       if (interpretado.error) {
         avisos.push(`public/productos/${nombre}: ${interpretado.error} (no se registra)`)
         continue
       }
 
-      const clave = `${interpretado.producto.categoria}/${interpretado.producto.slug}`
-      if (!presentes.has(clave)) presentes.set(clave, new Set())
-      presentes.get(clave).add(interpretado.vista.id)
+      const { producto, vista } = interpretado
+      const clave = `${producto.categoria}/${producto.slug}`
+      const meta = await sharp(join(DESTINO, nombre)).metadata()
+      const datos = { ancho: meta.width, alto: meta.height }
+
+      const archivoPequeno = `${base}${SUFIJO_PEQUENO}.webp`
+      if (pequenas.has(archivoPequeno)) {
+        const metaPequena = await sharp(join(DESTINO, archivoPequeno)).metadata()
+        datos.pequeno = { ancho: metaPequena.width, alto: metaPequena.height }
+      }
+
+      const credito = creditos.get(base) ?? previo.vistas?.[clave]?.[vista.id] ?? {}
+      if (credito.marca) datos.marca = credito.marca
+      if (credito.fuente) datos.fuente = credito.fuente
+      if (!datos.marca || !datos.fuente) avisos.push(`${nombre}: sin créditos (marca o URL de la fuente); agrégala a fuentes.csv`)
+
+      if (!presentes.has(clave)) presentes.set(clave, new Map())
+      presentes.get(clave).set(vista.id, datos)
+    }
+
+    for (const nombre of pequenas) {
+      if (!nombres.includes(nombre.replace(`${SUFIJO_PEQUENO}.webp`, '.webp'))) {
+        avisos.push(`public/productos/${nombre}: no tiene su copia grande (no se registra)`)
+      }
     }
   }
 
@@ -202,10 +334,12 @@ function armarManifiesto() {
     const clave = `${producto.categoria}/${producto.slug}`
 
     // En el orden que define la categoría, no en el del sistema de archivos.
-    const ids = (VISTAS_POR_CATEGORIA[producto.categoria] ?? [])
-      .map((vista) => vista.id)
-      .filter((id) => presentes.get(clave)?.has(id))
-    if (ids.length > 0) vistas[clave] = ids
+    const ordenadas = (VISTAS_POR_CATEGORIA[producto.categoria] ?? []).filter((vista) =>
+      presentes.get(clave)?.has(vista.id),
+    )
+    if (ordenadas.length > 0) {
+      vistas[clave] = Object.fromEntries(ordenadas.map((vista) => [vista.id, presentes.get(clave).get(vista.id)]))
+    }
 
     const mp4 = join(VIDEOS, `${producto.slug}.mp4`)
     const poster = join(VIDEOS, `${producto.slug}-poster.webp`)
@@ -268,7 +402,10 @@ async function principal() {
   if (resultado.procesadas.length > 0) {
     console.log('Imágenes procesadas:')
     for (const p of resultado.procesadas) {
-      console.log(`  ✓ ${p.nombre} → ${p.salida}  (calidad ${p.calidad}, ${kb(p.bytes)})`)
+      const { grande, pequena } = p
+      const medidas = `${grande.ancho}×${grande.alto}, calidad ${grande.calidad}, ${kb(grande.buffer.length)}`
+      const copia = pequena ? ` + pequeña ${pequena.ancho}×${pequena.alto}, ${kb(pequena.buffer.length)}` : ' (sin copia pequeña)'
+      console.log(`  ✓ ${p.nombre} → ${p.base}.webp  (${medidas}${copia})`)
       for (const aviso of p.avisos) console.log(`      ! ${aviso}`)
     }
     console.log('')
@@ -286,7 +423,7 @@ async function principal() {
     console.log('')
   }
 
-  const { manifiesto, avisos } = armarManifiesto()
+  const { manifiesto, avisos } = await armarManifiesto()
   if (avisos.length > 0) {
     console.log('Avisos del manifiesto:')
     for (const aviso of avisos) console.log(`  ! ${aviso}`)
@@ -296,8 +433,11 @@ async function principal() {
   const cambio = guardarManifiesto(manifiesto)
 
   const productosConFotos = Object.keys(manifiesto.vistas).length
-  const totalVistas = Object.values(manifiesto.vistas).reduce((suma, ids) => suma + ids.length, 0)
-  const bytes = resultado.procesadas.reduce((suma, p) => suma + p.bytes, 0)
+  const totalVistas = Object.values(manifiesto.vistas).reduce((suma, v) => suma + Object.keys(v).length, 0)
+  const bytes = resultado.procesadas.reduce(
+    (suma, p) => suma + p.grande.buffer.length + (p.pequena?.buffer.length ?? 0),
+    0,
+  )
 
   console.log('Resumen')
   console.log(`  Procesadas: ${resultado.procesadas.length}${bytes ? ` (${kb(bytes)} en total)` : ''}`)

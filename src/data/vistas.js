@@ -10,9 +10,14 @@
  * `etiqueta` es el texto visible del selector de vistas.
  */
 
-// Tamaño de todas las imágenes de producto (proporción 4:3). Se usa para los
-// atributos width y height, que evitan saltos de diseño mientras carga la foto.
-export const IMAGEN = { ancho: 1600, alto: 1200 }
+// Tamaños de las imágenes de producto. Las fotos NO se recortan: conservan su
+// proporción original y solo se reducen si son más anchas que `anchoMaximo`
+// (nunca se amplían). Si la foto es más ancha que `anchoPequeno`, también se
+// genera una copia pequeña con el sufijo "-sm" (la usan las tarjetas).
+export const IMAGEN = {
+  anchoMaximo: 1600,
+  anchoPequeno: 800,
+}
 
 export const VISTAS_POR_CATEGORIA = {
   carros: [

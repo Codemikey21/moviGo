@@ -95,7 +95,9 @@ function VistaCategoria({ categoria }) {
   const productos = useMemo(() => productosDeCategoria(categoria.slug), [categoria.slug])
   const hayAlquiler = productos.some((producto) => producto.disponibleAlquiler)
   const alquilerDesde = alquilerDesdePorDia(productos)
-  const precioMinimo = Math.min(...productos.map((p) => precioDe(p, 'comprar')))
+  // El precio más bajo solo cuenta los productos que tienen precio de referencia.
+  const preciosCompra = productos.map((p) => precioDe(p, 'comprar')).filter((valor) => valor !== null)
+  const precioMinimo = preciosCompra.length ? Math.min(...preciosCompra) : null
 
   // Si ningún producto de la categoría se alquila, siempre se muestra "comprar".
   const modoMostrado = modo === 'alquilar' && hayAlquiler ? 'alquilar' : 'comprar'
@@ -148,8 +150,10 @@ function VistaCategoria({ categoria }) {
         categoria={categoria}
       >
         <p className="categoria__datos">
-          {productos.length} {productos.length === 1 ? 'modelo' : 'modelos'} · Precio de
-          referencia desde {formatearPrecio(precioMinimo)}
+          {productos.length} {productos.length === 1 ? 'modelo' : 'modelos'}
+          {precioMinimo !== null
+            ? ` · Precio de referencia desde ${formatearPrecio(precioMinimo)}`
+            : ' · Precio de referencia por confirmar'}
           {alquilerDesde &&
             ` · Tarifa de ejemplo de alquiler desde ${formatearPrecio(alquilerDesde)} / día`}
         </p>

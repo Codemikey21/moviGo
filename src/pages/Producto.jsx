@@ -16,8 +16,10 @@ import {
   buscarProducto,
   formatearEspecificacion,
   formatearPrecio,
+  formatearPrecioReferencia,
   productosDeCategoria,
   rutaCategoria,
+  TEXTO_POR_CONFIRMAR,
 } from '../lib/formato'
 import { useEntradaHero } from '../lib/useEntradaHero'
 import { useModo } from '../lib/useModo'
@@ -64,7 +66,7 @@ function VistaProducto({ categoria, producto }) {
 
   // Si el producto no se alquila, la página siempre muestra el modo "comprar"
   // aunque la URL traiga ?modo=alquilar.
-  const modoMostrado = modo === 'alquilar' && alquiler ? 'alquilar' : 'comprar'
+  const modoMostrado = modo === 'alquilar' && producto.disponibleAlquiler ? 'alquilar' : 'comprar'
 
   const claves = producto.especificacionesClave
   const resto = producto.especificaciones.filter((especificacion) => !especificacion.clave)
@@ -124,7 +126,16 @@ function VistaProducto({ categoria, producto }) {
                     animarOferta ? 'producto__oferta--cambio' : ''
                   }`}
                 >
-                  {modoMostrado === 'alquilar' ? (
+                  {modoMostrado === 'alquilar' && !alquiler && (
+                    <>
+                      <p className="producto__etiqueta">{ETIQUETA_TARIFA}</p>
+                      <p className="producto__precio producto__precio--pendiente">
+                        {TEXTO_POR_CONFIRMAR}
+                      </p>
+                    </>
+                  )}
+
+                  {modoMostrado === 'alquilar' && alquiler && (
                     <>
                       <p className="producto__etiqueta">{ETIQUETA_TARIFA}</p>
                       <dl className="producto__tarifas">
@@ -142,11 +153,17 @@ function VistaProducto({ categoria, producto }) {
                         </div>
                       </dl>
                     </>
-                  ) : (
+                  )}
+
+                  {modoMostrado === 'comprar' && (
                     <>
                       <p className="producto__etiqueta">{ETIQUETA_PRECIO}</p>
-                      <p className="producto__precio">
-                        {formatearPrecio(producto.precioCompra)}
+                      <p
+                        className={`producto__precio ${
+                          producto.precioCompra === null ? 'producto__precio--pendiente' : ''
+                        }`}
+                      >
+                        {formatearPrecioReferencia(producto.precioCompra)}
                       </p>
                     </>
                   )}
@@ -156,8 +173,14 @@ function VistaProducto({ categoria, producto }) {
               {/* Lo que falta por confirmar, siempre a la vista */}
               <div className="producto__confirmar" data-entrada>
                 {!producto.precioVerificado && <p>Precio por confirmar.</p>}
-                {modoMostrado === 'alquilar' && (
+                {modoMostrado === 'alquilar' && alquiler && (
                   <p>Las tarifas son valores de ejemplo: no son tarifas reales de MoviGo.</p>
+                )}
+                {modoMostrado === 'alquilar' && !alquiler && (
+                  <p>
+                    La tarifa de alquiler depende del precio de referencia, que falta
+                    confirmar.
+                  </p>
                 )}
                 <p>Disponibilidad: {producto.disponibilidad.toLowerCase()}.</p>
                 <p>La compra y la reserva en línea todavía no están disponibles.</p>
@@ -212,6 +235,9 @@ function VistaProducto({ categoria, producto }) {
                 {formatearEspecificacion(especificacion)}
               </span>
               <span className="producto__clave-etiqueta">{especificacion.etiqueta}</span>
+              {especificacion.porConfirmar && (
+                <small className="producto__dato-confirmar">{TEXTO_POR_CONFIRMAR}</small>
+              )}
               {especificacion.nota && (
                 <small className="producto__nota">{especificacion.nota}</small>
               )}
@@ -231,6 +257,9 @@ function VistaProducto({ categoria, producto }) {
                   <th scope="row">{especificacion.etiqueta}</th>
                   <td>
                     {formatearEspecificacion(especificacion)}
+                    {especificacion.porConfirmar && (
+                      <small className="producto__dato-confirmar">{TEXTO_POR_CONFIRMAR}</small>
+                    )}
                     {especificacion.nota && (
                       <small className="producto__nota">{especificacion.nota}</small>
                     )}

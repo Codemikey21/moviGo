@@ -3,30 +3,43 @@ import { Link } from 'react-router-dom'
 import IconoCategoria from './IconoCategoria'
 import Revelar from './Revelar'
 import SelectorColor from './SelectorColor'
-import { IMAGEN } from '../data/vistas'
 import { TONO_NEUTRO, esColorClaro } from '../lib/color'
 import { useRevelarImagen } from '../lib/efectosImagen'
 import {
   ETIQUETA_PRECIO,
   ETIQUETA_TARIFA,
   MOTIVO_SIN_ALQUILER,
+  TEXTO_POR_CONFIRMAR,
   formatearEspecificacion,
   formatearPrecio,
+  formatearPrecioReferencia,
   rutaProducto,
 } from '../lib/formato'
+import { ajusteDeImagen, aspectRatioCss, proporcionDe } from '../lib/imagen'
 import './TarjetaProducto.css'
 
 // Inclinación máxima de la tarjeta al seguir el mouse (grados).
 const INCLINACION_MAXIMA = 6
+
+// Proporción fija del contenedor de la foto (4:3): todas las tarjetas de una fila
+// quedan alineadas y la página no se mueve mientras cargan las fotos. La foto
+// conserva su proporción real: si difiere menos del 10 % del contenedor lo llena
+// y, si no, se ve completa sobre un fondo neutro.
+const PROPORCION_VISUAL = 4 / 3
+
+// Ancho aproximado que ocupa la foto: una tarjeta (260–320 px) o toda la pantalla.
+const TAMANOS = '(min-width: 40em) 320px, 100vw'
 
 /**
  * Tarjeta de producto para las cuadrículas de la tienda.
  * - Con el modo "comprar" muestra el precio de referencia; con "alquilar", la
  *   tarifa de ejemplo (o, si el producto no se alquila, lo explica con texto).
  *   El modo viene de la página (?modo=...) y el enlace de la tarjeta lo conserva.
- * - Muestra las tres especificaciones clave y avisa de lo que está por confirmar.
- * - Si hay foto, la primera vista se acerca suavemente al pasar el cursor o el
- *   foco y se revela al entrar en pantalla; sin foto se ve el ícono de la categoría.
+ * - Muestra las tres especificaciones clave y avisa de lo que está por confirmar
+ *   (precio, tarifa, datos de la ficha o una cifra concreta).
+ * - Si hay foto, se ve la primera vista (copia pequeña), se acerca suavemente al
+ *   pasar el cursor o el foco y se revela al entrar en pantalla; sin foto se ve
+ *   el ícono de la categoría.
  * - Al pasar el mouse la tarjeta se eleva y se inclina siguiendo el cursor.
  * Toda la tarjeta es clicable (enlace extendido sobre el nombre).
  */
@@ -37,9 +50,14 @@ function TarjetaProducto({ producto, categoria, indice = 0, modo = 'comprar' }) 
   const [vista, setVista] = useState(null)
 
   const imagen = producto.vistas[0] ?? null
+  const ajuste = imagen ? ajusteDeImagen(proporcionDe(imagen), PROPORCION_VISUAL) : null
   const tono = producto.colores[vista ?? elegido]?.hex ?? TONO_NEUTRO
   const alquiler = producto.tarifasAlquiler
-  const porConfirmar = !producto.precioVerificado && (
+
+  // El precio puede no tener una fuente colombiana verificada ("por confirmar").
+  const precioPendiente = producto.precioCompra === null
+  const precioSinVerificar = !precioPendiente && !producto.precioVerificado
+  const marcaPrecio = precioSinVerificar && (
     <span className="tarjeta__confirmar"> · por confirmar</span>
   )
 
@@ -74,18 +92,25 @@ function TarjetaProducto({ producto, categoria, indice = 0, modo = 'comprar' }) 
         onPointerLeave={alSalirPuntero}
       >
         <div
-          className={`tarjeta__visual ${
+          className={`tarjeta__visual ${imagen ? 'tarjeta__visual--foto' : ''} ${
             !imagen && esColorClaro(tono) ? 'tarjeta__visual--claro' : ''
           }`}
+          style={{ aspectRatio: aspectRatioCss(PROPORCION_VISUAL) }}
         >
           {imagen ? (
             <img
               ref={imagenRef}
-              className="tarjeta__imagen"
-              src={imagen.imagen}
+              className={`tarjeta__imagen tarjeta__imagen--${ajuste}`}
+              src={imagen.imagenPequena}
+              srcSet={
+                imagen.imagenPequena === imagen.imagen
+                  ? undefined
+                  : `${imagen.imagenPequena} ${imagen.anchoPequeno}w, ${imagen.imagen} ${imagen.ancho}w`
+              }
+              sizes={TAMANOS}
               alt={imagen.alt}
-              width={IMAGEN.ancho}
-              height={IMAGEN.alto}
+              width={imagen.anchoPequeno}
+              height={imagen.altoPequeno}
               loading="lazy"
               decoding="async"
             />
@@ -120,7 +145,14 @@ function TarjetaProducto({ producto, categoria, indice = 0, modo = 'comprar' }) 
             {producto.especificacionesClave.map((especificacion) => (
               <div key={especificacion.etiqueta} className="tarjeta__dato">
                 <dt>{especificacion.etiqueta}</dt>
-                <dd>{formatearEspecificacion(especificacion)}</dd>
+                <dd>
+                  {formatearEspecificacion(especificacion)}
+                  {especificacion.porConfirmar && (
+                    <span className="tarjeta__confirmar tarjeta__confirmar--dato">
+                      {TEXTO_POR_CONFIRMAR}
+                    </span>
+                  )}
+                </dd>
               </div>
             ))}
           </dl>
@@ -134,7 +166,7 @@ function TarjetaProducto({ producto, categoria, indice = 0, modo = 'comprar' }) 
               <>
                 <p className="tarjeta__precio-etiqueta">
                   {ETIQUETA_TARIFA}
-                  {porConfirmar}
+                  {marcaPrecio}
                 </p>
                 <p className="tarjeta__precio">
                   {formatearPrecio(alquiler.dia)}{' '}
@@ -147,10 +179,22 @@ function TarjetaProducto({ producto, categoria, indice = 0, modo = 'comprar' }) 
               </>
             )}
 
-            {modo === 'alquilar' && !alquiler && (
+            {modo === 'alquilar' && !alquiler && producto.disponibleAlquiler && (
+              <>
+                <p className="tarjeta__precio-etiqueta">{ETIQUETA_TARIFA}</p>
+                <p className="tarjeta__precio tarjeta__precio--pendiente">
+                  {TEXTO_POR_CONFIRMAR}
+                </p>
+                <p className="tarjeta__alquiler">
+                  Depende del precio de referencia, que falta confirmar.
+                </p>
+              </>
+            )}
+
+            {modo === 'alquilar' && !producto.disponibleAlquiler && (
               <>
                 <p className="tarjeta__precio-etiqueta">Alquiler</p>
-                <p className="tarjeta__precio tarjeta__precio--sin">No se alquila</p>
+                <p className="tarjeta__precio tarjeta__precio--pendiente">No se alquila</p>
                 <p className="tarjeta__alquiler">{MOTIVO_SIN_ALQUILER}</p>
               </>
             )}
@@ -159,12 +203,14 @@ function TarjetaProducto({ producto, categoria, indice = 0, modo = 'comprar' }) 
               <>
                 <p className="tarjeta__precio-etiqueta">
                   {ETIQUETA_PRECIO}
-                  {porConfirmar}
+                  {marcaPrecio}
                 </p>
-                <p className="tarjeta__precio">
-                  {producto.disponibleCompra
-                    ? formatearPrecio(producto.precioCompra)
-                    : 'Solo alquiler'}
+                <p
+                  className={`tarjeta__precio ${
+                    precioPendiente ? 'tarjeta__precio--pendiente' : ''
+                  }`}
+                >
+                  {formatearPrecioReferencia(producto.precioCompra)}
                 </p>
               </>
             )}

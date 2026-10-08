@@ -1,4 +1,617 @@
 {
-  "vistas": {},
+  "vistas": {
+    "bicicletas/rockhopper-sport": {
+      "lateral": {
+        "ancho": 1600,
+        "alto": 900,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 450
+        },
+        "marca": "Specialized",
+        "fuente": "https://www.specialized.com/co/es/rockhopper-sport/p/4263615"
+      },
+      "frente": {
+        "ancho": 1600,
+        "alto": 900,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 450
+        },
+        "marca": "Specialized",
+        "fuente": "https://www.specialized.com/co/es/rockhopper-sport/p/4263615"
+      }
+    },
+    "bicicletas/rockhopper-comp": {
+      "lateral": {
+        "ancho": 1600,
+        "alto": 900,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 450
+        },
+        "marca": "Specialized",
+        "fuente": "https://www.specialized.com/co/es/rockhopper-comp/p/4263610"
+      },
+      "frente": {
+        "ancho": 1600,
+        "alto": 900,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 450
+        },
+        "marca": "Specialized",
+        "fuente": "https://www.specialized.com/co/es/rockhopper-comp/p/4263610"
+      }
+    },
+    "bicicletas/escape-3": {
+      "lateral": {
+        "ancho": 1600,
+        "alto": 1200,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 600
+        },
+        "marca": "Giant",
+        "fuente": "https://giant-bicycles.com.co/escape-3-2022.html"
+      },
+      "frente": {
+        "ancho": 1600,
+        "alto": 1200,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 600
+        },
+        "marca": "Giant",
+        "fuente": "https://giant-bicycles.com.co/escape-3-2022.html"
+      }
+    },
+    "bicicletas/starker-t-flex": {
+      "lateral": {
+        "ancho": 1000,
+        "alto": 1000,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 800
+        },
+        "marca": "Starker",
+        "fuente": "https://www.auteco.com.co/bicicleta-electrica-starker-t-flex-aluminio/p"
+      },
+      "frente": {
+        "ancho": 1000,
+        "alto": 1000,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 800
+        },
+        "marca": "Starker",
+        "fuente": "https://www.auteco.com.co/bicicleta-electrica-starker-t-flex-aluminio/p"
+      }
+    },
+    "patinetas/xiaomi-electric-scooter-4-lite": {
+      "lateral": {
+        "ancho": 1600,
+        "alto": 785,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 393
+        },
+        "marca": "Xiaomi",
+        "fuente": "https://www.mi.com/co/product/xiaomi-electric-scooter-4-lite-2nd-gen/"
+      },
+      "plegada": {
+        "ancho": 1600,
+        "alto": 863,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 431
+        },
+        "marca": "Xiaomi",
+        "fuente": "https://www.mi.com/co/product/xiaomi-electric-scooter-4-lite-2nd-gen/"
+      },
+      "pantalla": {
+        "ancho": 1600,
+        "alto": 864,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 432
+        },
+        "marca": "Xiaomi",
+        "fuente": "https://www.mi.com/co/product/xiaomi-electric-scooter-4-lite-2nd-gen/"
+      },
+      "ruedas-frenos": {
+        "ancho": 1600,
+        "alto": 821,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 410
+        },
+        "marca": "Xiaomi",
+        "fuente": "https://www.mi.com/co/product/xiaomi-electric-scooter-4-lite-2nd-gen/"
+      }
+    },
+    "patinetas/xiaomi-electric-scooter-4-pro": {
+      "lateral": {
+        "ancho": 1600,
+        "alto": 819,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 409
+        },
+        "marca": "Xiaomi",
+        "fuente": "https://www.mi.com/co/product/xiaomi-electric-scooter-4-pro-2nd-gen/"
+      },
+      "plegada": {
+        "ancho": 1600,
+        "alto": 794,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 397
+        },
+        "marca": "Xiaomi",
+        "fuente": "https://www.mi.com/co/product/xiaomi-electric-scooter-4-pro-2nd-gen/"
+      },
+      "pantalla": {
+        "ancho": 1600,
+        "alto": 794,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 397
+        },
+        "marca": "Xiaomi",
+        "fuente": "https://www.mi.com/co/product/xiaomi-electric-scooter-4-pro-2nd-gen/"
+      },
+      "ruedas-frenos": {
+        "ancho": 1600,
+        "alto": 794,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 397
+        },
+        "marca": "Xiaomi",
+        "fuente": "https://www.mi.com/co/product/xiaomi-electric-scooter-4-pro-2nd-gen/"
+      }
+    },
+    "patinetas/xiaomi-electric-scooter-4-ultra": {
+      "lateral": {
+        "ancho": 1600,
+        "alto": 954,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 477
+        },
+        "marca": "Xiaomi",
+        "fuente": "https://www.mi.com/global/product/xiaomi-electric-scooter-4-ultra/"
+      },
+      "pantalla": {
+        "ancho": 1600,
+        "alto": 771,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 386
+        },
+        "marca": "Xiaomi",
+        "fuente": "https://www.mi.com/global/product/xiaomi-electric-scooter-4-ultra/"
+      },
+      "ruedas-frenos": {
+        "ancho": 1600,
+        "alto": 904,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 452
+        },
+        "marca": "Xiaomi",
+        "fuente": "https://www.mi.com/global/product/xiaomi-electric-scooter-4-ultra/"
+      }
+    },
+    "patinetas/segway-ninebot-max-g2": {
+      "lateral": {
+        "ancho": 800,
+        "alto": 800,
+        "marca": "Segway-Ninebot",
+        "fuente": "https://store.segway.com/catalog/product/view/id/2519"
+      },
+      "pantalla": {
+        "ancho": 780,
+        "alto": 983,
+        "marca": "Segway-Ninebot",
+        "fuente": "https://www.segway.com/ekickscooter/products/max-g2.html"
+      },
+      "ruedas-frenos": {
+        "ancho": 660,
+        "alto": 1281,
+        "marca": "Segway-Ninebot",
+        "fuente": "https://www.segway.com/ekickscooter/products/max-g2.html"
+      }
+    },
+    "patines/next-black-80": {
+      "lateral": {
+        "ancho": 1600,
+        "alto": 1600,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 800
+        },
+        "marca": "Powerslide",
+        "fuente": "https://powerslide.com/products/powerslide-next-black-80"
+      },
+      "botin": {
+        "ancho": 1600,
+        "alto": 1600,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 800
+        },
+        "marca": "Powerslide",
+        "fuente": "https://powerslide.com/products/powerslide-next-black-80"
+      },
+      "ruedas": {
+        "ancho": 1600,
+        "alto": 1600,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 800
+        },
+        "marca": "Powerslide",
+        "fuente": "https://powerslide.com/products/powerslide-next-black-80"
+      },
+      "detalle": {
+        "ancho": 1600,
+        "alto": 1600,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 800
+        },
+        "marca": "Powerslide",
+        "fuente": "https://powerslide.com/products/powerslide-next-black-80"
+      }
+    },
+    "patines/phuzion-radon-90-pds": {
+      "lateral": {
+        "ancho": 1600,
+        "alto": 1600,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 800
+        },
+        "marca": "Powerslide",
+        "fuente": "https://powerslide.com/products/powerslide-phuzion-radon-90-pds-plum"
+      },
+      "ruedas": {
+        "ancho": 1600,
+        "alto": 1600,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 800
+        },
+        "marca": "Powerslide",
+        "fuente": "https://powerslide.com/products/powerslide-phuzion-radon-90-pds-plum"
+      },
+      "detalle": {
+        "ancho": 1600,
+        "alto": 1600,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 800
+        },
+        "marca": "Powerslide",
+        "fuente": "https://powerslide.com/products/powerslide-phuzion-radon-90-pds-plum"
+      }
+    },
+    "patines/zoom-pro-80-black": {
+      "lateral": {
+        "ancho": 1600,
+        "alto": 1600,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 800
+        },
+        "marca": "Powerslide",
+        "fuente": "https://powerslide.com/products/powerslide-zoom-pro-80-black"
+      },
+      "botin": {
+        "ancho": 1600,
+        "alto": 1600,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 800
+        },
+        "marca": "Powerslide",
+        "fuente": "https://powerslide.com/products/powerslide-zoom-pro-80-black"
+      },
+      "ruedas": {
+        "ancho": 1600,
+        "alto": 1600,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 800
+        },
+        "marca": "Powerslide",
+        "fuente": "https://powerslide.com/products/powerslide-zoom-pro-80-black"
+      },
+      "detalle": {
+        "ancho": 1600,
+        "alto": 1600,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 800
+        },
+        "marca": "Powerslide",
+        "fuente": "https://powerslide.com/products/powerslide-zoom-pro-80-black"
+      }
+    },
+    "drones/fimi-mini-3": {
+      "frente": {
+        "ancho": 1600,
+        "alto": 900,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 450
+        },
+        "marca": "FIMI",
+        "fuente": "https://www.fimi.com/fimi-mini-3.html"
+      },
+      "control": {
+        "ancho": 1600,
+        "alto": 844,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 422
+        },
+        "marca": "FIMI",
+        "fuente": "https://www.fimi.com/fimi-mini-3.html"
+      },
+      "camara": {
+        "ancho": 1600,
+        "alto": 1057,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 528
+        },
+        "marca": "FIMI",
+        "fuente": "https://www.fimi.com/fimi-mini-3.html"
+      }
+    },
+    "drones/fimi-x8-tele-max": {
+      "frente": {
+        "ancho": 1600,
+        "alto": 991,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 495
+        },
+        "marca": "FIMI",
+        "fuente": "https://www.fimi.com/fimi-x8-tele-max.html"
+      },
+      "control": {
+        "ancho": 1600,
+        "alto": 638,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 319
+        },
+        "marca": "FIMI",
+        "fuente": "https://www.fimi.com/fimi-x8-tele-max.html"
+      },
+      "camara": {
+        "ancho": 1600,
+        "alto": 1009,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 505
+        },
+        "marca": "FIMI",
+        "fuente": "https://www.fimi.com/fimi-x8-tele-max.html"
+      }
+    },
+    "motos/niu-nqi-sport": {
+      "frente": {
+        "ancho": 1600,
+        "alto": 1600,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 800
+        },
+        "marca": "NIU",
+        "fuente": "https://france.niu.com/collections/best-selling-collection/products/nqi-sport"
+      },
+      "lateral": {
+        "ancho": 1600,
+        "alto": 1600,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 800
+        },
+        "marca": "NIU",
+        "fuente": "https://france.niu.com/collections/best-selling-collection/products/nqi-sport"
+      }
+    },
+    "motos/starker-thunder-1500": {
+      "frente": {
+        "ancho": 800,
+        "alto": 800,
+        "marca": "Starker",
+        "fuente": "https://www.auteco.com.co/moto-electrica-starker-thunder-1500/p"
+      },
+      "lateral": {
+        "ancho": 1000,
+        "alto": 1000,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 800
+        },
+        "marca": "Starker",
+        "fuente": "https://www.auteco.com.co/moto-electrica-starker-thunder-1500/p"
+      },
+      "trasera": {
+        "ancho": 800,
+        "alto": 800,
+        "marca": "Starker",
+        "fuente": "https://www.auteco.com.co/moto-electrica-starker-thunder-1500/p"
+      }
+    },
+    "motos/starker-cool-joy": {
+      "frente": {
+        "ancho": 1000,
+        "alto": 1000,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 800
+        },
+        "marca": "Starker",
+        "fuente": "https://www.auteco.com.co/moto-electrica-starker-cooljoy/p"
+      },
+      "lateral": {
+        "ancho": 1000,
+        "alto": 1000,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 800
+        },
+        "marca": "Starker",
+        "fuente": "https://www.auteco.com.co/moto-electrica-starker-cooljoy/p"
+      }
+    },
+    "carros/renault-kwid-e-tech": {
+      "frente": {
+        "ancho": 1600,
+        "alto": 1066,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 533
+        },
+        "marca": "Renault",
+        "fuente": "https://prensa.renault.com.co/prensa/renault-anuncia-la-llegada-del-renault-kwid-e-tech-electrico-en-colombia/"
+      },
+      "trasera": {
+        "ancho": 1600,
+        "alto": 900,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 450
+        },
+        "marca": "Renault",
+        "fuente": "https://www.renault.com.co/electricos/kwid-etech0/galeria.html"
+      },
+      "interior": {
+        "ancho": 1600,
+        "alto": 900,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 450
+        },
+        "marca": "Renault",
+        "fuente": "https://www.renault.com.co/electricos/kwid-etech0/galeria.html"
+      },
+      "tablero": {
+        "ancho": 1600,
+        "alto": 900,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 450
+        },
+        "marca": "Renault",
+        "fuente": "https://www.renault.com.co/electricos/kwid-etech0/galeria.html"
+      }
+    },
+    "carros/dacia-spring-2026": {
+      "frente": {
+        "ancho": 1600,
+        "alto": 900,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 450
+        },
+        "marca": "Dacia; crédito fotográfico: Dacia Design/Recom Paris",
+        "fuente": "https://media.dacia.com/new-dacia-spring-100-per-cent-electric-100-per-cent-dacia/?lang=eng"
+      },
+      "lateral": {
+        "ancho": 1600,
+        "alto": 900,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 450
+        },
+        "marca": "Dacia; crédito fotográfico: Dacia Design/Recom Paris",
+        "fuente": "https://media.dacia.com/new-dacia-spring-100-per-cent-electric-100-per-cent-dacia/?lang=eng"
+      },
+      "trasera": {
+        "ancho": 1600,
+        "alto": 900,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 450
+        },
+        "marca": "Dacia; crédito fotográfico: Dacia Design/Recom Paris",
+        "fuente": "https://media.dacia.com/new-dacia-spring-100-per-cent-electric-100-per-cent-dacia/?lang=eng"
+      }
+    },
+    "accesorios/specialized-align-ii-mips": {
+      "vista-1": {
+        "ancho": 1600,
+        "alto": 900,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 450
+        },
+        "marca": "Specialized",
+        "fuente": "https://www.specialized.com/us/en/align-ii/p/1000207992"
+      },
+      "vista-2": {
+        "ancho": 1600,
+        "alto": 900,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 450
+        },
+        "marca": "Specialized",
+        "fuente": "https://www.specialized.com/us/en/align-ii/p/1000207992"
+      },
+      "vista-3": {
+        "ancho": 1600,
+        "alto": 900,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 450
+        },
+        "marca": "Specialized",
+        "fuente": "https://www.specialized.com/us/en/align-ii/p/1000207992"
+      }
+    },
+    "accesorios/kryptonite-evolution-mini-7": {
+      "vista-1": {
+        "ancho": 1000,
+        "alto": 1000,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 800
+        },
+        "marca": "Kryptonite",
+        "fuente": "https://www.kryptonitelock.com.co/producto/candado-para-bicicleta-evolution-series-mini-7-w-4-flex/"
+      }
+    },
+    "accesorios/specialized-stix-elite-2-headlight": {
+      "vista-1": {
+        "ancho": 1600,
+        "alto": 900,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 450
+        },
+        "marca": "Specialized",
+        "fuente": "https://www.specialized.com/us/en/stix-elite-2-headlight/p/174109"
+      },
+      "vista-2": {
+        "ancho": 1600,
+        "alto": 900,
+        "pequeno": {
+          "ancho": 800,
+          "alto": 450
+        },
+        "marca": "Specialized",
+        "fuente": "https://www.specialized.com/us/en/stix-elite-2-headlight/p/174109"
+      }
+    }
+  },
   "videos": {}
 }

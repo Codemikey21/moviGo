@@ -82,9 +82,10 @@ function Buscador({ abierto, onCerrar, disparadorRef }) {
         titulo: 'Productos',
         items: productos.map((producto) => {
           const categoria = buscarCategoria(producto.categoria)
-          const precio = producto.disponibleCompra
-            ? `${formatearPrecio(producto.precioCompra)} · ${ETIQUETA_PRECIO}`
-            : 'Solo alquiler'
+          const precio =
+            producto.precioCompra === null
+              ? `${ETIQUETA_PRECIO} por confirmar`
+              : `${formatearPrecio(producto.precioCompra)} · ${ETIQUETA_PRECIO}`
 
           return {
             clave: producto.id,

@@ -1,11 +1,23 @@
 import { useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import IconoCategoria from './IconoCategoria'
-import { IMAGEN } from '../data/vistas'
 import { esColorClaro } from '../lib/color'
 import { useParallax, useRevelarImagen } from '../lib/efectosImagen'
+import { ajusteDeImagen, aspectRatioCss, proporcionDe } from '../lib/imagen'
 import { useDialogoModal } from '../lib/useDialogoModal'
 import './Galeria.css'
+
+// Proporción del marcador "Foto pendiente" (no hay foto de la cual tomarla).
+const PROPORCION_MARCADOR = 4 / 3
+
+// Ancho aproximado que ocupa la foto: poco más de la mitad en pantallas anchas.
+const TAMANOS = '(min-width: 56.25em) 55vw, 100vw'
+
+// Imágenes que ofrece una vista: la copia pequeña y la grande (si son distintas).
+function srcSetDe(vista) {
+  if (vista.imagenPequena === vista.imagen) return undefined
+  return `${vista.imagenPequena} ${vista.anchoPequeno}w, ${vista.imagen} ${vista.ancho}w`
+}
 
 /**
  * Galería de la ficha del producto. Se adapta a las vistas que el producto tiene:
@@ -13,6 +25,11 @@ import './Galeria.css'
  *  - 1 vista  → la foto, que se puede ampliar;
  *  - 2 o más  → la foto principal y un selector de vistas (botones con
  *               aria-current) para cambiar de una a otra.
+ *
+ * Las fotos conservan su proporción real. El marco toma la proporción de la
+ * primera vista y no cambia al pasar de una vista a otra (así la página no se
+ * mueve). Cada foto se encaja en el marco: si su proporción difiere menos del
+ * 10 % lo llena (cover); si no, se ve completa sobre un fondo neutro (contain).
  *
  * La foto se amplía en un diálogo accesible: el foco queda atrapado dentro, Esc
  * lo cierra y el foco vuelve al botón que lo abrió. Dentro del diálogo, las
@@ -24,7 +41,7 @@ import './Galeria.css'
  *
  * @param producto       producto del catálogo (usa producto.vistas y producto.nombre)
  * @param categoria      categoría del producto (para el ícono del marcador)
- * @param tono           color de fondo del marco mientras carga la foto o falta
+ * @param tono           color de fondo del marcador cuando falta la foto
  * @param disparadorRef  ref de la sección cuyo scroll gobierna el parallax
  */
 function Galeria({ producto, categoria, tono, disparadorRef }) {
@@ -43,8 +60,13 @@ function Galeria({ producto, categoria, tono, disparadorRef }) {
   const dialogoRef = useRef(null)
   const cerrarRef = useRef(null)
 
+  // Cómo se encaja la vista actual en el marco (cubrir o contener, ver lib/imagen.js).
+  const ajuste = hayVistas ? ajusteDeImagen(proporcionDe(vistas[indice]), proporcionDe(vistas[0])) : null
+
   useRevelarImagen(imagenRef, { activo: hayVistas })
-  useParallax(paralajeRef, disparadorRef, { activo: hayVistas })
+  // El parallax agranda y desplaza la foto: solo se usa si llena el marco; una foto
+  // que se ve completa (contener) se queda quieta para no recortarla.
+  useParallax(paralajeRef, disparadorRef, { activo: ajuste === 'cubrir' })
 
   useDialogoModal({
     abierto: ampliada,
@@ -63,6 +85,7 @@ function Galeria({ producto, categoria, tono, disparadorRef }) {
           className={`galeria__marco galeria__marco--pendiente ${
             esColorClaro(tono) ? 'galeria__marco--claro' : ''
           }`}
+          style={{ aspectRatio: aspectRatioCss(PROPORCION_MARCADOR) }}
         >
           <IconoCategoria categoria={categoria} grosor={1.2} className="galeria__icono" />
           <p className="galeria__pendiente">Foto pendiente</p>
@@ -71,6 +94,7 @@ function Galeria({ producto, categoria, tono, disparadorRef }) {
     )
   }
 
+  const proporcionMarco = proporcionDe(vistas[0])
   const vista = vistas[indice]
 
   const irAVista = (nuevo) => {
@@ -96,7 +120,10 @@ function Galeria({ producto, categoria, tono, disparadorRef }) {
 
   return (
     <div className="galeria" style={{ '--tono': tono }}>
-      <div className="galeria__marco">
+      <div
+        className="galeria__marco galeria__marco--foto"
+        style={{ aspectRatio: aspectRatioCss(proporcionMarco) }}
+      >
         <div ref={paralajeRef} className="galeria__paralaje">
           <button
             ref={ampliarRef}
@@ -110,13 +137,15 @@ function Galeria({ producto, categoria, tono, disparadorRef }) {
             <img
               key={vista.id}
               ref={imagenRef}
-              className={`galeria__imagen ${
+              className={`galeria__imagen galeria__imagen--${ajuste} ${
                 cambioDeVista ? 'galeria__imagen--cambio' : ''
               }`}
               src={vista.imagen}
+              srcSet={srcSetDe(vista)}
+              sizes={TAMANOS}
               alt={vista.alt}
-              width={IMAGEN.ancho}
-              height={IMAGEN.alto}
+              width={vista.ancho}
+              height={vista.alto}
               loading={indice === 0 ? 'eager' : 'lazy'}
               fetchPriority={indice === 0 ? 'high' : undefined}
               decoding="async"
@@ -186,8 +215,8 @@ function Galeria({ producto, categoria, tono, disparadorRef }) {
                   className="galeria-dialogo__imagen"
                   src={vista.imagen}
                   alt={vista.alt}
-                  width={IMAGEN.ancho}
-                  height={IMAGEN.alto}
+                  width={vista.ancho}
+                  height={vista.alto}
                   decoding="async"
                 />
                 <figcaption className="galeria-dialogo__pie">

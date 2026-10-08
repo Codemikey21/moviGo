@@ -10,19 +10,25 @@
  *  - marca, modelo      → texto. `nombre` se arma como "marca modelo".
  *  - descripcion        → una o dos frases descriptivas, sacadas de las especificaciones.
  *  - colores            → solo los que publica la fuente (puede estar vacío).
- *  - vistas             → [{ id, etiqueta, imagen, alt, descripcion }]. Se arma sola
- *                         con las fotos que existen (src/data/medios.generado.json,
- *                         que crea `npm run imagenes`) y las vistas de la categoría
- *                         (src/data/vistas.js). Sin fotos queda vacía y la página
- *                         muestra "Foto pendiente".
+ *  - vistas             → [{ id, etiqueta, imagen, imagenPequena, ancho, alto,
+ *                         anchoPequeno, altoPequeno, alt, descripcion, credito }].
+ *                         Se arma sola con las fotos que existen
+ *                         (src/data/medios.generado.json, que crea `npm run imagenes`)
+ *                         y las vistas de la categoría (src/data/vistas.js). Las fotos
+ *                         no se recortan: `ancho` y `alto` son los reales de cada archivo.
+ *                         `credito` trae la marca y la URL de la fuente de la foto.
+ *                         Sin fotos queda vacía y la página muestra "Foto pendiente".
  *  - video              → { src, poster, descripcion } o null. También sale del
  *                         manifiesto: public/productos/video/<slug>.mp4 y
  *                         <slug>-poster.webp.
  *  - destacado          → true para el producto estrella de la categoría (lo usará
  *                         el Lote B1-3). Por defecto false; se decide a mano.
- *  - especificaciones   → [{ etiqueta, valor, unidad, clave, nota }]. Las tres
- *                         marcadas con `clave: true` salen en la tarjeta.
- *  - precioCompra       → número en COP (precio de referencia).
+ *  - especificaciones   → [{ etiqueta, valor, unidad, clave, nota, porConfirmar }].
+ *                         Las tres marcadas con `clave: true` salen en la tarjeta;
+ *                         `porConfirmar: true` marca un dato que falta confirmar.
+ *  - precioCompra       → número en COP (precio de referencia) o null si no hay una
+ *                         fuente colombiana verificable: entonces se muestra "por
+ *                         confirmar" y la tarifa de alquiler también queda por confirmar.
  *  - precioFuente       → URL donde se vio el precio (o null).
  *  - precioVerificado   → true solo si el número se leyó en una página abierta.
  *  - tarifasAlquiler    → { hora, dia, semana } en COP, o null si no se alquila.
@@ -32,9 +38,9 @@
  *  - verificado         → true si TODAS las especificaciones se leyeron en la fuente.
  *  - porConfirmar       → lista de datos que faltan por confirmar (vacía si todo está verificado).
  *
- * Los campos `nombre`, `disponibleCompra`, `disponibleAlquiler`,
- * `especificacionesClave`, `vistas`, `video` y `destacado` los calcula
- * `completar()` al final del archivo.
+ * Los campos `nombre`, `tarifasAlquiler`, `disponibleAlquiler`,
+ * `tarifaPorConfirmar`, `especificacionesClave`, `vistas`, `video` y
+ * `destacado` los calcula `completar()` al final del archivo.
  */
 
 import medios from './medios.generado.json' with { type: 'json' }
@@ -78,7 +84,7 @@ export const CATEGORIAS = [
     nombreCorto: 'Patinetas',
     tagline: 'La ciudad a tu ritmo.',
     descripcion:
-      'Patinetas eléctricas de Xiaomi, NIU y Segway-Ninebot para moverte por la ciudad.',
+      'Patinetas eléctricas de Xiaomi y Segway-Ninebot para moverte por la ciudad.',
     colorAcento: '#2997ff',
     icono: [
       circulo(11, 38, 4),
@@ -108,7 +114,7 @@ export const CATEGORIAS = [
     nombre: 'Drones',
     nombreCorto: 'Drones',
     tagline: 'Mira la ciudad desde arriba.',
-    descripcion: 'Drones DJI con cámara para fotografía y video aéreo.',
+    descripcion: 'Drones FIMI con cámara para fotografía y video aéreo.',
     colorAcento: '#bf5af2',
     icono: [
       'M20 21 H28 V27 H20 Z',
@@ -138,7 +144,7 @@ export const CATEGORIAS = [
     nombre: 'Carros eléctricos',
     nombreCorto: 'Carros',
     tagline: 'Tu próximo viaje, 100 % eléctrico.',
-    descripcion: 'Autos eléctricos compactos con presencia en Colombia: Renault y BYD.',
+    descripcion: 'Autos eléctricos compactos de Renault y Dacia.',
     colorAcento: '#40c8e0',
     icono: [
       'M5 30 V25 C5 23 6 22 8 21 L13 16 C14 15 15 15 16 15 H30 C31 15 32 15.5 33 16.5 L38 21 C41 22 43 23 43 25 V30 Z',
@@ -152,7 +158,7 @@ export const CATEGORIAS = [
     nombre: 'Accesorios',
     nombreCorto: 'Accesorios',
     tagline: 'Todo para rodar seguro.',
-    descripcion: 'Casco, luz, candado y una batería extra para completar tu equipo.',
+    descripcion: 'Casco, luz y candado para completar tu equipo.',
     colorAcento: '#ffd60a',
     icono: [
       'M8 30 C8 17 16 10 26 10 C35 10 41 17 41 26 V30 Z',
@@ -167,13 +173,15 @@ export const CATEGORIAS = [
 // Ayudas para escribir los datos
 // ---------------------------------------------------------------------------
 
-// Una especificación: etiqueta, valor, unidad (o null), si es clave y una nota.
-const esp = (etiqueta, valor, unidad = null, clave = false, nota = null) => ({
+// Una especificación: etiqueta, valor, unidad (o null), si es clave, una nota y si
+// el dato está por confirmar (por ejemplo, cuando dos fuentes oficiales no coinciden).
+const esp = (etiqueta, valor, unidad = null, clave = false, nota = null, porConfirmar = false) => ({
   etiqueta,
   valor,
   unidad,
   clave,
   nota,
+  porConfirmar,
 })
 
 const color = (nombre, hex) => ({ nombre, hex })
@@ -413,31 +421,37 @@ const PRODUCTOS_BASE = [
     ],
   },
   {
-    id: 'pat-niu-kqi3-pro',
-    slug: 'niu-kqi3-pro',
+    id: 'pat-xiaomi-4-ultra',
+    slug: 'xiaomi-electric-scooter-4-ultra',
     categoria: 'patinetas',
-    marca: 'NIU',
-    modelo: 'KQi3 Pro',
+    marca: 'Xiaomi',
+    modelo: 'Electric Scooter 4 Ultra',
     descripcion:
-      'Patineta eléctrica con motor de 350 W, batería de 48 V y frenos de disco delantero y trasero con frenado regenerativo.',
-    colores: [color('Oro rosa', '#e3b5a4')],
+      'Patineta eléctrica con sistema de doble suspensión, motor de 500 W, batería de 561,5 Wh y llantas DuraGel de 10 pulgadas.',
+    colores: [],
     especificaciones: [
-      esp('Velocidad máxima', 32, 'km/h', true),
-      esp('Autonomía', '40–50', 'km', true),
-      esp('Motor', 350, 'W'),
-      esp('Batería', '48 V / 10,4 Ah', null, true),
-      esp('Frenos', 'Disco delantero y trasero, con frenado regenerativo'),
-      esp('Iluminación', 'Luces LED delantera y trasera'),
-      esp('Guardabarros', 'Completos'),
+      esp('Velocidad máxima', 25, 'km/h', true, 'Por modo: peatón 6 km/h, D 20 km/h, S y S+ 25 km/h.'),
+      esp('Autonomía', 'Aprox. 70', 'km', true),
+      esp('Peso', 'Aprox. 24,5', 'kg', true),
+      esp('Motor', '500 W nominal / 940 W máximo'),
+      esp('Batería', '561,5 Wh (12.000 mAh), de ion de litio'),
+      esp('Tiempo de carga', 'Aprox. 6,5', 'h'),
+      esp('Suspensión', 'Doble'),
+      esp('Llantas', '10 pulgadas Xiaomi DuraGel'),
+      esp('Frenos', 'E-ABS y de tambor'),
+      esp('Carga máxima', 120, 'kg'),
     ],
-    precioCompra: 2290000,
-    precioFuente: 'https://niucolombia.com/productos/kqi3-pro/',
+    precioCompra: 2833290,
+    precioFuente: 'https://www.falabella.com.co/falabella-co/product/73200526/Xiaomi-Electric-Scooter-4-Ultra-Velocidad-Max-25km-h-Autonomia-de-viaje-70-km-940-W-Doble-suspencion/73200526',
     precioVerificado: true,
     alquilable: true,
     disponibilidad: POR_CONFIRMAR,
-    fuente: 'https://niucolombia.com/productos/kqi3-pro/',
+    fuente: 'https://www.mi.com/global/product/xiaomi-electric-scooter-4-ultra/specs/',
     verificado: true,
-    porConfirmar: [],
+    porConfirmar: [
+      'Precio: 2.833.290 COP es el precio con 29 % de descuento que mostraba Falabella Colombia el 7 de octubre de 2026 (precio de lista: 3.999.900 COP). La página de Xiaomi Colombia (mi.com/co) no mostró este modelo.',
+      'Colores: Xiaomi no publica un nombre de color; las fotos oficiales muestran la patineta en negro y gris con detalles amarillos.',
+    ],
   },
   {
     id: 'pat-segway-max-g2',
@@ -569,97 +583,71 @@ const PRODUCTOS_BASE = [
 
   // ===== DRONES =========================================================
   {
-    id: 'dro-dji-neo',
-    slug: 'dji-neo',
+    id: 'dro-fimi-mini-3',
+    slug: 'fimi-mini-3',
     categoria: 'drones',
-    marca: 'DJI',
-    modelo: 'Neo',
+    marca: 'FIMI',
+    modelo: 'Mini 3',
     descripcion:
-      'Dron compacto de 135 g con cámara 4K, 22 GB de almacenamiento interno y vuelo de hasta 18 minutos.',
+      'Dron plegable de unos 245 g con cámara de 48 MP, gimbal de 3 ejes, video 4K hasta 60 fps y vuelo de hasta 32 minutos.',
     colores: [],
     especificaciones: [
-      esp('Peso de despegue', 'Aprox. 135', 'g', true),
-      esp('Tiempo máximo de vuelo', 'Aprox. 18', 'min', true, 'Medido sin protectores de hélices.'),
-      esp('Video máximo', '4K a 30 fps', null, true, 'Resolución de 3840×2880 (4:3).'),
-      esp('Foto', 12, 'MP'),
-      esp('Sensor', '1/2 pulgada'),
-      esp('Velocidad horizontal máxima', 16, 'm/s', false, 'En modo manual.'),
-      esp('Resistencia al viento', 8, 'm/s', false, 'Nivel 4.'),
-      esp('Almacenamiento interno', 22, 'GB'),
-      esp('Tiempo de carga', 'Aprox. 50', 'min'),
-      esp('Batería', '1.435 mAh (10,5 Wh)'),
-    ],
-    precioCompra: 1079900,
-    precioFuente: 'https://skymotion.com.co/products/dji-neo',
-    precioVerificado: false,
-    alquilable: true,
-    disponibilidad: POR_CONFIRMAR,
-    fuente: 'https://www.dji.com/neo/specs',
-    verificado: true,
-    porConfirmar: [
-      'Precio: 1.079.900 COP (Sky Motion, distribuidor de DJI en Colombia) salió de un resumen de búsqueda; no abrí la página del vendedor.',
-    ],
-  },
-  {
-    id: 'dro-dji-mini-4-pro',
-    slug: 'dji-mini-4-pro',
-    categoria: 'drones',
-    marca: 'DJI',
-    modelo: 'Mini 4 Pro',
-    descripcion:
-      'Dron de menos de 249 g con sensor de 1/1,3 pulgadas, video 4K y vuelo de hasta 34 minutos con la batería estándar.',
-    colores: [],
-    especificaciones: [
-      esp('Peso de despegue', '< 249', 'g', true),
-      esp('Tiempo máximo de vuelo', 34, 'min', true, 'Con la batería estándar; con la batería Plus llega a 45 min.'),
-      esp('Video máximo', '4K hasta 100 fps', null, true, 'Resolución de 3840×2160.'),
-      esp('Sensor', '1/1,3 pulgadas CMOS, 48 MP'),
-      esp('Velocidad horizontal máxima', 16, 'm/s', false, 'En modo S.'),
+      esp('Peso de despegue', 'Aprox. 245', 'g', true),
+      esp('Tiempo máximo de vuelo', 32, 'min', true, 'Medido a 21,6 km/h, sin viento y a nivel del mar. En vuelo estacionario: 29 min.'),
+      esp('Video máximo', '4K hasta 60 fps', null, true, 'Resolución de 3840×2160 a 60, 30, 25 y 24 fps; tasa máxima de 100 Mbps.'),
+      esp('Cámara', '1/2 pulgada CMOS, 48 MP, f/1,6'),
+      esp('Gimbal', 'Mecánico de 3 ejes'),
+      esp('Velocidad máxima de vuelo', 18, 'm/s', false, 'Sin viento y a nivel del mar.'),
       esp('Resistencia al viento', 10.7, 'm/s'),
-      esp('Alcance de transmisión', 'Hasta 20', 'km', false, 'Según la norma FCC y sin obstáculos.'),
-      esp('Tiempo de carga', 70, 'min', false, 'Con la batería estándar y el cargador de 30 W.'),
+      esp('Alcance de transmisión', 'Aprox. 9', 'km', false, 'Norma FCC, sin interferencias ni obstáculos.'),
+      esp('Batería', '2.200 mAh (16,94 Wh)', null, false, 'Pesa unos 86 g.'),
+      esp('Dimensiones plegado', '145 × 85 × 56', 'mm', false, 'Sin hélices.'),
     ],
-    precioCompra: 4649900,
-    precioFuente: 'https://skymotion.com.co/products/dji-mini-4-pro-dji-rc-2',
+    precioCompra: null,
+    precioFuente: null,
     precioVerificado: false,
     alquilable: true,
     disponibilidad: POR_CONFIRMAR,
-    fuente: 'https://www.dji.com/mini-4-pro/specs',
+    fuente: 'https://www.fimi.com/fimi-mini-3.html',
     verificado: true,
     porConfirmar: [
-      'Precio: 4.649.900 COP (con control RC 2, en Sky Motion y Onfly) salió de un resumen de búsqueda; no abrí la página del vendedor.',
+      'Precio: no encontré una fuente colombiana que se pueda abrir y verificar; en Mercado Libre Colombia lo ofrecen distintos vendedores, en paquetes con precios muy diferentes. La tarifa de alquiler queda por confirmar.',
+      'Colores: FIMI no publica un nombre de color; las fotos oficiales muestran el dron en naranja.',
+      'Las especificaciones están en imágenes de la ficha oficial de FIMI: las transcribí a mano.',
     ],
   },
   {
-    id: 'dro-dji-air-3s',
-    slug: 'dji-air-3s',
+    id: 'dro-fimi-x8-tele-max',
+    slug: 'fimi-x8-tele-max',
     categoria: 'drones',
-    marca: 'DJI',
-    modelo: 'Air 3S',
+    marca: 'FIMI',
+    modelo: 'X8 Tele Max',
     descripcion:
-      'Dron de 724 g con cámara de 1 pulgada y teleobjetivo, video 4K a 120 fps y vuelo de hasta 45 minutos.',
+      'Dron con cámara gran angular de 48 MP y teleobjetivo de 13 MP, video 4K y vuelo de hasta 38 minutos con la batería estándar.',
     colores: [],
     especificaciones: [
-      esp('Peso de despegue', 724, 'g', true),
-      esp('Tiempo máximo de vuelo', 45, 'min', true),
-      esp('Video máximo', '4K hasta 120 fps', null, true, 'Resolución de 3840×2160.'),
-      esp('Cámara gran angular', '1 pulgada CMOS, 50 MP'),
-      esp('Teleobjetivo medio', '1/1,3 pulgadas CMOS, 48 MP'),
-      esp('Velocidad horizontal máxima', 21, 'm/s'),
-      esp('Resistencia al viento', 12, 'm/s'),
-      esp('Detección de obstáculos', 'Visión binocular omnidireccional y LiDAR frontal'),
-      esp('Batería', '4.276 mAh (62,5 Wh)'),
-      esp('Tiempo de carga', 'Aprox. 80', 'min', false, 'Con el cargador de 65 W.'),
+      esp('Peso de despegue', 760, 'g', true, 'Con la batería estándar; con la batería Plus pesa 832 g.'),
+      esp('Tiempo máximo de vuelo', 38, 'min', true, 'Con la batería estándar; con la Plus llega a 47 min. Medido a 25,2 km/h a nivel del mar, con video de 720p/30 fps.'),
+      esp('Cámaras', 'Gran angular y teleobjetivo', null, true),
+      esp('Cámara gran angular', '1/2 pulgada CMOS, 48 MP, f/1,6'),
+      esp('Teleobjetivo', '1/2,5 pulgadas CMOS, 13 MP, f/3,0 (equivale a 120 mm)'),
+      esp('Video máximo', '4K hasta 60 fps', null, false, 'En la cámara gran angular; el teleobjetivo graba 4K hasta 30 fps.'),
+      esp('Velocidad máxima de vuelo', 18, 'm/s', false, 'Sin viento y a nivel del mar.'),
+      esp('Alcance de transmisión', 'Aprox. 20', 'km', false, 'Norma FCC, sin interferencias ni obstáculos.'),
+      esp('Gimbal', 'Mecánico de 3 ejes'),
+      esp('Dimensiones plegado', '204 × 106 × 72,6', 'mm', false, 'Sin hélices.'),
     ],
-    precioCompra: 5719900,
-    precioFuente: 'https://skymotion.com.co/products/drone-dji-air-3s',
+    precioCompra: null,
+    precioFuente: null,
     precioVerificado: false,
     alquilable: true,
     disponibilidad: POR_CONFIRMAR,
-    fuente: 'https://www.dji.com/air-3s/specs',
+    fuente: 'https://www.fimi.com/fimi-x8-tele-max.html',
     verificado: true,
     porConfirmar: [
-      'Precio: 5.719.900 COP (versión estándar con control RC-N3, en Sky Motion) salió de un resumen de búsqueda; no abrí la página del vendedor.',
+      'Precio: no encontré ninguna fuente colombiana con precio. La tarifa de alquiler queda por confirmar.',
+      'Colores: FIMI no publica un nombre de color en la ficha; las fotos oficiales muestran el dron en blanco.',
+      'Las especificaciones están en imágenes de la ficha oficial de FIMI: las transcribí a mano.',
     ],
   },
 
@@ -674,7 +662,7 @@ const PRODUCTOS_BASE = [
       'Moto eléctrica para dos personas con motor de 1.500 W, batería de litio extraíble de 60 V y frenos de disco hidráulicos.',
     colores: [color('Blanco', '#f5f5f7')],
     especificaciones: [
-      esp('Velocidad máxima', 55, 'km/h', true),
+      esp('Velocidad máxima', 55, 'km/h', true, 'NIU Colombia publica 55 km/h y NIU Francia publica 45 km/h; la diferencia puede deberse a la homologación de cada región. Falta confirmar cuál corresponde a la moto que se vende en Colombia.', true),
       esp('Autonomía', '55–65', 'km', true),
       esp('Motor', '1.500 W nominal'),
       esp('Batería', '60 V / 26 Ah', null, true, 'De litio y extraíble.'),
@@ -688,8 +676,12 @@ const PRODUCTOS_BASE = [
     alquilable: true,
     disponibilidad: POR_CONFIRMAR,
     fuente: 'https://niucolombia.com/productos/nqi-sport/',
-    verificado: true,
-    porConfirmar: [],
+    verificado: false,
+    porConfirmar: [
+      'Velocidad máxima: NIU Colombia publica 55 km/h y la página de NIU Francia (france.niu.com/collections/best-selling-collection/products/nqi-sport) publica 45 km/h. Falta confirmar cuál aplica a la moto vendida en Colombia.',
+      'Autonomía: la página de NIU Francia publica de 45 a 65 km; el catálogo, tomado de NIU Colombia, indica de 55 a 65 km.',
+      'Las fotos oficiales son del NQi Sport blanco de NIU Francia; no certifican la configuración colombiana.',
+    ],
   },
   {
     id: 'mot-starker-thunder-1500',
@@ -785,75 +777,75 @@ const PRODUCTOS_BASE = [
     ],
   },
   {
-    id: 'car-byd-seagull',
-    slug: 'byd-seagull',
+    id: 'car-dacia-spring-2026',
+    slug: 'dacia-spring-2026',
     categoria: 'carros',
-    marca: 'BYD',
-    modelo: 'Seagull',
+    marca: 'Dacia',
+    modelo: 'Spring (nueva generación 2026)',
     descripcion:
-      'Hatchback eléctrico con batería Blade, carga rápida del 30 al 80 % en 30 minutos y pantalla giratoria de 10,1 pulgadas.',
+      'Auto eléctrico de nueva generación, presentado en septiembre de 2026, con motor de 60 kW, batería LFP de 27,5 kWh útiles y autonomía de hasta 250 km.',
     colores: [
-      color('Verde brote', '#a7d7a0'),
-      color('Azul claro', '#a5cde9'),
-      color('Rosa durazno', '#f3b8a6'),
+      color('Agave', '#4f8f8b'),
+      color('Schist Grey', '#6e7377'),
+      color('Diamond Black', '#1a1a1c'),
+      color('Glacier White', '#f2f4f5'),
     ],
     especificaciones: [
-      esp('Autonomía', 380, 'km', true, 'Ciclo NEDC, según la página de BYD Colombia. Otras fuentes publican versiones de 300 y 400 km (ciclo CLTC).'),
-      esp('Batería', 'Blade (LFP)', null, true),
-      esp('Carga rápida en corriente continua', '30–80 % en 30 min', null, true),
-      esp('Potencia máxima', 55, 'kW', false, 'Dato del folleto PDF de BYD (2023), cuyo texto sale desordenado: pendiente de confirmar.'),
-      esp('Par máximo', 135, 'N·m', false, 'Dato del folleto PDF de BYD (2023), cuyo texto sale desordenado: pendiente de confirmar.'),
-      esp('Pantalla', 'Giratoria de 10,1 pulgadas'),
-      esp('Plataforma', 'e-Platform 3.0'),
-      esp('Bolsas de aire', 6),
-      esp('Rines', 'Aleación de aluminio de 16 pulgadas'),
+      esp('Autonomía', 'Hasta 250', 'km', true, 'Ciclo combinado WLTP.'),
+      esp('Motor', '60 kW (80 hp)', null, true),
+      esp('Batería', 'LFP, 27,5 kWh útiles', null, true),
+      esp('Par máximo', 175, 'N·m'),
+      esp('Aceleración de 0 a 100 km/h', 12.1, 's'),
+      esp('Velocidad máxima', 130, 'km/h'),
+      esp('Carga en corriente alterna', '6,6 kW de serie', null, false, 'De 15 % a 80 % en 9 h en una toma doméstica; en 5 h 40 min con una toma reforzada y en 2 h 55 min con un cargador de pared de 7 kW.'),
+      esp('Carga rápida en corriente continua', 50, 'kW', false, 'Con el paquete de carga rápida: de 15 % a 80 % en 28 min.'),
+      esp('Radio de giro', 4.95, 'm'),
+      esp('Pantalla multimedia', 10.1, 'pulgadas', false, 'El cuadro de instrumentos digital es de 7 pulgadas.'),
     ],
-    precioCompra: 84990000,
-    precioFuente: 'https://www.elcarrocolombiano.com/novedades/byd-seagull-2026-colombia-actualizado-entrega-inmediata-precios-y-datos/',
+    precioCompra: null,
+    precioFuente: null,
     precioVerificado: false,
     alquilable: true,
     disponibilidad: POR_CONFIRMAR,
-    fuente: 'https://www.byd.com/co/car/seagull',
-    verificado: false,
+    fuente: 'https://media.dacia.com/new-dacia-spring-100-per-cent-electric-100-per-cent-dacia/?lang=eng',
+    verificado: true,
     porConfirmar: [
-      'Potencia (55 kW) y par (135 N·m): están en el folleto PDF oficial, pero el texto del PDF sale desordenado y no pude asociar cada cifra con certeza.',
-      'Capacidad de la batería (30,08 kWh en la versión GL 300) y dimensiones (3.780 × 1.715 × 1.580 mm): salen del mismo PDF y de notas de prensa.',
-      'Versión vendida hoy en Colombia: BYD publica 380 km NEDC; la prensa habla de GL 300 y GS 400.',
-      'Precio: 84.990.000 COP es el de la versión GL 300 según una nota de prensa (referencia de abril de 2025); BYD no publica precios en su sitio.',
+      'Disponibilidad en Colombia: no verificada. La fuente es el comunicado de prensa global de Dacia (8 de septiembre de 2026), no una página de Dacia Colombia.',
+      'Precio: no hay una fuente colombiana. La tarifa de alquiler queda por confirmar.',
+      'Versiones: las cifras son las del comunicado de prensa; no revisé si hay variantes distintas según el país.',
     ],
   },
 
   // ===== ACCESORIOS =====================================================
   {
-    id: 'acc-giro-register-mips',
-    slug: 'giro-register-mips',
+    id: 'acc-specialized-align-ii-mips',
+    slug: 'specialized-align-ii-mips',
     categoria: 'accesorios',
-    marca: 'Giro',
-    modelo: 'Register MIPS',
+    marca: 'Specialized',
+    modelo: 'Align II MIPS',
     descripcion:
-      'Casco de ciclismo en molde con protección Mips Evolve Core, visera removible y sistema de ajuste Roc Loc Sport.',
-    colores: [],
+      'Casco de ciclismo con protección MIPS, sistema de ajuste Headset SX con dial micrométrico y carcasa en molde.',
+    colores: [color('Negro / Negro reflectante', '#1d1d1f')],
     especificaciones: [
-      esp('Tipo', 'Casco recreativo en molde (in-mold)'),
-      esp('Cáscara', 'Dos piezas: exterior duro y parte inferior de policarbonato unida al forro'),
-      esp('Protección rotacional', 'Mips Evolve Core', null, true, 'Sistema integrado en el casco.'),
-      esp('Sistema de ajuste', 'Roc Loc Sport Mips', null, true, 'Rango de 7 cm y ajuste con una sola mano.'),
-      esp('Visera', 'Removible', null, true),
-      esp('Ventilación', 'Rejillas amplias y canales internos profundos'),
-      esp('Certificación', 'CPSC (Estados Unidos)'),
-      esp('Talla', 'Universal Fit'),
+      esp('Protección rotacional', 'MIPS', null, true, 'Capa de baja fricción que permite un deslizamiento de 10 a 15 mm en todas las direcciones.'),
+      esp('Sistema de ajuste', 'Headset SX con dial micrométrico', null, true),
+      esp('Ventilación', 'Sistema 4th Dimension Cooling', null, true),
+      esp('Carcasa', 'En molde (in-mold)', null, false, 'La ficha indica que mejora la resistencia y reduce el peso.'),
+      esp('Tallas', 'S/M, M/L y XL'),
+      esp('Calificación Virginia Tech', '5 estrellas', null, false, 'Según la ficha de Specialized.'),
+      esp('Certificación', 'CPSC (EE. UU.)', null, false, 'Para los cascos que se venden en EE. UU. y Canadá.'),
+      esp('Visibilidad', 'Calcomanías reflectantes'),
     ],
-    precioCompra: 267900,
-    precioFuente: 'https://www.homecenter.com.co/homecenter-co/product/495289/casco-giro-register-mips/495289/',
-    precioVerificado: false,
+    precioCompra: 260000,
+    precioFuente: 'https://www.specialized.com/co/es/align-ii/p/1000207922',
+    precioVerificado: true,
     alquilable: true,
     disponibilidad: POR_CONFIRMAR,
-    fuente: 'https://www.giro.com/product/register-mips-ii-xl-helmet/100000000200000180.html',
-    verificado: false,
+    fuente: 'https://www.specialized.com/us/en/align-ii/p/1000207992',
+    verificado: true,
     porConfirmar: [
-      'Generación: las especificaciones salen de la página oficial del Register Mips II (talla XL); falta confirmar si el que se vende en Colombia es el Register Mips original o el II.',
-      'Peso: la página no lo publica en texto; no lo incluí.',
-      'Precio: 267.900 COP (Homecenter) salió de un resumen de búsqueda; en otras tiendas va de 212.000 a 300.000 COP.',
+      'Peso: la ficha oficial no lo publica; no lo incluí.',
+      'Precio: 260.000 COP es el de la página de Specialized Colombia para el color Black/Black Reflective; las especificaciones salen de la ficha de Specialized en Estados Unidos.',
     ],
   },
   {
@@ -887,65 +879,35 @@ const PRODUCTOS_BASE = [
     ],
   },
   {
-    id: 'acc-cateye-volt400',
-    slug: 'cateye-volt400',
+    id: 'acc-specialized-stix-elite-2',
+    slug: 'specialized-stix-elite-2-headlight',
     categoria: 'accesorios',
-    marca: 'CatEye',
-    modelo: 'Volt400',
+    marca: 'Specialized',
+    modelo: 'Stix Elite 2 Headlight',
     descripcion:
-      'Luz delantera recargable de 400 lúmenes con cinco modos de luz y batería de ion de litio de 2.200 mAh.',
-    colores: [],
+      'Luz delantera recargable por USB con 100 lúmenes continuos, 200 lúmenes en destello y batería de 540 mAh.',
+    colores: [color('Negro', '#1d1d1f')],
     especificaciones: [
-      esp('Luminosidad', 400, 'lm', true),
-      esp('Modos de luz', 5),
-      esp('Duración en modo alto (400 lm)', 3, 'h'),
-      esp('Duración en modo medio (100 lm)', 8, 'h'),
-      esp('Duración en modo bajo (50 lm)', 18, 'h'),
-      esp('Peso', 120, 'g', true, 'Incluye la luz y la batería.'),
-      esp('Batería', '3,6 V / 2.200 mAh', null, true, 'De ion de litio.'),
-      esp('Carga', 'USB, 3–6 h (3 h con la base de carga rápida opcional)'),
-      esp('Montaje', 'Sobre o bajo el manubrio'),
+      esp('Luminosidad continua', 100, 'lm', true, 'Modo Steady High.'),
+      esp('Luminosidad en destello', 200, 'lm', true, 'Modo Power Flash.'),
+      esp('Modos de luz', 6),
+      esp('Duración en continuo alto (100 lm)', '2 h 30 min'),
+      esp('Duración en continuo bajo (38 lm)', 10, 'h'),
+      esp('Duración en destello (200 lm)', 10, 'h'),
+      esp('Duración máxima (12 lm, Eco Flash)', 112, 'h'),
+      esp('Batería', 540, 'mAh', true, 'Se recarga por el conector USB integrado en 2 horas, sin cable adicional.'),
+      esp('Montaje', 'Manubrios de 22,2 a 35 mm de diámetro'),
+      esp('Indicador de carga', 'Rojo y verde'),
     ],
-    precioCompra: 279900,
-    precioFuente: 'https://listado.mercadolibre.com.co/luz-cateye-volt-400',
-    precioVerificado: false,
+    precioCompra: 192000,
+    precioFuente: 'https://www.specialized.com/co/es/stix-elite-2-headlight/p/174109',
+    precioVerificado: true,
     alquilable: false,
     disponibilidad: POR_CONFIRMAR,
-    fuente: 'https://www.cateye.com/intl/products/headlights/HL-EL461RC/',
+    fuente: 'https://www.specialized.com/us/en/stix-elite-2-headlight/p/174109',
     verificado: true,
     porConfirmar: [
-      'Precio: 279.900 COP salió de un resumen de búsqueda de Mercado Libre Colombia (los vendedores la ofrecen entre 100.000 y 290.000 COP).',
-    ],
-  },
-  {
-    id: 'acc-dji-bateria-plus-mini-4-pro',
-    slug: 'dji-bateria-plus-mini-4-pro',
-    categoria: 'accesorios',
-    marca: 'DJI',
-    modelo: 'Intelligent Flight Battery Plus',
-    descripcion:
-      'Batería de vuelo de 3.850 mAh para los drones DJI Mini 4 Pro, Mini 3 Pro y Mini 3, con vuelo de hasta 45 minutos en el Mini 4 Pro.',
-    colores: [],
-    especificaciones: [
-      esp('Capacidad', 3850, 'mAh', true),
-      esp('Energía', 28.4, 'Wh', true),
-      esp('Peso', 'Aprox. 121', 'g', true),
-      esp('Voltaje nominal', 7.38, 'V'),
-      esp('Voltaje máximo de carga', 8.5, 'V'),
-      esp('Tipo', 'Ion de litio'),
-      esp('Vuelo máximo', 'Hasta 45', 'min', false, 'En el DJI Mini 4 Pro.'),
-      esp('Tiempo de carga', '101 / 78', 'min', false, '101 min en el dron con el cargador USB-C de 30 W; 78 min en el hub de carga.'),
-      esp('Compatibilidad', 'DJI Mini 4 Pro, Mini 3 Pro y Mini 3', null, false, 'Con esta batería el dron pesa más de 249 g.'),
-    ],
-    precioCompra: 649000,
-    precioFuente: 'https://listado.mercadolibre.com.co/baterias-para-dji-mini',
-    precioVerificado: false,
-    alquilable: false,
-    disponibilidad: POR_CONFIRMAR,
-    fuente: 'https://store.dji.com/product/dji-mini-3-pro-intelligent-flight-battery-plus',
-    verificado: true,
-    porConfirmar: [
-      'Precio: 649.000 COP salió de un resumen de búsqueda de Mercado Libre Colombia; la tienda de DJI muestra 145 USD.',
+      'Precio: 192.000 COP es el de la página de Specialized Colombia; las especificaciones salen de la ficha de Specialized en Estados Unidos.',
     ],
   },
 ]
@@ -955,20 +917,35 @@ const PRODUCTOS_BASE = [
 // ---------------------------------------------------------------------------
 
 // Vistas con foto: las del manifiesto, en el orden que define la categoría.
-// Cada vista queda como { id, etiqueta, imagen, alt, descripcion }; la
-// descripción es null porque no hay textos escritos para las fotos.
+// Cada vista queda como { id, etiqueta, imagen, imagenPequena, ancho, alto,
+// anchoPequeno, altoPequeno, alt, descripcion, credito }. Las fotos no se recortan:
+// el ancho y el alto son los reales de cada archivo (los componentes los usan para
+// reservar el espacio y para elegir cómo encajar la imagen). La descripción es null
+// porque no hay textos escritos para las fotos.
 function armarVistas(producto, nombre) {
-  const presentes = medios.vistas?.[`${producto.categoria}/${producto.slug}`] ?? []
+  const registradas = medios.vistas?.[`${producto.categoria}/${producto.slug}`] ?? {}
 
   return (VISTAS_POR_CATEGORIA[producto.categoria] ?? [])
-    .filter((vista) => presentes.includes(vista.id))
-    .map((vista) => ({
-      id: vista.id,
-      etiqueta: vista.etiqueta,
-      imagen: `/productos/${producto.categoria}-${producto.slug}-${vista.id}.webp`,
-      alt: `${nombre}, ${vista.etiqueta.toLowerCase()}`,
-      descripcion: null,
-    }))
+    .filter((vista) => registradas[vista.id])
+    .map((vista) => {
+      const datos = registradas[vista.id]
+      const base = `/productos/${producto.categoria}-${producto.slug}-${vista.id}`
+      const pequeno = datos.pequeno ?? { ancho: datos.ancho, alto: datos.alto }
+
+      return {
+        id: vista.id,
+        etiqueta: vista.etiqueta,
+        imagen: `${base}.webp`,
+        imagenPequena: datos.pequeno ? `${base}-sm.webp` : `${base}.webp`,
+        ancho: datos.ancho,
+        alto: datos.alto,
+        anchoPequeno: pequeno.ancho,
+        altoPequeno: pequeno.alto,
+        alt: `${nombre}, ${vista.etiqueta.toLowerCase()}`,
+        descripcion: null,
+        credito: { marca: datos.marca ?? null, fuente: datos.fuente ?? null },
+      }
+    })
 }
 
 // Video del producto: solo si el manifiesto lo registra (video y póster existen).
@@ -985,15 +962,18 @@ function armarVideo(producto) {
 
 function completar({ alquilable, ...producto }) {
   const nombre = `${producto.marca} ${producto.modelo}`
+  const sinPrecio = producto.precioCompra === null
 
   return {
     ...producto,
     nombre,
-    tarifasAlquiler: alquilable
-      ? tarifasDeEjemplo(producto.precioCompra, producto.categoria)
-      : null,
-    disponibleCompra: producto.precioCompra !== null,
+    // Sin precio de referencia no se inventa una tarifa: queda "por confirmar".
+    tarifasAlquiler:
+      alquilable && !sinPrecio
+        ? tarifasDeEjemplo(producto.precioCompra, producto.categoria)
+        : null,
     disponibleAlquiler: alquilable,
+    tarifaPorConfirmar: alquilable && sinPrecio,
     especificacionesClave: producto.especificaciones.filter((e) => e.clave),
     vistas: armarVistas(producto, nombre),
     video: armarVideo(producto),

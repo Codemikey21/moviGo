@@ -23,5 +23,9 @@ dist-ssr
 *.sln
 *.sw?
 
-# Fotos originales sin optimizar (ver ASSETS.md); solo se versiona public/productos/
+# Fotos originales sin optimizar (ver ASSETS.md)
 public/productos-origen/
+
+# Fotos optimizadas: no se versionan hasta confirmar el permiso de publicación de
+# cada una (ver ASSETS.md). El manifiesto src/data/medios.generado.json sí se versiona.
+public/productos/*.webp

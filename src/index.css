@@ -11,6 +11,7 @@
   --color-tinta: #1d1d1f; /* texto principal sobre fondos claros */
   --color-claro: #f5f5f7; /* fondo de las secciones claras */
   --color-fondo-elevado: #0c0c0e; /* footer y superficies sobre negro */
+  --color-fondo-foto: #f1f1f3; /* fondo neutro detrás de las fotos de producto que no llenan su marco */
 
   /* ---- Color: roles ---- */
   --color-fondo: var(--color-negro);
@@ -101,6 +102,7 @@
   --espacio-9: 6rem;
   --seccion-y: clamp(4rem, 9vw, 7.5rem);
   --contenedor: 1240px;
+  --contenedor-ancho: 1480px; /* secciones del inicio que aprovechan las pantallas anchas */
   --gutter: clamp(20px, 4vw, 40px);
 
   /* Espaciado fijo en px: valores intermedios repetidos en varios componentes.

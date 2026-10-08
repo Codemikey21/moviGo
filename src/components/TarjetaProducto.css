@@ -40,13 +40,13 @@
   }
 }
 
-/* ---- Parte visual: foto (4:3) o ícono sobre el color elegido ---- */
+/* ---- Parte visual: foto o ícono sobre el color elegido ---- */
+/* La proporción del contenedor (4:3) se fija en línea desde el componente. */
 
 .tarjeta__visual {
   position: relative;
   display: grid;
   place-items: center;
-  aspect-ratio: 4 / 3;
   overflow: hidden;
   background-color: var(--tono);
   background-image:
@@ -54,6 +54,12 @@
     linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.3));
   color: rgba(255, 255, 255, 0.9);
   transition: background-color var(--dur-lenta) var(--ease-estandar);
+}
+
+/* Con foto: fondo neutro (se ve donde la foto no llena el contenedor) */
+.tarjeta__visual--foto {
+  background-color: var(--color-fondo-foto);
+  background-image: none;
 }
 
 /* Sobre colores claros el ícono se oscurece para que se vea */
@@ -70,8 +76,17 @@
 .tarjeta__imagen {
   width: 100%;
   height: 100%;
-  object-fit: cover;
   transition: transform var(--dur-lenta) var(--ease-estandar);
+}
+
+/* Se llena el contenedor solo si la foto es casi igual de proporcionada; si no,
+   se ve completa. La decisión la toma el componente (ver lib/imagen.js). */
+.tarjeta__imagen--cubrir {
+  object-fit: cover;
+}
+
+.tarjeta__imagen--contener {
+  object-fit: contain;
 }
 
 /* Zoom suave al pasar el cursor o al enfocar la tarjeta con el teclado.
@@ -166,6 +181,12 @@
 .tarjeta__confirmar {
   color: var(--s-suave, var(--color-gris));
   font-size: var(--texto-3);
+  font-weight: 400;
+}
+
+/* Bajo el valor de una especificación, no a su lado */
+.tarjeta__confirmar--dato {
+  display: block;
 }
 
 .tarjeta__aviso {
@@ -198,8 +219,8 @@
   font-weight: 400;
 }
 
-/* "No se alquila": más discreto que un precio */
-.tarjeta__precio--sin {
+/* "Por confirmar" y "No se alquila": más discretos que una cifra */
+.tarjeta__precio--pendiente {
   font-weight: 500;
 }
 

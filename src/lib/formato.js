@@ -15,6 +15,15 @@ export function formatearPrecio(valor) {
   return formateadorPesos.format(valor)
 }
 
+// Texto para los datos que faltan por confirmar (precio, tarifa, disponibilidad…).
+export const TEXTO_POR_CONFIRMAR = 'Por confirmar'
+
+// Precio de referencia en COP o, si el catálogo no tiene una fuente colombiana
+// verificable (precioCompra es null), "Por confirmar".
+export function formatearPrecioReferencia(valor) {
+  return valor === null ? TEXTO_POR_CONFIRMAR : formateadorPesos.format(valor)
+}
+
 // Textos que acompañan a los precios: no son ofertas ni tarifas reales de MoviGo.
 export const ETIQUETA_PRECIO = 'Precio de referencia'
 export const ETIQUETA_TARIFA = 'Tarifa de ejemplo'

@@ -62,6 +62,13 @@
   letter-spacing: -0.03em;
 }
 
+/* "Por confirmar" ocupa el lugar del precio: más discreto que una cifra */
+.producto__precio--pendiente {
+  font-size: clamp(1.4rem, 2.6vw, 1.8rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
 .producto__tarifas {
   display: flex;
   flex-wrap: wrap;
@@ -221,6 +228,15 @@
   font-size: var(--texto-4);
   font-weight: 400;
   line-height: var(--interlinea-compacta);
+}
+
+/* Dato que falta confirmar, bajo su valor (mismo tratamiento que en las tarjetas) */
+.producto__dato-confirmar {
+  display: block;
+  margin-top: var(--espacio-1);
+  color: var(--s-suave);
+  font-size: var(--texto-3);
+  font-weight: 500;
 }
 
 /* ---- Fuente y avisos bajo la tabla ---- */
