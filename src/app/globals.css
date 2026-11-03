@@ -1,4 +1,154 @@
 @import "tailwindcss";
 
-/* Los tokens de diseño (colores, tipografía, espaciado) se definen aquí
-   cuando se apruebe el estilo visual. Por ahora solo se carga Tailwind. */
+/* ------------------------------------------------------------------
+   Tokens de diseño de MoviGo (estilo de referencia: Zoox).
+   Lienzo salvia, tarjetas muy redondeadas, turquesa solo como relleno
+   de botones, sin sombras.
+------------------------------------------------------------------- */
+@theme {
+  /* Colores */
+  --color-salvia: #d3e4df;
+  --color-blanco: #ffffff;
+  --color-escarcha: #edf4f2;
+  --color-carbon: #0d1212;
+  --color-bosque: #34484a;
+  --color-pizarra: #565959;
+  --color-niebla: #9aa3a5;
+  --color-bruma: #7b8889;
+  --color-turquesa: #64d5b3;
+  --color-eucalipto: #5b8279;
+
+  /* Radios */
+  --radius-tarjeta: 36px;
+  --radius-insignia: 20px;
+  --radius-campo: 16px;
+  --radius-boton: 16px;
+
+  /* Tipografía */
+  --font-sans:
+    "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+
+  /* Curvas */
+  --ease-salida: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    background: var(--color-blanco);
+    color: var(--color-carbon);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    font-kerning: none;
+    font-feature-settings: "kern" 0;
+  }
+
+  /* Foco visible y consistente para teclado */
+  :focus-visible {
+    outline: 2px solid var(--color-carbon);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+}
+
+/* Utilidades propias */
+@utility contenedor {
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: 20px;
+  @media (min-width: 768px) {
+    padding-inline: 20px;
+  }
+}
+
+/* Etiqueta pequeña en mayúsculas (caption del sistema) */
+@utility etiqueta {
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+@utility sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Titulares grandes con la ligereza de Zoox */
+@utility titular {
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+/* ------------------------------------------------------------------
+   Titular del hero: cada palabra recorta su contenido para que suba
+   desde una "máscara". El estado inicial lo pone GSAP, no el CSS, para
+   que el texto nunca quede oculto si la animación no corre.
+------------------------------------------------------------------- */
+.palabra {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.palabra-int {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* ------------------------------------------------------------------
+   Lenis (scroll suave)
+------------------------------------------------------------------- */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------
+   Movimiento reducido: sin transiciones largas ni scroll animado
+------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
