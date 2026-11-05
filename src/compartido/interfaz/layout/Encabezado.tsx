@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { Boton } from "../ui/Boton";
 import { Chevron } from "../ui/Chevron";
+import { useHaySesion } from "../hooks/useHaySesion";
+import { Logo } from "./Logo";
 import { MenuLateral } from "./MenuLateral";
 
 type Enlace = { texto: string; href: string };
@@ -15,6 +16,8 @@ type Props = {
   menuSecundarios: Enlace[];
   rutaIniciarSesion: string;
   rutaRegistro: string;
+  /** A dónde lleva el botón cuando ya hay sesión */
+  rutaCuenta?: string;
 };
 
 // Curva y duración medidas en el sitio de referencia
@@ -35,21 +38,6 @@ function EnlaceNav({ href, children }: { href: string; children: ReactNode }) {
       />
       {children}
     </a>
-  );
-}
-
-/** Marca provisional apilada ("MOVI" sobre "GO") hasta tener el logo real. */
-function Logo({ className = "" }: { className?: string }) {
-  return (
-    <Link
-      href="/"
-      aria-label="MoviGo, inicio"
-      className={`flex flex-col items-center text-[13px] font-bold leading-[1.05] tracking-[0.22em] text-bosque ${className}`}
-    >
-      {/* El margen negativo compensa el espacio que deja el tracking */}
-      <span className="-mr-[0.22em]">MOVI</span>
-      <span className="-mr-[0.22em]">GO</span>
-    </Link>
   );
 }
 
@@ -85,8 +73,10 @@ export function Encabezado({
   menuSecundarios,
   rutaIniciarSesion,
   rutaRegistro,
+  rutaCuenta = "/mi-cuenta",
 }: Props) {
   const [abierto, setAbierto] = useState(false);
+  const haySesion = useHaySesion();
   const [arriba, setArriba] = useState(true);
   const [bajando, setBajando] = useState(false);
   const [escritorio, setEscritorio] = useState(false);
@@ -197,19 +187,37 @@ export function Encabezado({
             <div
               className={`pointer-events-auto flex items-center justify-end gap-7 transition-[translate,opacity] ${curva} ${ocultarDer}`}
             >
-              <span className="hidden pl-4 lg:block">
-                <EnlaceNav href={rutaIniciarSesion}>Iniciar sesión</EnlaceNav>
-              </span>
-              <span className="md:hidden">
-                <Boton href={rutaRegistro} variante="oscuro" tamano="compacto">
-                  Registrarse
-                </Boton>
-              </span>
-              <span className="hidden md:block">
-                <Boton href={rutaRegistro} variante="oscuro">
-                  Registrarse
-                </Boton>
-              </span>
+              {haySesion ? (
+                <>
+                  {/* Con sesión: un solo botón a la cuenta */}
+                  <span className="md:hidden">
+                    <Boton href={rutaCuenta} variante="oscuro" tamano="compacto">
+                      Mi cuenta
+                    </Boton>
+                  </span>
+                  <span className="hidden md:block">
+                    <Boton href={rutaCuenta} variante="oscuro">
+                      Mi cuenta
+                    </Boton>
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="hidden pl-4 lg:block">
+                    <EnlaceNav href={rutaIniciarSesion}>Iniciar sesión</EnlaceNav>
+                  </span>
+                  <span className="md:hidden">
+                    <Boton href={rutaRegistro} variante="oscuro" tamano="compacto">
+                      Registrarse
+                    </Boton>
+                  </span>
+                  <span className="hidden md:block">
+                    <Boton href={rutaRegistro} variante="oscuro">
+                      Registrarse
+                    </Boton>
+                  </span>
+                </>
+              )}
             </div>
           </div>
         </div>

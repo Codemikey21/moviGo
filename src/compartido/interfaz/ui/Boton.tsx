@@ -2,8 +2,8 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Chevron } from "./Chevron";
 
-type Variante = "primario" | "secundario" | "oscuro";
-type Tamano = "normal" | "compacto";
+export type Variante = "primario" | "secundario" | "oscuro";
+export type Tamano = "normal" | "compacto";
 
 const variantes: Record<Variante, string> = {
   // El turquesa solo se usa como relleno; el texto va en carbón (contraste).
@@ -20,6 +20,39 @@ const tamanos: Record<Tamano, string> = {
 // Curva y duración medidas en el sitio de referencia
 const curva =
   "duration-[334ms] ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none";
+
+/** Clases del botón del sistema. Las usan Boton (enlace) y BotonAccion (botón). */
+export function clasesBoton(variante: Variante, tamano: Tamano) {
+  return `group relative inline-flex select-none items-center justify-center overflow-hidden rounded-boton text-[12px] font-bold uppercase leading-none transition-[scale] active:scale-[0.97] ${curva} ${variantes[variante]} ${tamanos[tamano]}`;
+}
+
+/** Texto del botón con las flechas que entran y salen al pasar el mouse. */
+export function ContenidoBoton({ children }: { children: ReactNode }) {
+  return (
+    <>
+      {/* Flecha que entra por la izquierda */}
+      <span
+        aria-hidden
+        className={`absolute left-[16px] top-1/2 -translate-x-[30px] -translate-y-1/2 opacity-0 transition-[translate,opacity] group-hover:-translate-x-[6px] group-hover:opacity-100 ${curva}`}
+      >
+        <Chevron className="rotate-180" />
+      </span>
+
+      <span
+        className={`flex items-center gap-2 transition-[translate] group-hover:translate-x-[14px] ${curva}`}
+      >
+        <span className="whitespace-nowrap">{children}</span>
+        {/* Flecha que sale por la derecha */}
+        <span
+          aria-hidden
+          className={`transition-[translate,opacity] group-hover:translate-x-[30px] group-hover:opacity-0 ${curva}`}
+        >
+          <Chevron />
+        </span>
+      </span>
+    </>
+  );
+}
 
 type Props = {
   href: string;
@@ -42,30 +75,8 @@ export function Boton({
   className = "",
 }: Props) {
   return (
-    <Link
-      href={href}
-      className={`group relative inline-flex select-none items-center justify-center overflow-hidden rounded-boton text-[12px] font-bold uppercase leading-none transition-[scale] active:scale-[0.97] ${curva} ${variantes[variante]} ${tamanos[tamano]} ${className}`}
-    >
-      {/* Flecha que entra por la izquierda */}
-      <span
-        aria-hidden
-        className={`absolute left-[16px] top-1/2 -translate-x-[30px] -translate-y-1/2 opacity-0 transition-[translate,opacity] group-hover:-translate-x-[6px] group-hover:opacity-100 ${curva}`}
-      >
-        <Chevron className="rotate-180" />
-      </span>
-
-      <span
-        className={`flex items-center gap-2 transition-[translate] group-hover:translate-x-[14px] ${curva}`}
-      >
-        <span className="whitespace-nowrap">{children}</span>
-        {/* Flecha que sale por la derecha */}
-        <span
-          aria-hidden
-          className={`transition-[translate,opacity] group-hover:translate-x-[30px] group-hover:opacity-0 ${curva}`}
-        >
-          <Chevron />
-        </span>
-      </span>
+    <Link href={href} className={`${clasesBoton(variante, tamano)} ${className}`}>
+      <ContenidoBoton>{children}</ContenidoBoton>
     </Link>
   );
 }

@@ -24,11 +24,22 @@ function crearCliente() {
 // En desarrollo Next.js recarga los módulos a cada cambio. Guardar el cliente
 // en globalThis evita abrir una conexión nueva en cada recarga.
 const global = globalThis as unknown as {
-  prisma?: ReturnType<typeof crearCliente>;
+  prisma?: PrismaClient;
 };
 
-export const db = global.prisma ?? crearCliente();
-
-if (process.env.NODE_ENV !== "production") {
-  global.prisma = db;
+function obtenerCliente(): PrismaClient {
+  if (!global.prisma) global.prisma = crearCliente();
+  return global.prisma;
 }
+
+/**
+ * El cliente se crea la primera vez que se usa, no al importar el archivo.
+ * Así una página que no consulta la base no falla si falta DATABASE_URL.
+ */
+export const db = new Proxy({} as PrismaClient, {
+  get(_destino, propiedad) {
+    const cliente = obtenerCliente();
+    const valor = Reflect.get(cliente, propiedad, cliente);
+    return typeof valor === "function" ? valor.bind(cliente) : valor;
+  },
+});
