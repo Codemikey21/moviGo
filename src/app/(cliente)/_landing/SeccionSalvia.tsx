@@ -34,7 +34,7 @@ export function SeccionSalvia() {
                 href={t.href}
                 className="group relative block aspect-square w-full max-w-[456px] overflow-hidden rounded-tarjeta"
               >
-                <div className="absolute inset-0 transition-transform duration-700 ease-salida group-hover:scale-[1.04]">
+                <div className="absolute inset-0">
                   <ImagenSlot src={t.foto} alt={t.etiqueta} tono={i === 0 ? "eucalipto" : "bosque"} />
                 </div>
               </Link>

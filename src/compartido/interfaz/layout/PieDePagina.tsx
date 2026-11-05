@@ -54,8 +54,12 @@ export function PieDePagina({
                 />
                 <button
                   type="submit"
-                  className="etiqueta h-[50px] w-full rounded-boton border border-carbon/70 font-bold text-carbon transition-colors duration-300 hover:bg-carbon hover:text-blanco"
+                  className="etiqueta group relative isolate h-[50px] w-full overflow-hidden rounded-boton border border-carbon/70 font-bold text-carbon transition-colors duration-[334ms] hover:text-blanco active:scale-[0.98]"
                 >
+                  <span
+                    aria-hidden
+                    className="absolute inset-0 -z-10 origin-left scale-x-0 bg-carbon transition-[scale] duration-[334ms] ease-[cubic-bezier(0.2,0,0,1)] group-hover:scale-x-100"
+                  />
                   Unirme al boletín
                 </button>
               </form>

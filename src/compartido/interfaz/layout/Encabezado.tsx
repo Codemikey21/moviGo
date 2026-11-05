@@ -31,8 +31,13 @@ function EnlaceNav({ href, children }: { href: string; children: ReactNode }) {
   return (
     <a
       href={href}
-      className="group/enlace relative inline-block py-2 text-[12px] font-bold uppercase leading-none text-bosque"
+      className="group/enlace relative isolate inline-block py-2 text-[12px] font-bold uppercase leading-none text-bosque"
     >
+      {/* Pastilla de fondo que aparece al pasar el mouse */}
+      <span
+        aria-hidden
+        className={`absolute -inset-x-[26px] -inset-y-[6px] -z-10 scale-90 rounded-[12px] bg-carbon/[0.06] opacity-0 transition-[scale,opacity] group-hover/enlace:scale-100 group-hover/enlace:opacity-100 group-focus-visible/enlace:scale-100 group-focus-visible/enlace:opacity-100 ${curvaCorta}`}
+      />
       <Chevron
         className={`absolute -left-[15px] top-1/2 -translate-x-[5px] -translate-y-1/2 opacity-0 transition-[translate,opacity] group-hover/enlace:translate-x-0 group-hover/enlace:opacity-100 group-focus-visible/enlace:translate-x-0 group-focus-visible/enlace:opacity-100 ${curvaCorta}`}
       />
@@ -49,11 +54,12 @@ function BotonMenu({ onClick }: { onClick: () => void }) {
       aria-controls="menu-principal"
       aria-label="Abrir menú"
       onClick={onClick}
-      className="flex h-12 w-12 items-center justify-center rounded-[16px] border border-carbon/10 text-bosque transition-colors hover:bg-blanco/60"
+      className="group/menu flex h-12 w-12 items-center justify-center rounded-[16px] border border-carbon/10 text-bosque transition-[background-color,scale] duration-300 hover:bg-blanco active:scale-95"
     >
-      <span className="flex h-[10px] w-[10px] flex-col justify-between">
+      {/* Al pasar el mouse las dos líneas se separan y la de abajo se acorta */}
+      <span className="flex h-[10px] w-[12px] flex-col justify-between transition-[height] duration-300 group-hover/menu:h-[12px]">
         <span className="block h-[2px] w-full rounded-full bg-current" />
-        <span className="block h-[2px] w-full rounded-full bg-current" />
+        <span className="block h-[2px] w-full rounded-full bg-current transition-[width] duration-300 group-hover/menu:w-[60%]" />
       </span>
     </button>
   );

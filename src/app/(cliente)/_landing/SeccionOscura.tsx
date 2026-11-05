@@ -79,7 +79,7 @@ export function SeccionOscura() {
                   i === 0 ? "md:w-[456px]" : "md:w-[338px]"
                 }`}
               >
-                <div className="absolute inset-0 transition-transform duration-700 ease-salida group-hover:scale-[1.04]">
+                <div className="absolute inset-0">
                   <ImagenSlot src={t.foto} alt={t.titulo} tono={i === 0 ? "carbon" : "eucalipto"} />
                 </div>
               </Link>

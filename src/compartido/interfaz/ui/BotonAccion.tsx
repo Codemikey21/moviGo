@@ -25,7 +25,7 @@ export function BotonAccion({
       className={`${clasesBoton(variante, tamano)} disabled:pointer-events-none disabled:opacity-60 ${className}`}
       {...resto}
     >
-      <ContenidoBoton>{children}</ContenidoBoton>
+      <ContenidoBoton variante={variante}>{children}</ContenidoBoton>
     </button>
   );
 }

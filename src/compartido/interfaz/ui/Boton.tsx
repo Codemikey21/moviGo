@@ -9,7 +9,16 @@ const variantes: Record<Variante, string> = {
   // El turquesa solo se usa como relleno; el texto va en carbón (contraste).
   primario: "bg-turquesa text-carbon",
   oscuro: "bg-bosque text-blanco",
-  secundario: "border border-carbon/70 bg-transparent text-carbon",
+  // Al pasar el mouse se rellena de carbón, así que el texto pasa a blanco
+  secundario:
+    "border border-carbon/70 bg-transparent text-carbon hover:text-blanco focus-visible:text-blanco",
+};
+
+// Color del relleno que barre el botón al pasar el mouse
+const barridos: Record<Variante, string> = {
+  primario: "bg-[#4cc7a1]",
+  oscuro: "bg-carbon",
+  secundario: "bg-carbon",
 };
 
 const tamanos: Record<Tamano, string> = {
@@ -23,13 +32,27 @@ const curva =
 
 /** Clases del botón del sistema. Las usan Boton (enlace) y BotonAccion (botón). */
 export function clasesBoton(variante: Variante, tamano: Tamano) {
-  return `group relative inline-flex select-none items-center justify-center overflow-hidden rounded-boton text-[12px] font-bold uppercase leading-none transition-[scale] active:scale-[0.97] ${curva} ${variantes[variante]} ${tamanos[tamano]}`;
+  return `group relative isolate inline-flex select-none items-center justify-center overflow-hidden rounded-boton text-[12px] font-bold uppercase leading-none transition-[scale,color] active:scale-[0.96] ${curva} ${variantes[variante]} ${tamanos[tamano]}`;
 }
 
-/** Texto del botón con las flechas que entran y salen al pasar el mouse. */
-export function ContenidoBoton({ children }: { children: ReactNode }) {
+/**
+ * Contenido del botón: un relleno que barre de izquierda a derecha y el
+ * texto con las flechas que entran y salen al pasar el mouse.
+ */
+export function ContenidoBoton({
+  children,
+  variante = "primario",
+}: {
+  children: ReactNode;
+  variante?: Variante;
+}) {
   return (
     <>
+      {/* Relleno que barre de izquierda a derecha */}
+      <span
+        aria-hidden
+        className={`absolute inset-0 -z-10 origin-left scale-x-0 rounded-[inherit] transition-[scale] group-hover:scale-x-100 group-focus-visible:scale-x-100 ${curva} ${barridos[variante]}`}
+      />
       {/* Flecha que entra por la izquierda */}
       <span
         aria-hidden
@@ -76,7 +99,7 @@ export function Boton({
 }: Props) {
   return (
     <Link href={href} className={`${clasesBoton(variante, tamano)} ${className}`}>
-      <ContenidoBoton>{children}</ContenidoBoton>
+      <ContenidoBoton variante={variante}>{children}</ContenidoBoton>
     </Link>
   );
 }

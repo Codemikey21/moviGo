@@ -54,8 +54,9 @@ export function MenuLateral({ abierto, onCerrar, principales, secundarios }: Pro
 
       if (primeraVez.current) {
         primeraVez.current = false;
-        // x: 0 limpia el translateX(-110%) que trae el HTML (ver style del
-        // panel); desde aquí GSAP controla la posición solo con xPercent.
+        // El HTML trae translateX(-110%) para que el panel no se vea antes de
+        // cargar el JS. GSAP lo lee como píxeles en "x", por eso cada animación
+        // pone x: 0 y mueve el panel solo con xPercent.
         gsap.set(p, { x: 0, xPercent: -110 });
         gsap.set(f, { opacity: 0 });
         return;
@@ -63,7 +64,7 @@ export function MenuLateral({ abierto, onCerrar, principales, secundarios }: Pro
 
       if (abierto) {
         gsap.to(f, { opacity: 1, duration: d * 0.8, ease: "power2.out" });
-        gsap.to(p, { xPercent: 0, duration: d, ease: curva });
+        gsap.to(p, { x: 0, xPercent: 0, duration: d, ease: curva });
         gsap.fromTo(
           "[data-menu-item]",
           { opacity: 0, x: -14 },
@@ -71,7 +72,7 @@ export function MenuLateral({ abierto, onCerrar, principales, secundarios }: Pro
         );
       } else {
         gsap.to(f, { opacity: 0, duration: d * 0.6, ease: "power2.out" });
-        gsap.to(p, { xPercent: -110, duration: d * 0.8, ease: "power3.inOut" });
+        gsap.to(p, { x: 0, xPercent: -110, duration: d * 0.8, ease: "power3.inOut" });
       }
     },
     { scope: raiz, dependencies: [abierto] },
