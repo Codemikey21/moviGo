@@ -20,7 +20,84 @@ export const RUTA_PENDIENTE = "#categorias";
 export const RUTA_INICIAR_SESION = "/iniciar-sesion";
 export const RUTA_REGISTRO = "/registro";
 
-/* 1. Hero (amanecer): titular centrado y video grande con botón de pausa
+/* 1. Historia (escena fija al hacer scroll, estilo "How to ride")
+   Abre la landing: video a pantalla completa con el título, después los
+   paneles se recortan y se cruzan, aparece la lista grande y un menú de
+   pastillas recorre las categorías. Termina con el llamado a crear cuenta.
+   Reemplaza al hero, al recorrido horizontal y a las palabras (secciones
+   2 a 4 de abajo), que quedan guardadas por si se quieren volver a usar. */
+export const historia = {
+  titulo: [
+    ["Así", "de", "fácil"],
+    ["es", "moverte"],
+  ],
+  // Video a pantalla completa del inicio (public/video/<nombre>-1080.mp4)
+  video: "recorrido",
+  // Foto que entra por la derecha en el segundo momento
+  foto: "/img/landing/recorrido-3.jpg",
+  textoAlt: "Mujer revisando su celular junto a un scooter eléctrico",
+  // Miniatura de abajo a la izquierda y lo que dice su burbuja en cada momento
+  miniatura: "/img/landing/recorrido-1.jpg",
+  burbujas: [
+    { texto: "Buscando tu scooter", puntos: true },
+    { texto: "Listo en MoviGo Cabecera", puntos: false },
+    { texto: "¡Buen viaje!", puntos: false },
+  ],
+  paso1: {
+    etiqueta: "Cómo funciona",
+    titulo: "Abres MoviGo, eliges tu vehículo y lo reservas en segundos.",
+    texto: "Si ya pediste un domicilio alguna vez, ya sabes cómo es.",
+  },
+  paso2: {
+    etiqueta: "Conoce tu vehículo",
+    titulo: "Te esperamos en el punto o te lo llevamos a la puerta.",
+    texto: "Casco incluido, batería cargada y revisado por nuestro taller antes de cada salida.",
+  },
+  // No repite el "Compra, alquila, rueda" de la sección oscura
+  lista: ["Elige.", "Reserva.", "Rueda."],
+  categorias: [
+    {
+      nombre: "Scooters",
+      foto: "/img/landing/palabra-trabajo.jpg",
+      titulo: "Para el día a día",
+      texto: "Plegables y eléctricos. Llegas al trabajo sin trancón y lo guardas debajo del escritorio.",
+    },
+    {
+      nombre: "Bicicletas",
+      foto: "/img/landing/palabra-domingo.jpg",
+      titulo: "Para el plan de domingo",
+      texto: "Urbanas, de montaña y eléctricas. Para salir en familia o subir a la Mesa de los Santos.",
+    },
+    {
+      nombre: "Motos",
+      foto: "/img/landing/palabra-escape.jpg",
+      titulo: "Para escaparte",
+      texto: "De ciudad o de ruta. Alquílala por días y sal de Bucaramanga cuando quieras.",
+    },
+    {
+      nombre: "Autos",
+      foto: "/img/landing/pie.jpg",
+      titulo: "Para ir lejos",
+      texto: "Autos eléctricos para el trabajo y la familia, con carga incluida en cada punto.",
+    },
+    {
+      nombre: "Drones",
+      foto: "/img/landing/palabra-perspectiva.jpg",
+      titulo: "Para verlo todo",
+      texto: "Para fotografía, video o simplemente ver tu ciudad desde arriba.",
+    },
+  ],
+  cierre: {
+    etiqueta: "Tu MoviGo te espera",
+    titulo: "Elige, reserva y sal a rodar.",
+    boton: { texto: "Crear mi cuenta", href: RUTA_REGISTRO },
+    enlace: { texto: "Ver categorías", href: "#categorias" },
+  },
+};
+
+/* --- Secciones guardadas (no se usan desde que está la historia) ---
+
+   2. Hero (amanecer): titular centrado y video grande con botón de pausa
    Video: la ciudad despierta, vista aérea de una avenida al amanecer.
    Horizontal 16:9, 16 segundos. */
 export const hero = {
@@ -28,7 +105,7 @@ export const hero = {
   video: "hero",
 };
 
-/* 2. Sección anclada horizontal (mañana): video, texto y tarjetas
+/* 3. Sección anclada horizontal (mañana): video, texto y tarjetas
    Video: el repartidor de MoviGo (maleta verde, scooter blanco) rodando
    por la ciudad. Es el mismo personaje de recorrido-1, palabra-trabajo y
    domicilio, para que la historia tenga un protagonista. Las tres tarjetas
@@ -55,7 +132,7 @@ export const recorrido = {
   ],
 };
 
-/* 3. Palabras que se encienden con el scroll (de la mañana al atardecer)
+/* 4. Palabras que se encienden con el scroll (de la mañana al atardecer)
    Cada palabra es un vehículo distinto y un momento del día.
    Fotos verticales 3:4. */
 export const palabras = {
@@ -75,7 +152,9 @@ export const palabras = {
   boton: { texto: "La experiencia MoviGo", href: RUTA_PENDIENTE },
 } as const;
 
-/* 4. Pedestal (atardecer): el vehículo estrella a pantalla completa
+/* --- Secciones en uso, después de la historia --- */
+
+/* 5. Pedestal (atardecer): el vehículo estrella a pantalla completa
    Video: una moto estacionada con el sol de la tarde a contraluz y su
    sombra larga. Deja espacio libre abajo a la izquierda para el texto.
    Horizontal 16:9. */
@@ -87,7 +166,7 @@ export const pedestal = {
   video: "pedestal",
 };
 
-/* 5. Sección verde oscuro (anochecer): palabras que entran una a una,
+/* 6. Sección verde oscuro (anochecer): palabras que entran una a una,
    dos tarjetas y cierre. Fotos cuadradas 1:1 con luz cálida de tienda. */
 export const oscura = {
   etiqueta: "Empieza a rodar",
@@ -116,7 +195,7 @@ export const oscura = {
   },
 };
 
-/* 6. Sección salvia (servicios): frase con palabras resaltadas y dos
+/* 7. Sección salvia (servicios): frase con palabras resaltadas y dos
    tarjetas con pie. Fotos cuadradas 1:1. */
 export const salvia = {
   etiqueta: "Movilidad a tu medida",
@@ -148,7 +227,7 @@ export const salvia = {
   ],
 };
 
-/* 7. Sección blanca: título centrado y lista de categorías con foto grande
+/* 8. Sección blanca: título centrado y lista de categorías con foto grande
    Foto horizontal 4:3: tienda con bicicletas en exhibición. */
 export const categorias = {
   etiqueta: "Elige tu MoviGo",

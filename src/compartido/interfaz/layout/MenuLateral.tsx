@@ -54,7 +54,9 @@ export function MenuLateral({ abierto, onCerrar, principales, secundarios }: Pro
 
       if (primeraVez.current) {
         primeraVez.current = false;
-        gsap.set(p, { xPercent: -110 });
+        // x: 0 limpia el translateX(-110%) que trae el HTML (ver style del
+        // panel); desde aquí GSAP controla la posición solo con xPercent.
+        gsap.set(p, { x: 0, xPercent: -110 });
         gsap.set(f, { opacity: 0 });
         return;
       }
@@ -86,6 +88,8 @@ export function MenuLateral({ abierto, onCerrar, principales, secundarios }: Pro
         ref={fondo}
         onClick={onCerrar}
         className="absolute inset-0 bg-carbon/45"
+        // Cerrado desde el HTML: así no se ve un instante antes de que cargue el JS
+        style={{ opacity: 0 }}
       />
 
       {/* Panel */}
@@ -95,6 +99,7 @@ export function MenuLateral({ abierto, onCerrar, principales, secundarios }: Pro
         role="dialog"
         aria-modal="true"
         aria-label="Menú"
+        style={{ transform: "translateX(-110%)" }}
         className="absolute bottom-[10px] left-[10px] top-[10px] flex w-[min(369px,calc(100vw-20px))] flex-col overflow-y-auto rounded-[16px] bg-blanco px-[38px] pb-[38px] pt-[38px]"
         data-lenis-prevent
       >

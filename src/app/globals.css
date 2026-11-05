@@ -173,6 +173,17 @@ html.lenis body {
   animation: entrar-desde-izquierda 420ms cubic-bezier(0.2, 0, 0, 1) both;
 }
 
+/* Puntos suspensivos que titilan ("Buscando tu scooter...") */
+@keyframes titilar {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
 /* ------------------------------------------------------------------
    Movimiento reducido: sin transiciones largas ni scroll animado
 ------------------------------------------------------------------- */

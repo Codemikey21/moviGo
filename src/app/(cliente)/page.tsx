@@ -1,20 +1,18 @@
 import { Revelador } from "@/compartido/interfaz/animaciones/Revelador";
-import { Hero } from "./_landing/Hero";
-import { SeccionHorizontal } from "./_landing/SeccionHorizontal";
-import { SeccionPalabras } from "./_landing/SeccionPalabras";
-import { SeccionPedestal } from "./_landing/SeccionPedestal";
-import { SeccionOscura } from "./_landing/SeccionOscura";
-import { SeccionSalvia } from "./_landing/SeccionSalvia";
 import { SeccionCategorias } from "./_landing/SeccionCategorias";
+import { SeccionHistoria } from "./_landing/SeccionHistoria";
+import { SeccionOscura } from "./_landing/SeccionOscura";
+import { SeccionPedestal } from "./_landing/SeccionPedestal";
+import { SeccionSalvia } from "./_landing/SeccionSalvia";
 
-// Misma secuencia de secciones que el sitio de referencia.
+// La historia abre la landing y reemplaza a Hero, SeccionHorizontal y
+// SeccionPalabras. Esos tres archivos siguen en _landing/ por si se quieren
+// volver a usar: basta con importarlos y ponerlos aquí.
 export default function Inicio() {
   return (
     <Revelador>
       <main>
-        <Hero />
-        <SeccionHorizontal />
-        <SeccionPalabras />
+        <SeccionHistoria />
         <SeccionPedestal />
         <SeccionOscura />
         <SeccionSalvia />

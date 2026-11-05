@@ -49,8 +49,14 @@ export async function ResumenCuenta({ aviso }: { aviso?: string }) {
               ["Celular", perfil.telefono ?? "Sin registrar"],
               ["Tipo de cuenta", nombresRol[perfil.rol]],
               ["Miembro desde", fecha.format(perfil.creadoEn)],
-            ].map(([etiqueta, valor]) => (
-              <div key={etiqueta} className="bg-escarcha px-6 py-5">
+            ].map(([etiqueta, valor], i, lista) => (
+              <div
+                key={etiqueta}
+                // Si el último queda solo en su fila, ocupa las dos columnas
+                className={`bg-escarcha px-6 py-5 ${
+                  i === lista.length - 1 && lista.length % 2 === 1 ? "sm:col-span-2" : ""
+                }`}
+              >
                 <dt className="etiqueta text-bruma">{etiqueta}</dt>
                 <dd className="mt-2 text-[17px] text-carbon">{valor}</dd>
               </div>

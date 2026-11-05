@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { ResumenCuenta } from "@/modulos/gestion-usuarios/interfaz/componentes/cuenta/ResumenCuenta";
 
@@ -20,6 +21,8 @@ export default function PaginaMiCuenta({ searchParams }: PageProps<"/mi-cuenta">
 }
 
 async function Contenido({ searchParams }: Pick<PageProps<"/mi-cuenta">, "searchParams">) {
+  // Esta parte depende de quién entra: se arma en cada visita, nunca al compilar.
+  await connection();
   const { aviso } = await searchParams;
   return <ResumenCuenta aviso={typeof aviso === "string" ? aviso : undefined} />;
 }
