@@ -48,3 +48,6 @@ CLAUDE.md
 
 # material crudo de fotos y videos (no se sube)
 _brutos/
+
+# cliente generado por Prisma (se crea con npm install o npm run db:generar)
+/src/generated/

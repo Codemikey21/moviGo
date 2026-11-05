@@ -55,7 +55,30 @@ Reglas de dependencia:
 ```bash
 npm install
 cp .env.ejemplo .env.local   # y completa los valores
+npm run db:aplicar           # crea las tablas en Supabase
+npm run db:semilla           # carga categorías, puntos de servicio y criterios
 npm run dev
 ```
+
+## Base de datos
+
+El esquema está en `database/schema.prisma` y sale del diagrama de clases. Las migraciones son archivos `.sql` en `database/migraciones/`, uno por módulo del negocio:
+
+| Archivo | Qué crea |
+|---|---|
+| `gestion_almacen.sql` | puntos de servicio, unidades y movimientos de stock |
+| `gestion_catalogo.sql` | categorías, productos y medios |
+| `gestion_notificaciones.sql` | notificaciones |
+| `gestion_pagos.sql` | pagos y avisos de la pasarela |
+| `gestion_pedidos.sql` | carritos, pedidos y sus líneas |
+| `gestion_servicios.sql` | alquileres, domicilios, seguimiento, evidencias y mantenimiento |
+| `gestion_usuarios.sql` | usuarios, clientes, domiciliarios, administradores y direcciones |
+| `portal_empresarial.sql` | empresas, contactos, solicitudes y cotizaciones |
+| `relaciones.sql` | llaves foráneas entre tablas de módulos distintos |
+| `seguridad_rls.sql` | activa RLS en todas las tablas para cerrar la API pública de Supabase |
+
+Se aplican en orden alfabético, que es el mismo en que aparecen en la carpeta. `npm run db:aplicar` lo hace solo; también se pueden pegar uno por uno en el SQL Editor de Supabase.
+
+Si cambias el esquema, `npm run db:diferencias` muestra el SQL que falta en la base. Ese SQL se guarda en el archivo `.sql` del módulo correspondiente o en uno nuevo. Para ver los datos: `npm run db:estudio`.
 
 La app queda en http://localhost:3000.
