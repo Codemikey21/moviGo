@@ -4,7 +4,7 @@ import "server-only";
 // El proxy ya manda a iniciar sesión a quien no tiene sesión; estas guardas
 // van dentro de las páginas y acciones para revisar además el rol.
 import { redirect } from "next/navigation";
-import { perfilActual } from "@/modulos/gestion-usuarios/servidor/servicio";
+import { administradorActual, perfilActual } from "@/modulos/gestion-usuarios/servidor/servicio";
 import type { PerfilUsuario } from "@/modulos/gestion-usuarios/tipos";
 
 /** Devuelve el perfil o manda a iniciar sesión. */
@@ -19,4 +19,15 @@ export async function requerirRol(...roles: PerfilUsuario["rol"][]): Promise<Per
   const perfil = await requerirSesion();
   if (!roles.includes(perfil.rol)) redirect("/mi-cuenta?aviso=sin-permiso");
   return perfil;
+}
+
+/**
+ * Exige un administrador (del sistema o de punto). Devuelve también el punto
+ * que puede manejar: puntoId null significa todos los puntos.
+ */
+export async function requerirAdministrador() {
+  await requerirRol("ADMIN_SISTEMA", "ADMIN_PUNTO");
+  const admin = await administradorActual();
+  if (!admin) redirect("/mi-cuenta?aviso=sin-permiso");
+  return admin;
 }

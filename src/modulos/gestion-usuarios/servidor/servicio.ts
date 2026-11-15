@@ -7,7 +7,8 @@ import { ErrorDominio } from "@/compartido/servidor/errores/errores";
 import { crearClienteServidor } from "@/compartido/servidor/supabase/servidor";
 import { RUTA_CUENTA } from "@/compartido/utilidades/rutas";
 import type { PerfilUsuario } from "../tipos";
-import { buscarPerfilPorId, crearPerfilCliente } from "./repositorio";
+import * as repositorio from "./repositorio";
+import { buscarAdministrador, buscarPerfilPorId, crearPerfilCliente } from "./repositorio";
 
 /** Enlace al que vuelve la persona desde el correo o desde Google. */
 function enlaceDeRegreso(origen: string, siguiente: string) {
@@ -168,4 +169,33 @@ export async function perfilActual(): Promise<PerfilUsuario | null> {
     nombre: nombre.trim(),
     telefono: typeof meta.telefono === "string" && meta.telefono.trim() ? meta.telefono.trim() : null,
   });
+}
+
+/**
+ * El perfil de quien inició sesión si es administrador, con el punto que
+ * puede manejar. puntoId null = todos los puntos (administrador del sistema).
+ */
+export async function administradorActual(): Promise<
+  (PerfilUsuario & { puntoId: string | null }) | null
+> {
+  const perfil = await perfilActual();
+  if (!perfil) return null;
+  if (perfil.rol === "ADMIN_SISTEMA") return { ...perfil, puntoId: null };
+  if (perfil.rol !== "ADMIN_PUNTO") return null;
+  const datos = await buscarAdministrador(perfil.id);
+  // Un administrador de punto sin punto asignado no puede mover inventario
+  return datos?.puntoAsignadoId ? { ...perfil, puntoId: datos.puntoAsignadoId } : null;
+}
+
+export const usuariosParaPanel = (busqueda?: string) => repositorio.listarUsuarios(busqueda);
+
+export async function cambiarRol(
+  adminId: string,
+  usuarioId: string,
+  rol: "CLIENTE" | "ADMIN_SISTEMA" | "ADMIN_PUNTO",
+  puntoId: string | null,
+) {
+  if (adminId === usuarioId) throw new ErrorDominio("No puedes cambiar tu propio rol.", "propio");
+  if (rol === "ADMIN_PUNTO" && !puntoId) throw new ErrorDominio("Elige el punto que va a administrar.", "punto");
+  await repositorio.cambiarRol(usuarioId, rol, puntoId);
 }

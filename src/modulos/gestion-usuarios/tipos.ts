@@ -1,20 +1,6 @@
 // Tipos compartidos del modulo (interfaz y servidor).
 
-/** Lo que devuelve cada acción de un formulario para que la interfaz lo pinte. */
-export type EstadoFormulario =
-  | { estado: "inicial" }
-  | {
-      estado: "error";
-      /** Mensaje general arriba del formulario */
-      mensaje?: string;
-      /** Mensaje por campo: { correo: "Escribe un correo válido." } */
-      errores?: Partial<Record<string, string>>;
-      /** Lo que la persona escribió, para no hacerla escribir todo de nuevo */
-      valores?: Record<string, string>;
-    }
-  | { estado: "exito"; mensaje: string; correo?: string };
-
-export const estadoInicial: EstadoFormulario = { estado: "inicial" };
+export { estadoInicial, type EstadoFormulario } from "@/compartido/tipos/formulario";
 
 /** Perfil de MoviGo de la persona que inició sesión. */
 export type PerfilUsuario = {
@@ -24,4 +10,12 @@ export type PerfilUsuario = {
   telefono: string | null;
   rol: "CLIENTE" | "EMPRESA" | "DOMICILIARIO" | "ADMIN_PUNTO" | "ADMIN_SISTEMA";
   creadoEn: Date;
+};
+
+/** Fila de la lista de usuarios del panel. */
+export type UsuarioFila = PerfilUsuario & {
+  activo: boolean;
+  pedidos: number;
+  alquileres: number;
+  puntoAsignado: string | null;
 };

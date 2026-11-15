@@ -60,3 +60,9 @@ export function erroresPorCampo(error: z.ZodError): Record<string, string> {
   }
   return resultado;
 }
+
+export const esquemaCambioRol = z.object({
+  usuarioId: z.uuid(),
+  rol: z.enum(["CLIENTE", "ADMIN_SISTEMA", "ADMIN_PUNTO"]),
+  puntoId: z.uuid().nullable(),
+});

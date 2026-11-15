@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { ScrollSuave } from "@/compartido/interfaz/animaciones/ScrollSuave";
 import { Encabezado } from "@/compartido/interfaz/layout/Encabezado";
 import { PieDePagina } from "@/compartido/interfaz/layout/PieDePagina";
+import { contarMiCarrito } from "@/modulos/gestion-pedidos/servidor/carrito/acciones";
 import {
   menu,
   pie,
@@ -20,6 +21,7 @@ export default function LayoutCliente({ children }: { children: ReactNode }) {
         menuSecundarios={menu.secundarios}
         rutaIniciarSesion={RUTA_INICIAR_SESION}
         rutaRegistro={RUTA_REGISTRO}
+        contarCarrito={contarMiCarrito}
       />
       {children}
       <PieDePagina

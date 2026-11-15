@@ -376,6 +376,7 @@ model PuntoServicio {
   administradores    Administrador[]
   movimientosDestino MovimientoStock[] @relation("MovimientoDestino")
   alquileresRecogida Alquiler[]        @relation("AlquilerRecogida")
+  domiciliosOrigen   Domicilio[]       @relation("DomicilioPuntoOrigen")
 
   @@map("puntos_servicio")
 }
@@ -468,8 +469,9 @@ model Pedido {
   cliente          Cliente    @relation(fields: [clienteId], references: [usuarioId], onDelete: Restrict)
   direccionEntrega Direccion? @relation("DireccionEntrega", fields: [direccionEntregaId], references: [id], onDelete: SetNull)
 
-  lineas LineaPedido[]
-  pagos  Pago[]
+  lineas     LineaPedido[]
+  pagos      Pago[]
+  domicilios Domicilio[]
 
   @@index([clienteId, creadoEn])
   @@map("pedidos")
@@ -573,7 +575,11 @@ model Domicilio {
   domiciliarioId         String?        @map("domiciliario_id") @db.Uuid
   alquilerId             String?        @map("alquiler_id") @db.Uuid
   solicitudCorporativaId String?        @map("solicitud_corporativa_id") @db.Uuid
-  origenId               String         @map("origen_id") @db.Uuid
+  // Pedido de compra que lleva este domicilio (si viene de una compra)
+  pedidoId               String?        @map("pedido_id") @db.Uuid
+  // Sale de un punto de servicio (pedidos y alquileres) o de una dirección
+  puntoOrigenId          String?        @map("punto_origen_id") @db.Uuid
+  origenId               String?        @map("origen_id") @db.Uuid
   destinoId              String         @map("destino_id") @db.Uuid
   estado                 EstadoServicio @default(SOLICITADO)
   descripcionPaquete     String         @map("descripcion_paquete")
@@ -588,7 +594,9 @@ model Domicilio {
   domiciliario         Domiciliario?         @relation(fields: [domiciliarioId], references: [usuarioId], onDelete: SetNull)
   alquiler             Alquiler?             @relation(fields: [alquilerId], references: [id], onDelete: SetNull)
   solicitudCorporativa SolicitudCorporativa? @relation(fields: [solicitudCorporativaId], references: [id], onDelete: SetNull)
-  origen               Direccion             @relation("DomicilioOrigen", fields: [origenId], references: [id], onDelete: Restrict)
+  pedido               Pedido?               @relation(fields: [pedidoId], references: [id], onDelete: SetNull)
+  puntoOrigen          PuntoServicio?        @relation("DomicilioPuntoOrigen", fields: [puntoOrigenId], references: [id], onDelete: SetNull)
+  origen               Direccion?            @relation("DomicilioOrigen", fields: [origenId], references: [id], onDelete: Restrict)
   destino              Direccion             @relation("DomicilioDestino", fields: [destinoId], references: [id], onDelete: Restrict)
 
   ubicaciones RegistroUbicacion[]
@@ -596,6 +604,7 @@ model Domicilio {
 
   @@index([clienteId, creadaEn])
   @@index([domiciliarioId, estado])
+  @@index([pedidoId])
   @@map("domicilios")
 }
 

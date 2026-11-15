@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { Aviso } from "./Aviso";
+import { Aviso } from "@/compartido/interfaz/ui/Aviso";
 
 /**
  * Lee de la dirección a dónde volver después de entrar (?siguiente=...).

@@ -2,17 +2,20 @@
 
 // Server Actions: unico punto de entrada que la interfaz puede llamar.
 // Valida con validaciones.ts, aplica permisos y delega en servicio.ts.
+import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
+import { requerirRol } from "@/compartido/servidor/autenticacion/guardas";
 import { origenDelSitio } from "@/compartido/servidor/configuracion/entorno";
 import { esErrorDominio } from "@/compartido/servidor/errores/errores";
 import { rutaSegura } from "@/compartido/utilidades/rutas";
-import type { EstadoFormulario, PerfilUsuario } from "../tipos";
+import type { EstadoFormulario, PerfilUsuario, UsuarioFila } from "../tipos";
 import * as servicio from "./servicio";
 import {
   erroresPorCampo,
   esquemaInicioSesion,
   esquemaNuevaContrasena,
   esquemaRecuperar,
+  esquemaCambioRol,
   esquemaRegistro,
 } from "./validaciones";
 
@@ -143,4 +146,31 @@ export async function cerrarSesionAccion(): Promise<void> {
 /** Perfil de quien inició sesión, o null. Lo usa la página de mi cuenta. */
 export async function obtenerMiPerfil(): Promise<PerfilUsuario | null> {
   return servicio.perfilActual();
+}
+
+// ---------------------------------------------------------------------------
+// Panel de administración
+// ---------------------------------------------------------------------------
+
+export async function listarUsuariosAdmin(busqueda?: string): Promise<UsuarioFila[]> {
+  await requerirRol("ADMIN_SISTEMA", "ADMIN_PUNTO");
+  return servicio.usuariosParaPanel(busqueda);
+}
+
+/** Solo el administrador del sistema cambia roles. */
+export async function cambiarRolAccion(_anterior: EstadoFormulario, formData: FormData): Promise<EstadoFormulario> {
+  const admin = await requerirRol("ADMIN_SISTEMA");
+  const datos = esquemaCambioRol.safeParse({
+    usuarioId: formData.get("usuarioId"),
+    rol: formData.get("rol"),
+    puntoId: formData.get("puntoId") || null,
+  });
+  if (!datos.success) return { estado: "error", mensaje: "Datos no válidos." };
+  try {
+    await servicio.cambiarRol(admin.id, datos.data.usuarioId, datos.data.rol, datos.data.puntoId);
+  } catch (error) {
+    return aEstado(error);
+  }
+  refresh();
+  return { estado: "exito", mensaje: "Rol actualizado." };
 }

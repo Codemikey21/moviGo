@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { BotonAccion } from "@/compartido/interfaz/ui/BotonAccion";
 import { nuevaContrasenaAccion } from "../../../servidor/acciones";
 import { estadoInicial } from "../../../tipos";
-import { Aviso } from "./Aviso";
+import { Aviso } from "@/compartido/interfaz/ui/Aviso";
 import { CampoContrasena } from "./CampoContrasena";
 
 export function FormularioNuevaContrasena() {

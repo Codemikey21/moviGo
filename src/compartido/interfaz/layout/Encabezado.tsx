@@ -1,8 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Suspense, useCallback, useEffect, useState, type ReactNode } from "react";
 import { Boton } from "../ui/Boton";
 import { Chevron } from "../ui/Chevron";
+import { Icono } from "../ui/Icono";
 import { useHaySesion } from "../hooks/useHaySesion";
 import { Logo } from "./Logo";
 import { MenuLateral } from "./MenuLateral";
@@ -18,7 +21,46 @@ type Props = {
   rutaRegistro: string;
   /** A dónde lleva el botón cuando ya hay sesión */
   rutaCuenta?: string;
+  /** Server Action que cuenta lo que hay en el carrito (con sesión) */
+  contarCarrito?: () => Promise<number>;
 };
+
+/** Carrito con el numerito de unidades. */
+function BotonCarrito({ cantidad }: { cantidad: number }) {
+  return (
+    <Link
+      href="/carrito"
+      aria-label={cantidad ? `Carrito, ${cantidad} producto${cantidad === 1 ? "" : "s"}` : "Carrito"}
+      className="relative grid size-12 place-items-center rounded-[16px] border border-carbon/10 text-bosque transition-colors hover:bg-blanco"
+    >
+      <Icono nombre="carrito" className="size-[22px]" />
+      {cantidad > 0 && (
+        <span className="absolute -right-1.5 -top-1.5 grid min-w-5 place-items-center rounded-full bg-turquesa px-1 text-[11px] font-bold leading-5 text-carbon">
+          {cantidad}
+        </span>
+      )}
+    </Link>
+  );
+}
+
+/**
+ * Carrito que se actualiza al cambiar de página. Usa la ruta actual, por eso
+ * va dentro de un Suspense (la barra se sigue generando estática).
+ */
+function CarritoConRuta({ contarCarrito }: { contarCarrito: () => Promise<number> }) {
+  const ruta = usePathname();
+  const [cantidad, setCantidad] = useState(0);
+  useEffect(() => {
+    let vigente = true;
+    contarCarrito()
+      .then((n) => vigente && setCantidad(n))
+      .catch(() => {});
+    return () => {
+      vigente = false;
+    };
+  }, [contarCarrito, ruta]);
+  return <BotonCarrito cantidad={cantidad} />;
+}
 
 // Curva y duración medidas en el sitio de referencia
 const curva =
@@ -80,9 +122,11 @@ export function Encabezado({
   rutaIniciarSesion,
   rutaRegistro,
   rutaCuenta = "/mi-cuenta",
+  contarCarrito,
 }: Props) {
   const [abierto, setAbierto] = useState(false);
   const haySesion = useHaySesion();
+
   const [arriba, setArriba] = useState(true);
   const [bajando, setBajando] = useState(false);
   const [escritorio, setEscritorio] = useState(false);
@@ -191,11 +235,16 @@ export function Encabezado({
 
             {/* Derecha: cuenta */}
             <div
-              className={`pointer-events-auto flex items-center justify-end gap-7 transition-[translate,opacity] ${curva} ${ocultarDer}`}
+              className={`pointer-events-auto flex items-center justify-end gap-3 md:gap-5 transition-[translate,opacity] ${curva} ${ocultarDer}`}
             >
               {haySesion ? (
                 <>
-                  {/* Con sesión: un solo botón a la cuenta */}
+                  {/* Con sesión: carrito y botón a la cuenta */}
+                  {contarCarrito && (
+                    <Suspense fallback={<BotonCarrito cantidad={0} />}>
+                      <CarritoConRuta contarCarrito={contarCarrito} />
+                    </Suspense>
+                  )}
                   <span className="md:hidden">
                     <Boton href={rutaCuenta} variante="oscuro" tamano="compacto">
                       Mi cuenta

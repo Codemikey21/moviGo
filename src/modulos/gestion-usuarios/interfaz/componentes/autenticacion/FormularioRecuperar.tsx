@@ -5,8 +5,8 @@ import { useActionState } from "react";
 import { BotonAccion } from "@/compartido/interfaz/ui/BotonAccion";
 import { recuperarContrasenaAccion } from "../../../servidor/acciones";
 import { estadoInicial } from "../../../tipos";
-import { Aviso } from "./Aviso";
-import { CampoTexto } from "./CampoTexto";
+import { Aviso } from "@/compartido/interfaz/ui/Aviso";
+import { CampoTexto } from "@/compartido/interfaz/ui/CampoTexto";
 import { RevisaTuCorreo } from "./RevisaTuCorreo";
 
 export function FormularioRecuperar() {

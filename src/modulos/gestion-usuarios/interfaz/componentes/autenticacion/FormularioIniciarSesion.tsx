@@ -5,10 +5,10 @@ import { Suspense, useActionState } from "react";
 import { BotonAccion } from "@/compartido/interfaz/ui/BotonAccion";
 import { iniciarSesionAccion } from "../../../servidor/acciones";
 import { estadoInicial } from "../../../tipos";
-import { Aviso } from "./Aviso";
+import { Aviso } from "@/compartido/interfaz/ui/Aviso";
 import { BotonGoogle } from "./BotonGoogle";
 import { CampoContrasena } from "./CampoContrasena";
-import { CampoTexto } from "./CampoTexto";
+import { CampoTexto } from "@/compartido/interfaz/ui/CampoTexto";
 import { AvisoDesdeUrl, CampoSiguiente } from "./ParametrosUrl";
 import { Separador } from "./Separador";
 

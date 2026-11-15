@@ -14,9 +14,10 @@
 //   - Vehículos claros (blanco, gris claro, verde pálido) y sin marcas.
 //   - Gente natural, en movimiento. Sin placas ni logos visibles.
 
-// Mientras no existan las landings de producto, los enlaces llevan a la
-// lista de categorías. Luego apuntarán a /catalogo/<categoria>.
-export const RUTA_PENDIENTE = "#categorias";
+// Catálogo: /catalogo, filtrado con ?categoria=<slug> y ?modo=comprar|alquilar
+export const RUTA_CATALOGO = "/catalogo";
+const RUTA_PENDIENTE = RUTA_CATALOGO;
+const categoria = (slug: string) => `${RUTA_CATALOGO}?categoria=${slug}`;
 export const RUTA_INICIAR_SESION = "/iniciar-sesion";
 export const RUTA_REGISTRO = "/registro";
 
@@ -175,14 +176,14 @@ export const oscura = {
     {
       titulo: "Comprar",
       enlace: "Ver catálogo",
-      href: RUTA_PENDIENTE,
+      href: `${RUTA_CATALOGO}?modo=comprar`,
       // Escaparate de una tienda de bicicletas de noche, con luz cálida
       foto: "/img/landing/comprar.jpg",
     },
     {
       titulo: "Alquilar",
       enlace: "Ver alquiler",
-      href: RUTA_PENDIENTE,
+      href: `${RUTA_CATALOGO}?modo=alquilar`,
       // Asesora de MoviGo entregando las llaves a un cliente
       foto: "/img/landing/alquilar.jpg",
     },
@@ -191,7 +192,7 @@ export const oscura = {
     etiqueta: "Portal empresarial: flotas para tu equipo",
     texto:
       "Cotiza, administra y mantén los vehículos de tu empresa desde un solo panel.",
-    boton: { texto: "Solicitar cotización", href: "#contacto" },
+    boton: { texto: "Solicitar cotización", href: "/empresas" },
   },
 };
 
@@ -211,7 +212,7 @@ export const salvia = {
       texto:
         "Agenda una revisión o reparación y sigue el estado de tu vehículo desde tu cuenta.",
       enlace: "Agendar mantenimiento",
-      href: "#servicios",
+      href: "/mi-cuenta/mantenimiento",
       // Mecánico ajustando una moto o bicicleta, luz cálida de taller
       foto: "/img/landing/mantenimiento.jpg",
     },
@@ -220,7 +221,7 @@ export const salvia = {
       texto:
         "Te llevamos tu compra o tu alquiler donde estés y lo recogemos cuando termines.",
       enlace: "Pedir domicilio",
-      href: "#servicios",
+      href: RUTA_CATALOGO,
       // El repartidor de MoviGo sacando un pedido de su maleta térmica
       foto: "/img/landing/domicilio.jpg",
     },
@@ -235,47 +236,47 @@ export const categorias = {
   boton: { texto: "Ver catálogo completo", href: RUTA_PENDIENTE },
   foto: "/img/landing/catalogo.jpg",
   items: [
-    { nombre: "Bicicletas", modo: "Compra · Alquiler", href: RUTA_PENDIENTE },
-    { nombre: "Scooters", modo: "Compra · Alquiler", href: RUTA_PENDIENTE },
-    { nombre: "Motos", modo: "Compra · Alquiler", href: RUTA_PENDIENTE },
-    { nombre: "Autos eléctricos", modo: "Compra · Alquiler", href: RUTA_PENDIENTE },
-    { nombre: "Drones", modo: "Compra · Alquiler", href: RUTA_PENDIENTE },
-    { nombre: "Patinetas", modo: "Compra", href: RUTA_PENDIENTE },
-    { nombre: "Accesorios", modo: "Compra", href: RUTA_PENDIENTE },
+    { nombre: "Bicicletas", modo: "Compra · Alquiler", href: categoria("bicicletas") },
+    { nombre: "Scooters", modo: "Compra · Alquiler", href: categoria("scooters") },
+    { nombre: "Motos", modo: "Compra · Alquiler", href: categoria("motos") },
+    { nombre: "Autos eléctricos", modo: "Compra · Alquiler", href: categoria("autos-electricos") },
+    { nombre: "Drones", modo: "Compra · Alquiler", href: categoria("drones") },
+    { nombre: "Patinetas", modo: "Compra", href: categoria("patinetas") },
+    { nombre: "Accesorios", modo: "Compra", href: categoria("accesorios") },
   ],
 };
 
 /* Menú lateral y pie de página */
 export const menu = {
   principales: [
-    { texto: "Categorías", href: "#categorias" },
-    { texto: "Servicios", href: "#servicios" },
-    { texto: "Empresas", href: "#empresas" },
-    { texto: "Contacto", href: "#contacto" },
+    { texto: "Catálogo", href: RUTA_CATALOGO },
+    { texto: "Alquilar", href: `${RUTA_CATALOGO}?modo=alquilar` },
+    { texto: "Servicios", href: "/#servicios" },
+    { texto: "Empresas", href: "/empresas" },
   ],
   secundarios: [
-    { texto: "Comprar", href: RUTA_PENDIENTE },
-    { texto: "Alquilar", href: RUTA_PENDIENTE },
-    { texto: "Mantenimiento", href: "#servicios" },
-    { texto: "Domicilios", href: "#servicios" },
+    { texto: "Comprar", href: `${RUTA_CATALOGO}?modo=comprar` },
+    { texto: "Mi carrito", href: "/carrito" },
+    { texto: "Mis pedidos", href: "/mi-cuenta/pedidos" },
+    { texto: "Mantenimiento", href: "/mi-cuenta/mantenimiento" },
     { texto: "Iniciar sesión", href: RUTA_INICIAR_SESION },
     { texto: "Registrarse", href: RUTA_REGISTRO },
-    { texto: "Portal empresarial", href: "#empresas" },
-    { texto: "Soporte", href: "#contacto" },
+    { texto: "Portal empresarial", href: "/empresas" },
+    { texto: "Soporte", href: "/#contacto" },
   ],
 };
 
 export const pie = {
   mapa: [
-    { texto: "Categorías", href: "#categorias" },
-    { texto: "Servicios", href: "#servicios" },
-    { texto: "Empresas", href: "#empresas" },
-    { texto: "Soporte", href: "#contacto" },
+    { texto: "Catálogo", href: RUTA_CATALOGO },
+    { texto: "Servicios", href: "/#servicios" },
+    { texto: "Empresas", href: "/#empresas" },
+    { texto: "Soporte", href: "/#contacto" },
   ],
   cuenta: [
     { texto: "Iniciar sesión", href: RUTA_INICIAR_SESION },
     { texto: "Registrarse", href: RUTA_REGISTRO },
-    { texto: "Mi cuenta", href: RUTA_INICIAR_SESION },
+    { texto: "Mi cuenta", href: "/mi-cuenta" },
   ],
   boletin: {
     etiqueta: "Mantente al día",

@@ -3,7 +3,7 @@ import { supabaseConfigurado } from "@/compartido/servidor/supabase/config";
 import { actualizarSesion } from "@/compartido/servidor/supabase/sesion";
 
 // Páginas que piden haber iniciado sesión.
-const PRIVADAS = ["/mi-cuenta", "/nueva-contrasena", "/empresa", "/admin"];
+const PRIVADAS = ["/mi-cuenta", "/nueva-contrasena", "/empresa", "/admin", "/carrito", "/pagar"];
 
 // Páginas que no tienen sentido si ya hay sesión.
 const DE_ACCESO = ["/iniciar-sesion", "/registro"];

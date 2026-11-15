@@ -41,3 +41,48 @@ export async function crearPerfilCliente(datos: {
     select: camposPerfil,
   });
 }
+
+/** Datos de administrador: alcance (todo el sistema o un punto) y su punto. */
+export async function buscarAdministrador(usuarioId: string) {
+  return db.administrador.findUnique({
+    where: { usuarioId },
+    select: { alcance: true, puntoAsignadoId: true },
+  });
+}
+
+/** Usuarios para el panel, con cuántos pedidos y alquileres tienen. */
+export async function listarUsuarios(busqueda?: string) {
+  const texto = busqueda?.trim();
+  const filas = await db.usuario.findMany({
+    where: texto
+      ? { OR: [{ nombre: { contains: texto, mode: "insensitive" } }, { correo: { contains: texto, mode: "insensitive" } }] }
+      : undefined,
+    orderBy: { creadoEn: "desc" },
+    take: 100,
+    select: {
+      ...camposPerfil,
+      activo: true,
+      cliente: { select: { _count: { select: { pedidos: true, alquileres: true } } } },
+      administrador: { select: { puntoAsignado: { select: { nombre: true } } } },
+    },
+  });
+  return filas.map(({ cliente, administrador, ...u }) => ({
+    ...u,
+    pedidos: cliente?._count.pedidos ?? 0,
+    alquileres: cliente?._count.alquileres ?? 0,
+    puntoAsignado: administrador?.puntoAsignado?.nombre ?? null,
+  }));
+}
+
+/** Cambia el rol. Los administradores llevan además su fila en administradores. */
+export async function cambiarRol(usuarioId: string, rol: "CLIENTE" | "ADMIN_SISTEMA" | "ADMIN_PUNTO", puntoId: string | null) {
+  await db.$transaction(async (tx) => {
+    await tx.usuario.update({ where: { id: usuarioId }, data: { rol } });
+    if (rol === "CLIENTE") {
+      await tx.administrador.deleteMany({ where: { usuarioId } });
+    } else {
+      const datos = { alcance: rol === "ADMIN_SISTEMA" ? ("SISTEMA" as const) : ("PUNTO" as const), puntoAsignadoId: rol === "ADMIN_PUNTO" ? puntoId : null };
+      await tx.administrador.upsert({ where: { usuarioId }, update: datos, create: { usuarioId, ...datos } });
+    }
+  });
+}
