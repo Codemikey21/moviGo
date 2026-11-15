@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 // El eje "opsz" da un corte más fino en tamaños grandes.
 import "@fontsource-variable/inter/opsz.css";
 import "./globals.css";
+import { DefinicionesVehiculos } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/DefinicionesVehiculos";
 
 export const metadata: Metadata = {
   title: "MoviGo | Bicicletas, scooters, motos y más",
@@ -15,6 +16,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es">
       <body>
+        {/* Dibujos de los vehículos: se definen una vez y se reutilizan en todo el sitio */}
+        <DefinicionesVehiculos />
         {children}
       </body>
     </html>

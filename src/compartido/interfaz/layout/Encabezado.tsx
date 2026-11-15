@@ -185,6 +185,7 @@ export function Encabezado({
           {/* Fondo: barra completa o pastilla de 64px centrada */}
           <div
             aria-hidden
+            data-barra-fondo
             className={`pointer-events-auto absolute top-0 h-16 border transition-[left,width,translate,border-radius,background-color,border-color] ${curva} ${
               arriba
                 ? "left-0 w-full rounded-[24px] border-transparent bg-transparent"

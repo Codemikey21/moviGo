@@ -233,3 +233,273 @@ html.lenis body {
 .leaflet-container {
   font-family: var(--font-sans);
 }
+
+/* Clases del rediseño en la capa "components": así las utilidades de
+   Tailwind (absolute, h-full...) siempre pueden sobrescribirlas. */
+@layer components {
+  /* ------------------------------------------------------------------
+     Rediseño estilo Zoox (después de iniciar sesión)
+  ------------------------------------------------------------------- */
+
+  /* Escenario oscuro con carril de luz: el "pedestal" de los vehículos */
+  .escenario {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-carbon);
+  }
+
+  .escenario-carril {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, #4d6264, #5f7677 60%, #6d8484);
+    clip-path: polygon(30% 0, 70% 0, 100% 100%, 0 100%);
+  }
+
+  .escenario-haz {
+    position: absolute;
+    left: -20%;
+    right: -20%;
+    top: 38%;
+    height: 30%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(255 255 255 / 0.55) 35%,
+      rgb(255 255 255 / 0.7) 50%,
+      rgb(255 255 255 / 0.4) 70%,
+      transparent
+    );
+    filter: blur(22px);
+    mix-blend-mode: soft-light;
+    animation: escenario-haz 9s ease-in-out infinite alternate;
+  }
+
+  @keyframes escenario-haz {
+    from {
+      transform: rotate(-24deg) translateY(-40px);
+    }
+    to {
+      transform: rotate(-22deg) translateY(40px);
+    }
+  }
+
+  /* Muesca: pestaña del color del fondo recortada en una esquina de la
+     tarjeta, con las dos esquinas invertidas (como Zoox). */
+  .muesca {
+    position: absolute;
+    bottom: 0;
+    z-index: 3;
+    background: var(--fondo-muesca, var(--color-blanco));
+  }
+
+  .muesca::before,
+  .muesca::after {
+    content: "";
+    position: absolute;
+    width: 32px;
+    height: 32px;
+  }
+
+  .muesca-izquierda {
+    left: 0;
+    border-top-right-radius: 32px;
+  }
+
+  .muesca-izquierda::before {
+    left: 0;
+    top: -32px;
+    background: radial-gradient(circle at 100% 0, transparent 31.5px, var(--fondo-muesca, var(--color-blanco)) 32px);
+  }
+
+  .muesca-izquierda::after {
+    right: -32px;
+    bottom: 0;
+    background: radial-gradient(circle at 100% 0, transparent 31.5px, var(--fondo-muesca, var(--color-blanco)) 32px);
+  }
+
+  .muesca-derecha {
+    right: 0;
+    border-top-left-radius: 32px;
+  }
+
+  .muesca-derecha::before {
+    right: 0;
+    top: -32px;
+    background: radial-gradient(circle at 0 0, transparent 31.5px, var(--fondo-muesca, var(--color-blanco)) 32px);
+  }
+
+  .muesca-derecha::after {
+    left: -32px;
+    bottom: 0;
+    background: radial-gradient(circle at 0 0, transparent 31.5px, var(--fondo-muesca, var(--color-blanco)) 32px);
+  }
+
+  /* Pastilla activa que se va llenando mientras avanza sola */
+  .pastilla-avanza {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pastilla-avanza::after {
+    content: "";
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 6px;
+    height: 2px;
+    background: var(--color-turquesa);
+    transform-origin: left;
+    animation: pastilla-avanza var(--duracion, 4.5s) linear forwards;
+  }
+
+  @keyframes pastilla-avanza {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* Vehículo que entra y sale de la vitrina */
+  @keyframes vehiculo-entra {
+    from {
+      opacity: 0;
+      transform: translateX(90px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes vehiculo-sale {
+    to {
+      opacity: 0;
+      transform: translateX(-90px);
+    }
+  }
+
+  .vehiculo-entra {
+    animation: vehiculo-entra 1s var(--ease-salida) both;
+  }
+
+  .vehiculo-sale {
+    animation: vehiculo-sale 0.45s ease-in forwards;
+  }
+
+  /* Punto vivo (latido) */
+  .punto-vivo {
+    position: relative;
+    display: inline-block;
+    flex: none;
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: var(--color-turquesa);
+  }
+
+  .punto-vivo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: inherit;
+    animation: latido 1.6s infinite;
+  }
+
+  @keyframes latido {
+    from {
+      transform: scale(1);
+      opacity: 0.8;
+    }
+    to {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+
+  /* Texto que se enciende palabra por palabra con el scroll */
+  .palabra-scroll {
+    opacity: 0.16;
+    transition: opacity 0.35s;
+  }
+
+  .palabra-scroll[data-encendida="true"] {
+    opacity: 1;
+  }
+
+  /* Foto flotante que sigue el cursor en las listas grandes */
+  .foto-flotante {
+    position: fixed;
+    z-index: 30;
+    width: 260px;
+    aspect-ratio: 4 / 5;
+    border-radius: 26px;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8) rotate(-4deg);
+    transition:
+      opacity 0.35s,
+      transform 0.5s var(--ease-salida);
+  }
+
+  .foto-flotante[data-visible="true"] {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(-4deg);
+  }
+
+  /* Escenas que se mueven con el scroll (usan --p de <EscenaScroll>).
+     En celular no se encogen: se ven completas. */
+  .escena-vehiculo {
+    transform: translate(-50%, -50%);
+  }
+
+  @media (min-width: 768px) {
+    /* El escenario se encoge hacia la derecha */
+    .escena-encoge {
+      clip-path: inset(
+        calc(var(--p) * 13vh) calc(var(--p) * 2.5vw) calc(var(--p) * 5vh) calc(var(--p) * 47vw)
+          round calc(var(--p) * 36px)
+      );
+    }
+
+    .escena-vehiculo {
+      transform: translate(calc(-50% + var(--p) * 23.5vw), calc(-50% + var(--p) * 4vh))
+        scale(calc(1 - var(--p) * 0.3));
+    }
+
+    /* Lo que se va al empezar a bajar */
+    .escena-desvanece {
+      opacity: calc(1 - var(--p) * 4);
+    }
+
+    /* El panel que aparece a la izquierda al final */
+    .escena-lado {
+      opacity: calc((var(--p) - 0.55) * 2.6);
+      transform: translateY(calc(-50% + (1 - var(--p)) * 60px));
+    }
+
+    /* Tarjeta que crece hasta ocupar la pantalla */
+    .escena-crece {
+      transform: scale(calc(0.58 + var(--p) * 0.42));
+    }
+
+    .escena-aparece-final {
+      opacity: calc((var(--p) - 0.62) * 3);
+    }
+
+    .escena-titulo {
+      opacity: calc(1 - var(--p) * 3);
+    }
+  }
+}
+
+/* Páginas que empiezan con un escenario oscuro (data-cabecera-clara): la
+   barra superior es blanca desde arriba para que se lea. Va fuera de las
+   capas para ganarle a bg-transparent. */
+body:has([data-cabecera-clara]) [data-barra-fondo] {
+  background-color: var(--color-blanco);
+  border-color: rgb(13 18 18 / 0.1);
+}

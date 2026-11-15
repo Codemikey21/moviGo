@@ -14,6 +14,10 @@ export type CategoriaResumen = {
   descripcion: string | null;
   /** Productos activos en la categoría */
   totalProductos: number;
+  /** Precio de venta más bajo de la categoría (null si no tiene productos) */
+  desdeVenta: number | null;
+  /** Tarifa de alquiler por día más baja (null si nada se alquila) */
+  desdeAlquiler: number | null;
 };
 
 export type Foto = {
