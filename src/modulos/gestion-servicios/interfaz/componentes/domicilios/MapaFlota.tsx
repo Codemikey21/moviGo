@@ -41,7 +41,7 @@ export function MapaFlota({ puntos, entregas, className = "" }: Props) {
 
       const limites: [number, number][] = [];
       for (const p of puntos) {
-        L.marker([p.latitud, p.longitud], { icon: icono("mapa-origen", "M") }).addTo(mapa).bindTooltip(p.nombre);
+        L.marker([p.latitud, p.longitud], { icon: icono("mapa-origen", "M"), zIndexOffset: 1000 }).addTo(mapa).bindTooltip(p.nombre);
         limites.push([p.latitud, p.longitud]);
       }
       for (const e of entregas) {

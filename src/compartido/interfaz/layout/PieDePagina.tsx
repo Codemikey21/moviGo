@@ -1,6 +1,8 @@
+import type { ReactNode } from "react";
 import { Chevron } from "../ui/Chevron";
 import { IconoCuadrado } from "../ui/IconoCuadrado";
 import { ImagenSlot } from "../ui/ImagenSlot";
+import { hayRedes, RedesSociales } from "./RedesSociales";
 
 type Enlace = { texto: string; href: string };
 
@@ -8,6 +10,8 @@ type Props = {
   mapa: Enlace[];
   cuenta: Enlace[];
   boletin: { etiqueta: string; texto: string };
+  /** Formulario del boletín (lo pone el layout, que conoce el módulo de notificaciones). */
+  formularioBoletin: ReactNode;
   legales: Enlace[];
   /** Foto grande del cierre (parte trasera de un vehículo, por ejemplo). */
   foto: string;
@@ -24,6 +28,7 @@ export function PieDePagina({
   mapa,
   cuenta,
   boletin,
+  formularioBoletin,
   legales,
   foto,
   legal,
@@ -41,28 +46,7 @@ export function PieDePagina({
             <div>
               <h2 className="etiqueta pb-[22px] text-carbon/70">{boletin.etiqueta}</h2>
               <p className="pb-5 text-[16px] text-pizarra">{boletin.texto}</p>
-              <form className="flex flex-col gap-4" action="#" method="get">
-                <label className="sr-only" htmlFor="pie-correo">
-                  Correo electrónico
-                </label>
-                <input
-                  id="pie-correo"
-                  type="email"
-                  name="correo"
-                  placeholder="Tu correo"
-                  className="h-14 w-full rounded-[18px] border border-carbon/20 bg-blanco px-5 text-[14px] text-carbon placeholder:text-niebla focus:border-carbon focus:outline-none"
-                />
-                <button
-                  type="submit"
-                  className="etiqueta group relative isolate h-[50px] w-full overflow-hidden rounded-boton border border-carbon/70 font-bold text-carbon transition-colors duration-[334ms] hover:text-blanco active:scale-[0.98]"
-                >
-                  <span
-                    aria-hidden
-                    className="absolute inset-0 -z-10 origin-left scale-x-0 bg-carbon transition-[scale] duration-[334ms] ease-[cubic-bezier(0.2,0,0,1)] group-hover:scale-x-100"
-                  />
-                  Unirme al boletín
-                </button>
-              </form>
+              {formularioBoletin}
             </div>
           </div>
         </div>
@@ -83,10 +67,15 @@ export function PieDePagina({
                 </li>
               ))}
             </ul>
-            <div className="flex items-center gap-5">
-              <span className="text-[12px] font-bold uppercase text-bosque">Redes</span>
-              <Redes />
-            </div>
+            {hayRedes && (
+              <div className="flex items-center gap-5">
+                <span className="text-[12px] font-bold uppercase text-bosque">Redes</span>
+                <RedesSociales
+                  className="gap-3"
+                  claseEnlace="flex h-8 w-8 items-center justify-center rounded-[10px] border border-carbon/15 text-carbon transition-colors hover:bg-escarcha"
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -139,31 +128,5 @@ function Columna({ titulo, enlaces }: { titulo: string; enlaces: Enlace[] }) {
         ))}
       </ul>
     </nav>
-  );
-}
-
-function Redes() {
-  const clase =
-    "flex h-8 w-8 items-center justify-center rounded-[10px] border border-carbon/15 text-carbon transition-colors hover:bg-escarcha";
-  return (
-    <span className="flex items-center gap-3">
-      <a href="#" aria-label="YouTube" className={clase}>
-        <svg aria-hidden viewBox="0 0 24 24" className="h-4 w-4 fill-current">
-          <path d="M22 8.2a2.6 2.6 0 0 0-1.8-1.8C18.6 6 12 6 12 6s-6.6 0-8.2.4A2.6 2.6 0 0 0 2 8.2 27 27 0 0 0 1.6 12 27 27 0 0 0 2 15.8a2.6 2.6 0 0 0 1.8 1.8C5.4 18 12 18 12 18s6.6 0 8.2-.4a2.6 2.6 0 0 0 1.8-1.8 27 27 0 0 0 .4-3.8 27 27 0 0 0-.4-3.8zM10 14.6V9.4l4.6 2.6L10 14.6z" />
-        </svg>
-      </a>
-      <a href="#" aria-label="Instagram" className={clase}>
-        <svg aria-hidden viewBox="0 0 24 24" className="h-4 w-4 fill-none stroke-current" strokeWidth="1.8">
-          <rect x="3" y="3" width="18" height="18" rx="5" />
-          <circle cx="12" cy="12" r="4" />
-          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
-        </svg>
-      </a>
-      <a href="#" aria-label="TikTok" className={clase}>
-        <svg aria-hidden viewBox="0 0 24 24" className="h-4 w-4 fill-current">
-          <path d="M16 3c.3 2.4 1.8 4 4 4.2v3.1c-1.5 0-2.9-.5-4-1.3v6.4A5.6 5.6 0 1 1 10.4 10v3.2a2.5 2.5 0 1 0 2.5 2.5V3H16z" />
-        </svg>
-      </a>
-    </span>
   );
 }

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { gsap, useGSAP } from "../animaciones/gsap";
 import { obtenerLenis } from "../animaciones/lenis-store";
+import { RedesSociales } from "./RedesSociales";
 import { Chevron } from "../ui/Chevron";
 import { IconoCuadrado } from "../ui/IconoCuadrado";
 
@@ -160,26 +161,11 @@ export function MenuLateral({ abierto, onCerrar, principales, secundarios }: Pro
           data-menu-item
           className="mt-auto flex items-center justify-between rounded-[16px] border border-carbon/10 px-6 py-4"
         >
-          <span className="text-[12px] font-bold uppercase text-bosque">Redes</span>
-          <span className="flex items-center gap-4 text-carbon">
-            <a href="#" aria-label="Instagram" className="transition-opacity hover:opacity-70">
-              <svg aria-hidden viewBox="0 0 24 24" className="h-4 w-4 fill-none stroke-current" strokeWidth="1.8">
-                <rect x="3" y="3" width="18" height="18" rx="5" />
-                <circle cx="12" cy="12" r="4" />
-                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
-              </svg>
-            </a>
-            <a href="#" aria-label="TikTok" className="transition-opacity hover:opacity-70">
-              <svg aria-hidden viewBox="0 0 24 24" className="h-4 w-4 fill-current">
-                <path d="M16 3c.3 2.4 1.8 4 4 4.2v3.1c-1.5 0-2.9-.5-4-1.3v6.4A5.6 5.6 0 1 1 10.4 10v3.2a2.5 2.5 0 1 0 2.5 2.5V3H16z" />
-              </svg>
-            </a>
-            <a href="#" aria-label="YouTube" className="transition-opacity hover:opacity-70">
-              <svg aria-hidden viewBox="0 0 24 24" className="h-4 w-4 fill-current">
-                <path d="M22 8.2a2.6 2.6 0 0 0-1.8-1.8C18.6 6 12 6 12 6s-6.6 0-8.2.4A2.6 2.6 0 0 0 2 8.2 27 27 0 0 0 1.6 12 27 27 0 0 0 2 15.8a2.6 2.6 0 0 0 1.8 1.8C5.4 18 12 18 12 18s6.6 0 8.2-.4a2.6 2.6 0 0 0 1.8-1.8 27 27 0 0 0 .4-3.8 27 27 0 0 0-.4-3.8zM10 14.6V9.4l4.6 2.6L10 14.6z" />
-              </svg>
-            </a>
-          </span>
+          <Link href="/contacto" onClick={onCerrar} className="group inline-flex items-center gap-2 text-[12px] font-bold uppercase text-bosque">
+            ¿Necesitas ayuda?
+            <Chevron className="transition-transform duration-300 group-hover:translate-x-[2px]" />
+          </Link>
+          <RedesSociales className="gap-4 text-carbon" claseEnlace="transition-opacity hover:opacity-70" />
         </div>
       </div>
     </div>

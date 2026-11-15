@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { ScrollSuave } from "@/compartido/interfaz/animaciones/ScrollSuave";
 import { Encabezado } from "@/compartido/interfaz/layout/Encabezado";
 import { PieDePagina } from "@/compartido/interfaz/layout/PieDePagina";
+import { FormularioBoletin } from "@/modulos/gestion-notificaciones/interfaz/componentes/FormularioBoletin";
 import { contarMiCarrito } from "@/modulos/gestion-pedidos/servidor/carrito/acciones";
 import {
   menu,
@@ -28,6 +29,7 @@ export default function LayoutCliente({ children }: { children: ReactNode }) {
         mapa={pie.mapa}
         cuenta={pie.cuenta}
         boletin={pie.boletin}
+        formularioBoletin={<FormularioBoletin />}
         legales={pie.legales}
         foto={pie.foto}
         legal={pie.legal}

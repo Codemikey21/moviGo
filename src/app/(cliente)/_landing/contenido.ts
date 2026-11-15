@@ -262,7 +262,7 @@ export const menu = {
     { texto: "Iniciar sesión", href: RUTA_INICIAR_SESION },
     { texto: "Registrarse", href: RUTA_REGISTRO },
     { texto: "Portal empresarial", href: "/empresas" },
-    { texto: "Soporte", href: "/#contacto" },
+    { texto: "Soporte", href: "/contacto" },
   ],
 };
 
@@ -270,8 +270,8 @@ export const pie = {
   mapa: [
     { texto: "Catálogo", href: RUTA_CATALOGO },
     { texto: "Servicios", href: "/#servicios" },
-    { texto: "Empresas", href: "/#empresas" },
-    { texto: "Soporte", href: "/#contacto" },
+    { texto: "Empresas", href: "/empresas" },
+    { texto: "Soporte", href: "/contacto" },
   ],
   cuenta: [
     { texto: "Iniciar sesión", href: RUTA_INICIAR_SESION },
@@ -283,10 +283,10 @@ export const pie = {
     texto: "Novedades, modelos nuevos y promociones.",
   },
   legales: [
-    { texto: "Política de privacidad", href: "#contacto" },
-    { texto: "Términos de uso", href: "#contacto" },
-    { texto: "Zonas de cobertura", href: "#contacto" },
-    { texto: "Gestionar cookies", href: "#contacto" },
+    { texto: "Política de privacidad", href: "/legal/privacidad" },
+    { texto: "Términos de uso", href: "/legal/terminos" },
+    { texto: "Zonas de cobertura", href: "/cobertura" },
+    { texto: "Cookies", href: "/legal/cookies" },
   ],
   // Cierre del día (noche): calle de ciudad con estelas de luz, foto
   // oscura horizontal 16:9

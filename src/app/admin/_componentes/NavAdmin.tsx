@@ -12,6 +12,7 @@ const secciones = [
   { href: "/admin/empresas", texto: "Empresas" },
   { href: "/admin/inventario", texto: "Inventario" },
   { href: "/admin/usuarios", texto: "Usuarios" },
+  { href: "/admin/mensajes", texto: "Mensajes" },
 ];
 
 /** Menú del panel con pastillas (como el de la landing); resalta la sección actual. */

@@ -299,6 +299,31 @@ model Notificacion {
   @@map("notificaciones")
 }
 
+/// Mensaje que alguien deja en /contacto. Lo atiende un administrador.
+model MensajeContacto {
+  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nombre   String
+  correo   String
+  telefono String?
+  /// PEDIDO | PRODUCTO | TALLER | EMPRESAS | OTRO
+  motivo   String
+  mensaje  String
+  creadoEn DateTime @default(now()) @map("creado_en") @db.Timestamptz(6)
+  atendido Boolean  @default(false)
+
+  @@index([atendido, creadoEn])
+  @@map("mensajes_contacto")
+}
+
+/// Correo suscrito al boletín de novedades.
+model SuscripcionBoletin {
+  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  correo   String   @unique
+  creadaEn DateTime @default(now()) @map("creada_en") @db.Timestamptz(6)
+
+  @@map("suscripciones_boletin")
+}
+
 // =============================================================================
 // gestion-catalogo
 // =============================================================================

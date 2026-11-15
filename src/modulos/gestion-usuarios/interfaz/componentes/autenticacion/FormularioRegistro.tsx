@@ -89,11 +89,11 @@ export function FormularioRegistro({ alCambiar }: Props) {
             />
             <span>
               Acepto los{" "}
-              <Link href="#" className="text-carbon underline underline-offset-4">
+              <Link href="/legal/terminos" target="_blank" className="text-carbon underline underline-offset-4">
                 términos de uso
               </Link>{" "}
               y la{" "}
-              <Link href="#" className="text-carbon underline underline-offset-4">
+              <Link href="/legal/privacidad" target="_blank" className="text-carbon underline underline-offset-4">
                 política de privacidad
               </Link>
               .

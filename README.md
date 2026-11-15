@@ -71,6 +71,7 @@ El esquema está en `database/schema.prisma` y sale del diagrama de clases. Las 
 | `gestion_catalogo.sql` | categorías, productos y medios |
 | `gestion_catalogo_fotos.sql` | bucket `productos` en Storage: fotos públicas que solo un administrador sube o borra |
 | `gestion_notificaciones.sql` | notificaciones |
+| `gestion_notificaciones_contacto.sql` | mensajes de la página de contacto y suscripciones al boletín |
 | `gestion_pagos.sql` | pagos y avisos de la pasarela |
 | `gestion_pedidos.sql` | carritos, pedidos y sus líneas |
 | `gestion_servicios.sql` | alquileres, domicilios, seguimiento, evidencias y mantenimiento |
