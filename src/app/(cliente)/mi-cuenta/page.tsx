@@ -14,7 +14,11 @@ import { Escenario } from "@/compartido/interfaz/ui/Escenario";
 import { Icono } from "@/compartido/interfaz/ui/Icono";
 import { Muesca } from "@/compartido/interfaz/ui/Muesca";
 import { formatoDia, formatoFechaHora, formatoFechaLarga, formatoPesos } from "@/compartido/utilidades/formato";
-import { IlustracionVehiculo } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/IlustracionVehiculo";
+import {
+  estiloCategorias,
+  MosaicoCategorias,
+  ordenarCategorias,
+} from "@/modulos/gestion-catalogo/interfaz/componentes/categorias/MosaicoCategorias";
 import { obtenerCategorias } from "@/modulos/gestion-catalogo/servidor/categorias/acciones";
 import { obtenerMisNotificaciones } from "@/modulos/gestion-notificaciones/servidor/acciones";
 import { obtenerMisPedidos } from "@/modulos/gestion-pedidos/servidor/compras/acciones";
@@ -34,17 +38,6 @@ export const metadata: Metadata = { title: "Mi cuenta · MoviGo" };
 const avisos: Record<string, string> = {
   "contrasena-actualizada": "Listo, tu contraseña quedó actualizada.",
   "sin-permiso": "No tienes permiso para entrar a esa sección.",
-};
-
-// Orden, nombre corto y estilo de cada categoría en la vitrina y el mosaico
-const estiloCategorias: Record<string, { orden: number; corto: string; fondo: "oscuro" | "salvia" | "escarcha"; tamano: "grande" | "ancha" | "normal" }> = {
-  "autos-electricos": { orden: 1, corto: "Autos", fondo: "oscuro", tamano: "grande" },
-  motos: { orden: 2, corto: "Motos", fondo: "salvia", tamano: "ancha" },
-  scooters: { orden: 3, corto: "Scooters", fondo: "escarcha", tamano: "normal" },
-  bicicletas: { orden: 4, corto: "Bicis", fondo: "escarcha", tamano: "normal" },
-  drones: { orden: 5, corto: "Drones", fondo: "oscuro", tamano: "normal" },
-  patinetas: { orden: 6, corto: "Patinetas", fondo: "salvia", tamano: "normal" },
-  accesorios: { orden: 7, corto: "Accesorios", fondo: "escarcha", tamano: "normal" },
 };
 
 // Foto de ambiente (de la landing) para las tarjetas de lo que está en curso
@@ -145,10 +138,7 @@ async function Contenido({ searchParams }: Pick<PageProps<"/mi-cuenta">, "search
   const minutos = seguimiento?.minutosRestantes ?? null;
 
   // Vitrina: todas las categorías con productos
-  const categoriasVitrina: CategoriaVitrina[] = categorias
-    .filter((c) => c.totalProductos > 0)
-    .sort((a, b) => (estiloCategorias[a.slug]?.orden ?? 99) - (estiloCategorias[b.slug]?.orden ?? 99))
-    .map((c) => ({
+  const categoriasVitrina: CategoriaVitrina[] = ordenarCategorias(categorias).map((c) => ({
       slug: c.slug,
       nombre: c.nombre,
       corto: estiloCategorias[c.slug]?.corto ?? c.nombre,
@@ -273,26 +263,9 @@ async function Contenido({ searchParams }: Pick<PageProps<"/mi-cuenta">, "search
               ]}
             />
           </div>
-          <ul className="mt-16 grid auto-rows-[300px] grid-cols-1 gap-4 sm:grid-cols-2 lg:auto-rows-[330px] lg:grid-cols-4">
-            {categoriasVitrina.map((c) => (
-              <TarjetaCategoria key={c.slug} categoria={c} />
-            ))}
-            <li data-revelar className="lg:col-span-1">
-              <Link
-                href="/catalogo?modo=alquilar"
-                className="group flex h-full flex-col justify-between rounded-[30px] bg-bosque p-7 text-blanco transition-transform duration-700 ease-salida hover:-translate-y-1.5"
-              >
-                <div>
-                  <p className="etiqueta text-turquesa">Alquiler por días</p>
-                  <p className="titular mt-4 text-[32px]">Pruébalo antes de comprarlo.</p>
-                </div>
-                <div className="flex items-end justify-between gap-4">
-                  <p className="text-[14px] text-blanco/75">Con seguro y casco incluidos.</p>
-                  <Flecha />
-                </div>
-              </Link>
-            </li>
-          </ul>
+          <div className="mt-16">
+            <MosaicoCategorias categorias={categorias} />
+          </div>
         </section>
 
         {/* 4. Lo que está en curso */}
@@ -391,58 +364,6 @@ async function Contenido({ searchParams }: Pick<PageProps<"/mi-cuenta">, "search
 /* ------------------------------------------------------------------
    Piezas de la página
 ------------------------------------------------------------------- */
-
-function Flecha() {
-  return (
-    <span className="grid size-11 shrink-0 place-items-center rounded-[13px] bg-turquesa text-[18px] text-carbon transition-transform duration-500 ease-salida group-hover:-rotate-45">
-      ›
-    </span>
-  );
-}
-
-function TarjetaCategoria({ categoria: c }: { categoria: CategoriaVitrina }) {
-  const estilo = estiloCategorias[c.slug] ?? { fondo: "escarcha", tamano: "normal" };
-  const oscuro = estilo.fondo === "oscuro";
-  const tamano = { grande: "sm:col-span-2 lg:row-span-2", ancha: "sm:col-span-2", normal: "" }[estilo.tamano];
-  const fondo = { oscuro: "", salvia: "bg-salvia", escarcha: "bg-escarcha" }[estilo.fondo];
-  const dibujo = { grande: "inset-x-[6%]", ancha: "left-[26%] right-[4%]", normal: "inset-x-[8%]" }[estilo.tamano];
-
-  const contenido = (
-    <>
-      <div className={`absolute ${dibujo} top-1/2 -translate-y-[56%] transition-transform duration-700 ease-salida group-hover:translate-x-3.5 group-hover:scale-[1.04]`}>
-        <IlustracionVehiculo categoria={c.slug} className="w-full" />
-      </div>
-      <p className={`etiqueta relative ${oscuro ? "text-turquesa" : "text-bosque"}`}>{c.nombre}</p>
-      <div className="relative flex items-end justify-between gap-3">
-        <div>
-          <h3 className={`titular ${estilo.tamano === "grande" ? "text-[clamp(34px,3.4vw,46px)]" : "text-[28px]"}`}>{c.nombre}</h3>
-          <p className="mt-1.5 text-[14px] opacity-70">
-            {c.total} modelo{c.total === 1 ? "" : "s"}
-            {c.desdeVenta !== null && ` · desde ${formatoPesos.format(c.desdeVenta)}`}
-          </p>
-        </div>
-        <Flecha />
-      </div>
-    </>
-  );
-
-  return (
-    <li data-revelar className={tamano}>
-      <Link
-        href={`/catalogo?categoria=${c.slug}`}
-        className="group block h-full transition-transform duration-700 ease-salida hover:-translate-y-1.5"
-      >
-        {oscuro ? (
-          <Escenario className={`flex h-full flex-col justify-between rounded-[30px] text-blanco ${estilo.tamano === "grande" ? "p-8" : "p-6"}`} haz={false}>
-            {contenido}
-          </Escenario>
-        ) : (
-          <div className={`relative flex h-full flex-col justify-between overflow-hidden rounded-[30px] p-6 text-carbon ${fondo}`}>{contenido}</div>
-        )}
-      </Link>
-    </li>
-  );
-}
 
 function CartaFoto({ foto, children }: { foto: string; children: ReactNode }) {
   return (
