@@ -14,7 +14,13 @@ export async function contarFotos(productoId: string): Promise<number> {
 }
 
 /** La foto nueva queda de última. */
-export async function crearFoto(datos: { productoId: string; url: string; textoAlt: string }): Promise<Foto> {
+export async function crearFoto(datos: {
+  productoId: string;
+  url: string;
+  textoAlt: string;
+  colorId: string | null;
+  vista: string | null;
+}): Promise<Foto> {
   const ultima = await db.medio.aggregate({
     where: { productoId: datos.productoId },
     _max: { orden: true },
@@ -27,6 +33,10 @@ export async function crearFoto(datos: { productoId: string; url: string; textoA
 
 export async function buscarFoto(id: string) {
   return db.medio.findUnique({ where: { id }, select: camposFoto });
+}
+
+export async function etiquetarFoto(id: string, datos: { colorId: string | null; vista: string | null }): Promise<void> {
+  await db.medio.update({ where: { id }, data: datos });
 }
 
 export async function borrarFoto(id: string): Promise<void> {

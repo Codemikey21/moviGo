@@ -13,6 +13,7 @@ export const esquemaAlquiler = z
     dias: z.coerce.number().int().min(1, "Mínimo un día.").max(MAX_DIAS, `Máximo ${MAX_DIAS} días.`),
     entrega: z.enum(["EN_PUNTO", "A_DOMICILIO"]),
     puntoId: z.uuid({ error: "Elige el punto de servicio." }),
+    colorId: z.union([z.uuid(), z.literal("").transform(() => null)]).default(null),
   })
   .refine((d) => d.fechaInicio >= hoyEnColombia() && d.fechaInicio <= hoyEnColombia(MAX_ANTICIPACION_DIAS), {
     path: ["fechaInicio"],

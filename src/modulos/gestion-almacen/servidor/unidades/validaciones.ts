@@ -7,6 +7,8 @@ export const esquemaRegistrarUnidades = z
   .object({
     productoId: z.uuid(),
     puntoId: z.uuid("Elige el punto de servicio."),
+    // Color de las unidades (vacío = sin color)
+    colorId: z.union([z.uuid(), z.literal("").transform(() => null)]),
     // Seriales del fabricante, uno por línea (o separados por coma).
     // Si se deja vacío, MoviGo genera seriales internos.
     seriales: z.string().max(4000),

@@ -11,8 +11,9 @@ import { DisponibilidadProducto } from "@/modulos/gestion-almacen/interfaz/compo
 import { RegistrarUnidades } from "@/modulos/gestion-almacen/interfaz/componentes/unidades/RegistrarUnidades";
 import { TablaUnidades } from "@/modulos/gestion-almacen/interfaz/componentes/unidades/TablaUnidades";
 import { listarMovimientosAdmin } from "@/modulos/gestion-almacen/servidor/movimientos/acciones";
-import { obtenerDisponibilidad } from "@/modulos/gestion-almacen/servidor/stock/acciones";
+import { obtenerDisponibilidad, obtenerDisponibilidadPorColor } from "@/modulos/gestion-almacen/servidor/stock/acciones";
 import { listarUnidadesAdmin } from "@/modulos/gestion-almacen/servidor/unidades/acciones";
+import { ColoresProducto } from "@/modulos/gestion-catalogo/interfaz/componentes/colores/ColoresProducto";
 import { GaleriaFotos } from "@/modulos/gestion-catalogo/interfaz/componentes/medios/GaleriaFotos";
 import { FormularioProducto } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/FormularioProducto";
 import { obtenerCategorias } from "@/modulos/gestion-catalogo/servidor/categorias/acciones";
@@ -59,13 +60,17 @@ async function Contenido({
   if (!producto) notFound();
 
   // Catálogo y almacén son módulos separados: la página junta los dos
-  const [categorias, disponibilidad, unidades, movimientos] = await Promise.all([
+  const [categorias, disponibilidad, porColor, unidades, movimientos] = await Promise.all([
     obtenerCategorias(),
     obtenerDisponibilidad(producto.id),
+    obtenerDisponibilidadPorColor(producto.id),
     listarUnidadesAdmin(producto.id),
     listarMovimientosAdmin(producto.id),
   ]);
   const puntos = disponibilidad.map((d) => ({ id: d.punto.id, nombre: d.punto.nombre }));
+  // Unidades de cada color (en todos los puntos)
+  const unidadesPorColor: Record<string, number> = {};
+  for (const fila of porColor) if (fila.colorId) unidadesPorColor[fila.colorId] = (unidadesPorColor[fila.colorId] ?? 0) + fila.total;
   const esSistema = admin.rol === "ADMIN_SISTEMA";
 
   return (
@@ -111,26 +116,37 @@ async function Contenido({
         )}
       </div>
 
+      <Seccion
+        titulo="Colores"
+        descripcion="Los colores del configurador. Marca cada foto y cada unidad con su color para que la ficha muestre el stock por color."
+      >
+        <ColoresProducto productoId={producto.id} colores={producto.colores} conteo={unidadesPorColor} puedeEditar={esSistema} />
+      </Seccion>
+
+      <Seccion
+        titulo="Fotos"
+        descripcion="Sube las fotos de cada color y vista. La primera es la que se ve en el catálogo."
+      >
+        <GaleriaFotos productoId={producto.id} fotos={producto.fotos} colores={producto.colores} puedeEditar={esSistema} />
+      </Seccion>
+
       <div className="grid gap-6 lg:grid-cols-[1fr_1.15fr] lg:items-start">
-        <Seccion titulo="Fotos" descripcion="La primera es la que se ve en el catálogo.">
-          <GaleriaFotos productoId={producto.id} fotos={producto.fotos} puedeEditar={esSistema} />
-        </Seccion>
 
         <Seccion titulo="Unidades por punto" descripcion="Disponibles para vender o alquilar hoy.">
           <DisponibilidadProducto puntos={disponibilidad} />
           <div className="mt-8 border-t border-carbon/[0.08] pt-6">
             <h3 className="mb-4 text-[16px] font-medium text-carbon">Registrar ingreso</h3>
-            <RegistrarUnidades productoId={producto.id} puntos={puntos} puntoFijo={admin.puntoId} />
+            <RegistrarUnidades productoId={producto.id} puntos={puntos} colores={producto.colores} puntoFijo={admin.puntoId} />
           </div>
         </Seccion>
-      </div>
 
-      <Seccion
-        titulo={`Unidades (${unidades.length})`}
-        descripcion="Cada vehículo físico con su serial. Desde aquí lo mandas al taller o lo trasladas."
-      >
-        <TablaUnidades unidades={unidades} puntos={puntos} puntoFijo={admin.puntoId} />
-      </Seccion>
+        <Seccion
+          titulo={`Unidades (${unidades.length})`}
+          descripcion="Cada vehículo físico con su serial y su color. Desde aquí lo mandas al taller o lo trasladas."
+        >
+          <TablaUnidades unidades={unidades} puntos={puntos} puntoFijo={admin.puntoId} />
+        </Seccion>
+      </div>
 
       {esSistema && (
         <Seccion titulo="Datos del producto">

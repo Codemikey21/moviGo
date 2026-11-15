@@ -14,6 +14,8 @@ export type ItemCarrito = {
   foto: Foto | null;
   cantidad: number;
   precioUnitario: number;
+  /** Color elegido (null si el producto no tiene colores) */
+  color: { id: string; nombre: string; hex: string } | null;
 };
 
 export type Carrito = {

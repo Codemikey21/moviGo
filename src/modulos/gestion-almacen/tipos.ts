@@ -27,11 +27,22 @@ export type DisponibilidadPunto = {
   total: number;
 };
 
+/** Unidades de un producto por color y punto (configurador de la ficha). */
+export type DisponibilidadColor = {
+  /** null = unidades sin color asignado */
+  colorId: string | null;
+  puntoId: string;
+  disponibles: number;
+  /** Todas las que están en el punto (menos vendidas y de baja) */
+  total: number;
+};
+
 export type UnidadFila = {
   id: string;
   serial: string;
   estado: EstadoUnidad;
   punto: { id: string; nombre: string };
+  color: { id: string; nombre: string; hex: string } | null;
   kilometraje: number;
   ingresoEn: Date;
 };

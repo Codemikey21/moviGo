@@ -4,7 +4,9 @@ import "server-only";
 import * as repositorio from "./repositorio";
 
 export const puntos = () => repositorio.listarPuntos();
-export const disponibilidad = (productoId: string) => repositorio.disponibilidadPorPunto(productoId);
+export const disponibilidad = (productoId: string, colorId: string | null = null) =>
+  repositorio.disponibilidadPorPunto(productoId, colorId);
+export const disponibilidadPorColor = (productoId: string) => repositorio.disponibilidadPorColor(productoId);
 export const conteos = (productoIds: string[]) =>
   productoIds.length ? repositorio.conteoPorProducto(productoIds) : Promise.resolve({});
 export const porEstado = () => repositorio.unidadesPorEstado();

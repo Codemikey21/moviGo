@@ -14,6 +14,7 @@ export async function obtener(clienteId: string): Promise<Carrito> {
           id: true,
           cantidad: true,
           precioUnitario: true,
+          color: { select: { id: true, nombre: true, hex: true } },
           producto: {
             select: {
               id: true,
@@ -47,6 +48,7 @@ export async function obtener(clienteId: string): Promise<Carrito> {
       foto: i.producto.medios[0] ?? null,
       cantidad: i.cantidad,
       precioUnitario: Number(i.precioUnitario),
+      color: i.color,
     }));
   return {
     items,
@@ -71,10 +73,11 @@ export async function cantidadDe(clienteId: string, productoId: string): Promise
   return item?.cantidad ?? 0;
 }
 
-/** Suma unidades del producto (crea el carrito si no existe). */
+/** Suma unidades del producto (crea el carrito si no existe). Queda con el último color elegido. */
 export async function agregar(datos: {
   clienteId: string;
   productoId: string;
+  colorId: string | null;
   cantidad: number;
   precioUnitario: number;
 }) {
@@ -86,10 +89,11 @@ export async function agregar(datos: {
   });
   await db.itemCarrito.upsert({
     where: { carritoId_productoId: { carritoId: carrito.id, productoId: datos.productoId } },
-    update: { cantidad: { increment: datos.cantidad }, precioUnitario: datos.precioUnitario },
+    update: { cantidad: { increment: datos.cantidad }, precioUnitario: datos.precioUnitario, colorId: datos.colorId },
     create: {
       carritoId: carrito.id,
       productoId: datos.productoId,
+      colorId: datos.colorId,
       cantidad: datos.cantidad,
       precioUnitario: datos.precioUnitario,
     },

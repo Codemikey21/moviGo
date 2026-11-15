@@ -12,12 +12,14 @@ import { registrarUnidadesAccion } from "../../../servidor/unidades/acciones";
 type Props = {
   productoId: string;
   puntos: { id: string; nombre: string }[];
+  /** Colores del producto: cada ingreso es de un color */
+  colores: { id: string; nombre: string }[];
   /** Un administrador de punto solo registra en su punto */
   puntoFijo: string | null;
 };
 
 /** Ingreso de unidades nuevas de un producto a un punto de servicio. */
-export function RegistrarUnidades({ productoId, puntos, puntoFijo }: Props) {
+export function RegistrarUnidades({ productoId, puntos, colores, puntoFijo }: Props) {
   const [estado, accion, enviando] = useActionState(registrarUnidadesAccion, estadoInicial);
   const error = estado.estado === "error" ? estado : null;
   const v = error?.valores;
@@ -53,6 +55,17 @@ export function RegistrarUnidades({ productoId, puntos, puntoFijo }: Props) {
           error={error?.errores?.cantidad}
         />
       </div>
+
+      {colores.length > 0 && (
+        <CampoSelect
+          etiqueta="Color"
+          name="colorId"
+          vacio="Sin color"
+          defaultValue={v?.colorId ?? colores[0].id}
+          opciones={colores.map((c) => ({ valor: c.id, texto: c.nombre }))}
+          error={error?.errores?.colorId}
+        />
+      )}
 
       <label className="flex cursor-pointer items-center gap-3 text-[14px] font-medium text-carbon">
         <input

@@ -336,6 +336,7 @@ model Producto {
   categoria Categoria @relation(fields: [categoriaId], references: [id], onDelete: Restrict)
 
   medios       Medio[]
+  colores      ColorProducto[]
   unidades     Unidad[]
   itemsCarrito ItemCarrito[]
   lineasPedido LineaPedido[]
@@ -351,11 +352,35 @@ model Medio {
   tipo       TipoMedio @default(FOTO)
   textoAlt   String    @map("texto_alt")
   orden      Int       @default(0)
+  /// Color del producto que muestra la foto (null = sirve para todos)
+  colorId    String?   @map("color_id") @db.Uuid
+  /// LATERAL, FRENTE, DETALLE o AMBIENTE
+  vista      String?
 
-  producto Producto @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  producto Producto       @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  color    ColorProducto? @relation(fields: [colorId], references: [id], onDelete: SetNull)
 
   @@index([productoId, orden])
   @@map("medios")
+}
+
+/// Colores en que viene un producto (configurador).
+model ColorProducto {
+  id         String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  productoId String @map("producto_id") @db.Uuid
+  nombre     String
+  /// Color en hexadecimal: #24272a
+  hex        String
+  orden      Int    @default(0)
+
+  producto     Producto      @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  medios       Medio[]
+  unidades     Unidad[]
+  itemsCarrito ItemCarrito[]
+
+  @@unique([productoId, nombre])
+  @@index([productoId, orden])
+  @@map("colores_producto")
 }
 
 // =============================================================================
@@ -392,9 +417,11 @@ model Unidad {
   horasUso            Decimal      @default(0) @map("horas_uso") @db.Decimal(10, 1)
   ultimoMantenimiento DateTime?    @map("ultimo_mantenimiento") @db.Date
   ingresoEn           DateTime     @default(now()) @map("ingreso_en") @db.Timestamptz(6)
+  colorId             String?      @map("color_id") @db.Uuid
 
-  producto      Producto      @relation(fields: [productoId], references: [id], onDelete: Restrict)
-  puntoServicio PuntoServicio @relation(fields: [puntoServicioId], references: [id], onDelete: Restrict)
+  producto      Producto       @relation(fields: [productoId], references: [id], onDelete: Restrict)
+  puntoServicio PuntoServicio  @relation(fields: [puntoServicioId], references: [id], onDelete: Restrict)
+  color         ColorProducto? @relation(fields: [colorId], references: [id], onDelete: SetNull)
 
   movimientos    MovimientoStock[]
   lineaPedido    LineaPedido?
@@ -404,6 +431,7 @@ model Unidad {
 
   @@index([productoId, estado])
   @@index([puntoServicioId, estado])
+  @@index([productoId, colorId, estado])
   @@map("unidades")
 }
 
@@ -446,9 +474,12 @@ model ItemCarrito {
   productoId     String  @map("producto_id") @db.Uuid
   cantidad       Int
   precioUnitario Decimal @map("precio_unitario") @db.Decimal(12, 2)
+  /// Color elegido (un color por producto en el carrito)
+  colorId        String? @map("color_id") @db.Uuid
 
-  carrito  Carrito  @relation(fields: [carritoId], references: [id], onDelete: Cascade)
-  producto Producto @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  carrito  Carrito        @relation(fields: [carritoId], references: [id], onDelete: Cascade)
+  producto Producto       @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  color    ColorProducto? @relation(fields: [colorId], references: [id], onDelete: SetNull)
 
   @@unique([carritoId, productoId])
   @@map("items_carrito")

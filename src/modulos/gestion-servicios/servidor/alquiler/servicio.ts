@@ -29,7 +29,14 @@ async function codigoNuevo() {
 /** Crea el alquiler, aparta una unidad y deja listo el pago. */
 export async function crear(
   clienteId: string,
-  datos: { productoId: string; fechaInicio: string; dias: number; entrega: "EN_PUNTO" | "A_DOMICILIO"; puntoId: string },
+  datos: {
+    productoId: string;
+    fechaInicio: string;
+    dias: number;
+    entrega: "EN_PUNTO" | "A_DOMICILIO";
+    puntoId: string;
+    colorId: string | null;
+  },
   destino: DestinoEntrega | null,
 ) {
   const producto = await catalogo.productoPorId(datos.productoId);
@@ -41,6 +48,7 @@ export async function crear(
     productoId: producto.id,
     cantidad: 1,
     puntoId: datos.puntoId,
+    colorId: datos.colorId,
     usuarioId: clienteId,
     nota: "Reserva de alquiler",
   });

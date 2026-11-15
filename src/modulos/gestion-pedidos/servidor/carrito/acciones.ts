@@ -29,12 +29,13 @@ export async function agregarAlCarritoAccion(
   const perfil = await requerirSesion();
   const datos = esquemaAgregar.safeParse({
     productoId: formData.get("productoId"),
+    colorId: formData.get("colorId") ?? "",
     cantidad: formData.get("cantidad"),
   });
   if (!datos.success) return { error: "Elige una cantidad válida." };
 
   try {
-    await servicio.agregar(perfil.id, datos.data.productoId, datos.data.cantidad);
+    await servicio.agregar(perfil.id, datos.data.productoId, datos.data.cantidad, datos.data.colorId);
   } catch (error) {
     if (esErrorDominio(error)) return { error: error.message };
     throw error;

@@ -9,7 +9,7 @@ import { registrarFotoAccion } from "../../servidor/medios/acciones";
 // Después, la acción registrarFotoAccion la agrega al producto.
 
 const BUCKET = "productos";
-const LADO_MAXIMO = 1600; // px: suficiente para la ficha del producto
+const LADO_MAXIMO = 2000; // px: suficiente para la vitrina a pantalla completa
 const TIPOS = ["image/jpeg", "image/png", "image/webp", "image/avif"];
 
 /** Reduce la foto y la pasa a WebP para que cargue rápido en el catálogo. */
@@ -38,7 +38,8 @@ export function useSubirFotos(productoId: string) {
   const actualizar = (i: number, cambio: Partial<EstadoSubida>) =>
     setSubidas((lista) => lista.map((s, j) => (j === i ? { ...s, ...cambio } : s)));
 
-  async function subir(archivos: File[]) {
+  /** Sube las fotos; opcionalmente las marca con un color y una vista. */
+  async function subir(archivos: File[], etiqueta: { colorId: string | null; vista: string | null } = { colorId: null, vista: null }) {
     const inicio = subidas.length;
     setSubidas((lista) => [
       ...lista,
@@ -66,7 +67,7 @@ export function useSubirFotos(productoId: string) {
           );
         }
 
-        const resultado = await registrarFotoAccion({ productoId, ruta, textoAlt: "" });
+        const resultado = await registrarFotoAccion({ productoId, ruta, textoAlt: "", ...etiqueta });
         if (!resultado.ok) throw new Error(resultado.mensaje);
         actualizar(i, { estado: "lista" });
       } catch (e) {

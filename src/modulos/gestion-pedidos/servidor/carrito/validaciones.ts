@@ -5,6 +5,8 @@ export const MAX_POR_PRODUCTO = 5;
 
 export const esquemaAgregar = z.object({
   productoId: z.uuid(),
+  // Color elegido en el configurador (vacío si el producto no tiene colores)
+  colorId: z.union([z.uuid(), z.literal("").transform(() => null)]).default(null),
   cantidad: z.coerce.number().int().min(1).max(MAX_POR_PRODUCTO),
 });
 

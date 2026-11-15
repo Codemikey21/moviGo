@@ -27,6 +27,7 @@ export async function registrarUnidadesAccion(
   const valores = {
     productoId: texto(formData, "productoId"),
     puntoId: texto(formData, "puntoId"),
+    colorId: texto(formData, "colorId"),
     seriales: texto(formData, "seriales"),
     cantidad: texto(formData, "cantidad"),
     nota: texto(formData, "nota"),

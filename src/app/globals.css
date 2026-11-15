@@ -429,6 +429,18 @@ html.lenis body {
     opacity: 1;
   }
 
+  /* Ondas que salen del producto en la ficha técnica */
+  @keyframes onda-ficha {
+    0% {
+      width: 10%;
+      opacity: 0.9;
+    }
+    100% {
+      width: 110%;
+      opacity: 0;
+    }
+  }
+
   /* Foto flotante que sigue el cursor en las listas grandes */
   .foto-flotante {
     position: fixed;

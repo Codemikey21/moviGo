@@ -79,6 +79,7 @@ El esquema está en `database/schema.prisma` y sale del diagrama de clases. Las 
 | `gestion_usuarios_autenticacion.sql` | crea el perfil de MoviGo cuando alguien se registra en Supabase Auth |
 | `portal_empresarial.sql` | empresas, contactos, solicitudes y cotizaciones |
 | `relaciones.sql` | llaves foráneas entre tablas de módulos distintos |
+| `relaciones_colores.sql` | colores de cada producto; fotos, unidades y carrito por color (configurador) |
 | `seguridad_rls.sql` | activa RLS en todas las tablas para cerrar la API pública de Supabase |
 
 Se aplican en orden alfabético, que es el mismo en que aparecen en la carpeta. `npm run db:aplicar` lo hace solo; también se pueden pegar uno por uno en el SQL Editor de Supabase.
@@ -124,8 +125,10 @@ El domiciliario se mueve sobre la ruta real de calles (OSRM de OpenStreetMap; si
 
 ## Panel de administración
 
-`/admin/inventario` (solo administradores) lista los productos con sus unidades por punto. Desde la ficha de cada producto se suben fotos, se editan datos y precios, se registra el ingreso de unidades (con el serial del fabricante o uno interno) y se mandan al taller o se trasladan; cada cambio queda como movimiento de stock.
+`/admin/inventario` (solo administradores) lista los productos con sus unidades por punto. Desde la ficha de cada producto se agregan sus colores, se suben fotos por color y vista, se editan datos y precios, se registra el ingreso de unidades (de un color, con el serial del fabricante o uno interno) y se mandan al taller o se trasladan; cada cambio queda como movimiento de stock.
 
 - El administrador del sistema maneja todo; el administrador de punto solo mueve unidades de su punto.
-- Las fotos van del navegador directo a Supabase Storage (se reducen a 1600 px en WebP). No hace falta la clave secreta: las políticas de `gestion_catalogo_fotos.sql` solo dejan subir a administradores.
+- **Configurador por color:** cada producto tiene sus colores (`colores_producto`). Cada foto se marca con un color y una vista (de lado, de frente, detalle, en la calle) y cada unidad con su color. La ficha pública muestra las fotos del color elegido, el stock de ese color en cada punto y aparta una unidad de ese color al comprar o alquilar. Mientras un producto no tenga fotos se muestra el dibujo de su categoría pintado del color elegido.
+- Fotos ideales para la vitrina: PNG sin fondo, de lado, unos 2400 × 1600 px (una por color).
+- Las fotos van del navegador directo a Supabase Storage (se reducen a 2000 px en WebP, conservando la transparencia). No hace falta la clave secreta: las políticas de `gestion_catalogo_fotos.sql` solo dejan subir a administradores.
 - Los productos de la semilla (`database/semillas/datos-productos.ts`) son modelos reales con precios de referencia: conviene revisarlos antes de una presentación.

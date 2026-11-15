@@ -63,7 +63,7 @@ async function Contenido() {
   }
 
   // Disponibilidad por punto de cada producto (almacén) para elegir dónde recoger
-  const disponibilidades = await Promise.all(carrito.items.map((i) => obtenerDisponibilidad(i.productoId)));
+  const disponibilidades = await Promise.all(carrito.items.map((i) => obtenerDisponibilidad(i.productoId, i.color?.id ?? null)));
 
   return (
     <>
@@ -80,6 +80,7 @@ async function Contenido() {
                 <VitrinaProducto
                   foto={item.foto}
                   categoria={item.categoria}
+                  color={item.color?.hex}
                   tamanos="160px"
                   className="size-28 rounded-[28px] sm:size-40"
                   tamanoDibujo="w-[78%]"
@@ -90,7 +91,15 @@ async function Contenido() {
                 <Link href={`/producto/${item.slug}`} className="mt-1.5 text-[20px] leading-tight text-carbon">
                   {item.nombre}
                 </Link>
-                <p className="mt-1 text-[14px] text-pizarra">{formatoPesos.format(item.precioUnitario)} c/u</p>
+                <p className="mt-1 flex flex-wrap items-center gap-x-2 text-[14px] text-pizarra">
+                  {item.color && (
+                    <span className="flex items-center gap-1.5">
+                      <span className="size-3 rounded-full ring-1 ring-carbon/15" style={{ background: item.color.hex }} />
+                      {item.color.nombre} ·
+                    </span>
+                  )}
+                  {formatoPesos.format(item.precioUnitario)} c/u
+                </p>
                 <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-4">
                   <div className="flex items-center rounded-[14px] bg-salvia/70 p-0.5">
                     <BotonCantidad itemId={item.id} cantidad={item.cantidad - 1} icono="menos" etiqueta="Quitar uno" />

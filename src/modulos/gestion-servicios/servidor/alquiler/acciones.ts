@@ -24,6 +24,7 @@ export async function reservarAlquilerAccion(
     dias: texto(formData, "dias"),
     entrega: texto(formData, "entrega"),
     puntoId: texto(formData, "puntoId"),
+    colorId: texto(formData, "colorId"),
     direccion: texto(formData, "direccion"),
     barrio: texto(formData, "barrio"),
     indicaciones: texto(formData, "indicaciones"),

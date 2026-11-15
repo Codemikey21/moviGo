@@ -3,12 +3,14 @@ import "server-only";
 // Acceso a datos (Prisma). Es la única capa que habla con la base de datos.
 import { db } from "@/compartido/servidor/base-de-datos/cliente";
 import type { Prisma } from "@/generated/prisma/client";
-import type {
-  Especificacion,
-  FiltroCatalogo,
-  Modalidad,
-  ProductoDetalle,
-  ProductoResumen,
+import {
+  VISTAS,
+  type Especificacion,
+  type FiltroCatalogo,
+  type Modalidad,
+  type ProductoDetalle,
+  type ProductoResumen,
+  type Vista,
 } from "../../tipos";
 
 const camposResumen = {
@@ -37,7 +39,11 @@ const camposDetalle = {
   medios: {
     where: { tipo: "FOTO" },
     orderBy: { orden: "asc" },
-    select: { id: true, url: true, textoAlt: true, orden: true },
+    select: { id: true, url: true, textoAlt: true, orden: true, colorId: true, vista: true },
+  },
+  colores: {
+    orderBy: { orden: "asc" },
+    select: { id: true, nombre: true, hex: true },
   },
 } satisfies Prisma.ProductoSelect;
 
@@ -55,14 +61,17 @@ function aResumen({ medios, precioVenta, tarifaAlquilerDia, ...p }: FilaResumen)
 }
 
 function aDetalle(fila: FilaDetalle): ProductoDetalle {
-  const { medios, descripcion, especificaciones } = fila;
+  const { medios, descripcion, especificaciones, colores } = fila;
   return {
     ...aResumen({ ...fila, medios: medios.slice(0, 1) }),
     descripcion,
     especificaciones: leerEspecificaciones(especificaciones),
-    fotos: medios,
+    fotos: medios.map((m) => ({ ...m, vista: esVista(m.vista) ? m.vista : null })),
+    colores,
   };
 }
+
+const esVista = (valor: string | null): valor is Vista => VISTAS.includes(valor as Vista);
 
 /** La columna es JSON libre: se toman solo las filas con la forma esperada. */
 function leerEspecificaciones(valor: Prisma.JsonValue): Especificacion[] {

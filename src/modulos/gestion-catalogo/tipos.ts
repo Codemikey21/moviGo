@@ -27,6 +27,32 @@ export type Foto = {
   orden: number;
 };
 
+/** Vistas de una foto del producto (como en un configurador de carros). */
+export const VISTAS = ["LATERAL", "FRENTE", "DETALLE", "AMBIENTE"] as const;
+export type Vista = (typeof VISTAS)[number];
+
+export const NOMBRE_VISTA: Record<Vista, string> = {
+  LATERAL: "De lado",
+  FRENTE: "De frente",
+  DETALLE: "Detalle",
+  AMBIENTE: "En la calle",
+};
+
+/** Foto de la ficha del producto: puede ser de un color y de una vista. */
+export type FotoProducto = Foto & {
+  /** null = sirve para todos los colores */
+  colorId: string | null;
+  vista: Vista | null;
+};
+
+/** Un color en que viene el producto. */
+export type ColorProducto = {
+  id: string;
+  nombre: string;
+  /** #24272a */
+  hex: string;
+};
+
 /** Lo necesario para una tarjeta del catálogo. */
 export type ProductoResumen = {
   id: string;
@@ -47,7 +73,8 @@ export type ProductoResumen = {
 export type ProductoDetalle = ProductoResumen & {
   descripcion: string;
   especificaciones: Especificacion[];
-  fotos: Foto[];
+  fotos: FotoProducto[];
+  colores: ColorProducto[];
 };
 
 /** Filtros del catálogo público. */

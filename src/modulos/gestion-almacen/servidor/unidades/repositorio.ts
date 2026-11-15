@@ -16,6 +16,7 @@ export async function listarPorProducto(productoId: string): Promise<UnidadFila[
       kilometraje: true,
       ingresoEn: true,
       puntoServicio: { select: { id: true, nombre: true } },
+      color: { select: { id: true, nombre: true, hex: true } },
     },
   });
   return filas.map(({ puntoServicio, kilometraje, ...u }) => ({
@@ -61,6 +62,7 @@ export async function serialesEnUso(seriales: string[]): Promise<string[]> {
 export async function registrarUnidades(datos: {
   productoId: string;
   puntoId: string;
+  colorId: string | null;
   seriales: string[];
   registradoPorId: string;
   nota: string | null;
@@ -72,6 +74,7 @@ export async function registrarUnidades(datos: {
           serial,
           productoId: datos.productoId,
           puntoServicioId: datos.puntoId,
+          colorId: datos.colorId,
           movimientos: {
             create: { tipo: "INGRESO", registradoPorId: datos.registradoPorId, nota: datos.nota },
           },
@@ -114,9 +117,14 @@ export async function moverUnidad(datos: {
 // ---------------------------------------------------------------------------
 
 /** Unidades disponibles de un producto; primero las del punto preferido. */
-export async function buscarDisponibles(productoId: string, puntoId: string | null) {
+export async function buscarDisponibles(productoId: string, puntoId: string | null, colorId: string | null = null) {
   return db.unidad.findMany({
-    where: { productoId, estado: "DISPONIBLE", ...(puntoId ? { puntoServicioId: puntoId } : {}) },
+    where: {
+      productoId,
+      estado: "DISPONIBLE",
+      ...(puntoId ? { puntoServicioId: puntoId } : {}),
+      ...(colorId ? { colorId } : {}),
+    },
     orderBy: [{ kilometraje: "asc" }, { serial: "asc" }],
     select: { id: true, serial: true, puntoServicioId: true },
   });

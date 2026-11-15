@@ -16,6 +16,8 @@ import { reservarAlquilerAccion } from "@/modulos/gestion-servicios/servidor/alq
 
 type Props = {
   producto: { id: string; slug: string; nombre: string; precioVenta: number; tarifaAlquilerDia: number | null };
+  /** Color elegido en el configurador (null si el producto no tiene colores) */
+  colorId: string | null;
   disponibilidad: DisponibilidadPunto[];
   haySesion: boolean;
   /** Pestaña con la que abre (?modo=alquilar) */
@@ -79,7 +81,7 @@ function Fila({ etiqueta, valor, fuerte }: { etiqueta: string; valor: string; fu
   );
 }
 
-export function PanelReserva({ producto, disponibilidad, haySesion, modoInicial, hoy, maxFecha, costoDomicilio }: Props) {
+export function PanelReserva({ producto, colorId, disponibilidad, haySesion, modoInicial, hoy, maxFecha, costoDomicilio }: Props) {
   const alquila = producto.tarifaAlquilerDia !== null;
   const [modo, setModo] = useState<"comprar" | "alquilar">(alquila ? modoInicial : "comprar");
   const totalDisponibles = disponibilidad.reduce((s, d) => s + d.disponibles, 0);
@@ -110,13 +112,22 @@ export function PanelReserva({ producto, disponibilidad, haySesion, modoInicial,
 
       {totalDisponibles === 0 ? (
         <Aviso tipo="info">
-          No hay unidades disponibles en este momento. Vuelve pronto: el inventario se actualiza cada día.
+          {colorId
+            ? "No hay unidades de este color en este momento. Prueba con otro color o vuelve pronto."
+            : "No hay unidades disponibles en este momento. Vuelve pronto: el inventario se actualiza cada día."}
         </Aviso>
       ) : modo === "comprar" ? (
-        <FormularioCompra producto={producto} maximo={Math.min(5, totalDisponibles)} haySesion={haySesion} enlaceAcceso={enlaceAcceso} />
+        <FormularioCompra
+          producto={producto}
+          colorId={colorId}
+          maximo={Math.min(5, totalDisponibles)}
+          haySesion={haySesion}
+          enlaceAcceso={enlaceAcceso}
+        />
       ) : (
         <FormularioAlquiler
           producto={producto}
+          colorId={colorId}
           disponibilidad={disponibilidad}
           haySesion={haySesion}
           enlaceAcceso={enlaceAcceso}
@@ -131,11 +142,13 @@ export function PanelReserva({ producto, disponibilidad, haySesion, modoInicial,
 
 function FormularioCompra({
   producto,
+  colorId,
   maximo,
   haySesion,
   enlaceAcceso,
 }: {
   producto: Props["producto"];
+  colorId: string | null;
   maximo: number;
   haySesion: boolean;
   enlaceAcceso: string;
@@ -146,6 +159,7 @@ function FormularioCompra({
   return (
     <form action={accion} className="space-y-6">
       <input type="hidden" name="productoId" value={producto.id} />
+      <input type="hidden" name="colorId" value={colorId ?? ""} />
       <div>
         <p className="text-[14px] text-pizarra">Precio</p>
         <p className="mt-1 text-[clamp(32px,3vw,44px)] leading-none tracking-[-0.02em] text-carbon">
@@ -201,6 +215,7 @@ function FormularioCompra({
 
 function FormularioAlquiler({
   producto,
+  colorId,
   disponibilidad,
   haySesion,
   enlaceAcceso,
@@ -223,6 +238,7 @@ function FormularioAlquiler({
   return (
     <form action={accion} className="space-y-6" noValidate>
       <input type="hidden" name="productoId" value={producto.id} />
+      <input type="hidden" name="colorId" value={colorId ?? ""} />
       <input type="hidden" name="entrega" value={entrega} />
 
       <div>

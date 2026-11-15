@@ -11,6 +11,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 
 import { Modalidad, PrismaClient, TipoCriterio } from "../../src/generated/prisma/client";
 import { productos } from "./datos-productos";
+import { coloresPorProducto } from "./datos-colores";
 
 config({ path: ".env.local", quiet: true });
 
@@ -146,6 +147,7 @@ async function sembrarProductos() {
 
   const numeroEnCategoria = new Map<string, number>();
   let totalUnidades = 0;
+  let totalColores = 0;
 
   for (const p of productos) {
     const categoriaId = idsCategoria.get(p.categoria);
@@ -168,6 +170,20 @@ async function sembrarProductos() {
       create: { ...datos, slug: p.slug },
     });
 
+    // Colores del producto (si ya existen, se actualiza el tono y el orden)
+    const colores = [];
+    for (const [orden, [nombre, hex]] of (coloresPorProducto[p.slug] ?? []).entries()) {
+      colores.push(
+        await db.colorProducto.upsert({
+          where: { productoId_nombre: { productoId: producto.id, nombre } },
+          update: { hex, orden },
+          create: { productoId: producto.id, nombre, hex, orden },
+          select: { id: true },
+        }),
+      );
+    }
+    totalColores += colores.length;
+
     // Unidades físicas: el serial no cambia entre corridas, así que si la
     // unidad ya existe no se toca (puede estar alquilada o en taller).
     const numero = (numeroEnCategoria.get(p.categoria) ?? 0) + 1;
@@ -177,16 +193,21 @@ async function sembrarProductos() {
       for (let n = 0; n < cantidad; n++) {
         consecutivo++;
         const serial = `MV-${prefijos[p.categoria]}-${String(numero).padStart(2, "0")}-${String(consecutivo).padStart(3, "0")}`;
+        // Las unidades se reparten entre los colores del producto
+        const colorId = colores.length ? colores[(consecutivo - 1) % colores.length].id : null;
         await db.unidad.upsert({
           where: { serial },
           update: {},
-          create: { serial, productoId: producto.id, puntoServicioId: idsPunto[i] },
+          create: { serial, productoId: producto.id, puntoServicioId: idsPunto[i], colorId },
         });
+        // Las que ya existían sin color reciben el suyo (no se cambia si ya tenían)
+        if (colorId) await db.unidad.updateMany({ where: { serial, colorId: null }, data: { colorId } });
         totalUnidades++;
       }
     }
   }
   console.log(`Productos: ${productos.length}`);
+  console.log(`Colores: ${totalColores}`);
   console.log(`Unidades: ${totalUnidades}`);
 }
 

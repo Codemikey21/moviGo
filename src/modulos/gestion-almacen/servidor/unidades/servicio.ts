@@ -5,6 +5,7 @@ import "server-only";
 import { randomBytes } from "node:crypto";
 import { ErrorDominio } from "@/compartido/servidor/errores/errores";
 import type { CambioUnidad } from "../../tipos";
+import * as colores from "@/modulos/gestion-catalogo/servidor/colores/servicio";
 import * as repositorio from "./repositorio";
 
 /** Quién hace el cambio y qué punto puede manejar (null = todos). */
@@ -42,12 +43,20 @@ function serialInterno() {
 
 export async function registrar(
   admin: Administrador,
-  datos: { productoId: string; puntoId: string; seriales: string[]; cantidad: number; nota: string | null },
+  datos: {
+    productoId: string;
+    puntoId: string;
+    colorId: string | null;
+    seriales: string[];
+    cantidad: number;
+    nota: string | null;
+  },
 ) {
   exigirPunto(admin, datos.puntoId);
   if (!(await repositorio.existeProducto(datos.productoId))) {
     throw new ErrorDominio("Ese producto ya no existe.", "no-existe");
   }
+  await colores.validarColor(datos.productoId, datos.colorId);
   await exigirEspacio(datos.puntoId, datos.cantidad);
 
   let seriales = datos.seriales;
@@ -69,6 +78,7 @@ export async function registrar(
   await repositorio.registrarUnidades({
     productoId: datos.productoId,
     puntoId: datos.puntoId,
+    colorId: datos.colorId,
     seriales,
     registradoPorId: admin.id,
     nota: datos.nota,
@@ -139,20 +149,24 @@ export const unidadesDe = (productoId: string) => repositorio.listarPorProducto(
 
 /**
  * Aparta unidades disponibles de un producto. Con punto, solo de ese punto;
- * sin punto, de cualquiera. Si no alcanzan, no aparta ninguna.
+ * sin punto, de cualquiera. Con color, solo de ese color. Si no alcanzan,
+ * no aparta ninguna.
  */
 export async function reservar(datos: {
   productoId: string;
   cantidad: number;
   puntoId: string | null;
+  colorId?: string | null;
   usuarioId: string;
   nota: string;
 }): Promise<{ id: string; serial: string; puntoServicioId: string }[]> {
-  const candidatas = await repositorio.buscarDisponibles(datos.productoId, datos.puntoId);
+  const candidatas = await repositorio.buscarDisponibles(datos.productoId, datos.puntoId, datos.colorId ?? null);
   if (candidatas.length < datos.cantidad) {
     throw new ErrorDominio(
       candidatas.length === 0
-        ? "Ya no quedan unidades disponibles de este producto en ese punto."
+        ? datos.colorId
+          ? "Ya no quedan unidades de ese color en ese punto."
+          : "Ya no quedan unidades disponibles de este producto en ese punto."
         : `Solo quedan ${candidatas.length} unidad(es) disponibles.`,
       "sin-stock",
     );

@@ -2,7 +2,7 @@ import "server-only";
 
 // Acceso a datos (Prisma). Es la única capa que habla con la base de datos.
 import { db } from "@/compartido/servidor/base-de-datos/cliente";
-import type { DisponibilidadPunto, PuntoResumen } from "../../tipos";
+import type { DisponibilidadColor, DisponibilidadPunto, PuntoResumen } from "../../tipos";
 
 /** Estados que ya no ocupan espacio en un punto. */
 const FUERA_DEL_PUNTO = ["VENDIDA", "BAJA"] as const;
@@ -30,8 +30,8 @@ export async function listarPuntos(): Promise<PuntoResumen[]> {
   }));
 }
 
-/** Unidades de un producto en cada punto activo (también los puntos con 0). */
-export async function disponibilidadPorPunto(productoId: string): Promise<DisponibilidadPunto[]> {
+/** Unidades de un producto (de un color, si se pide) en cada punto activo (también los puntos con 0). */
+export async function disponibilidadPorPunto(productoId: string, colorId: string | null = null): Promise<DisponibilidadPunto[]> {
   const [puntos, conteos] = await Promise.all([
     db.puntoServicio.findMany({
       where: { activo: true },
@@ -40,7 +40,7 @@ export async function disponibilidadPorPunto(productoId: string): Promise<Dispon
     }),
     db.unidad.groupBy({
       by: ["puntoServicioId", "estado"],
-      where: { productoId, estado: { notIn: [...FUERA_DEL_PUNTO] } },
+      where: { productoId, estado: { notIn: [...FUERA_DEL_PUNTO] }, ...(colorId ? { colorId } : {}) },
       _count: { _all: true },
     }),
   ]);
@@ -53,6 +53,24 @@ export async function disponibilidadPorPunto(productoId: string): Promise<Dispon
       total: delPunto.reduce((suma, c) => suma + c._count._all, 0),
     };
   });
+}
+
+/** Unidades de un producto por color y por punto (solo las combinaciones que existen). */
+export async function disponibilidadPorColor(productoId: string): Promise<DisponibilidadColor[]> {
+  const conteos = await db.unidad.groupBy({
+    by: ["colorId", "puntoServicioId", "estado"],
+    where: { productoId, estado: { notIn: [...FUERA_DEL_PUNTO] }, puntoServicio: { activo: true } },
+    _count: { _all: true },
+  });
+  const filas = new Map<string, DisponibilidadColor>();
+  for (const c of conteos) {
+    const clave = `${c.colorId}|${c.puntoServicioId}`;
+    const fila = filas.get(clave) ?? { colorId: c.colorId, puntoId: c.puntoServicioId, disponibles: 0, total: 0 };
+    fila.total += c._count._all;
+    if (c.estado === "DISPONIBLE") fila.disponibles += c._count._all;
+    filas.set(clave, fila);
+  }
+  return [...filas.values()];
 }
 
 /** { productoId: { disponibles, total } } para varios productos a la vez. */

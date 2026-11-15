@@ -28,8 +28,8 @@ async function numeroNuevo() {
 }
 
 /** Para domicilios: el punto que tiene todo lo del carrito (el que más tenga). */
-async function puntoConTodo(items: { productoId: string; cantidad: number }[]) {
-  const disponibilidad = await Promise.all(items.map((i) => stock.disponibilidad(i.productoId)));
+async function puntoConTodo(items: { productoId: string; cantidad: number; color: { id: string } | null }[]) {
+  const disponibilidad = await Promise.all(items.map((i) => stock.disponibilidad(i.productoId, i.color?.id ?? null)));
   const puntos = disponibilidad[0]?.map((d) => d.punto.id) ?? [];
   const candidatos = puntos.filter((puntoId) =>
     items.every((item, i) => (disponibilidad[i].find((d) => d.punto.id === puntoId)?.disponibles ?? 0) >= item.cantidad),
@@ -62,6 +62,7 @@ export async function crearDesdeCarrito(
         productoId: item.productoId,
         cantidad: item.cantidad,
         puntoId,
+        colorId: item.color?.id ?? null,
         usuarioId: clienteId,
         nota: "Reserva de compra",
       });
@@ -93,7 +94,7 @@ export async function crearDesdeCarrito(
         pedidoId,
         puntoOrigenId: puntoId,
         destino,
-        descripcion: `Pedido ${numero}: ${items.map((i) => `${i.cantidad}× ${i.marca} ${i.nombre}`).join(", ")}`,
+        descripcion: `Pedido ${numero}: ${items.map((i) => `${i.cantidad}× ${i.marca} ${i.nombre}${i.color ? ` (${i.color.nombre})` : ""}`).join(", ")}`,
       });
       await repositorio.asignarDireccion(pedidoId, direccionId);
     }

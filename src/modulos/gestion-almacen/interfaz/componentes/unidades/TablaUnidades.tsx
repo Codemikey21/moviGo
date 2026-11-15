@@ -66,7 +66,18 @@ export function TablaUnidades({ unidades, puntos, puntoFijo }: Props) {
           <tbody className="divide-y divide-carbon/[0.06]">
             {visibles.map((u) => (
               <tr key={u.id}>
-                <td className="py-2.5 pr-4 font-mono text-[13px] text-carbon">{u.serial}</td>
+                <td className="py-2.5 pr-4 font-mono text-[13px] text-carbon">
+                  <span className="flex items-center gap-2">
+                    {u.color && (
+                      <span
+                        title={u.color.nombre}
+                        className="size-3 shrink-0 rounded-full ring-1 ring-carbon/15"
+                        style={{ background: u.color.hex }}
+                      />
+                    )}
+                    {u.serial}
+                  </span>
+                </td>
                 <td className="py-2.5 pr-4 text-pizarra">{u.punto.nombre.replace("MoviGo ", "")}</td>
                 <td className="py-2.5 pr-4">
                   <span className={`rounded-full px-2.5 py-1 text-[12px] font-medium ${estados[u.estado].clase}`}>
