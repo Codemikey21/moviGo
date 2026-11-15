@@ -34,6 +34,12 @@ export interface Pasarela {
   cobrar(referencia: string, monto: number, solicitud: SolicitudCobro): Promise<RespuestaPasarela>;
 }
 
+/**
+ * Con este banco el pago por PSE siempre sale rechazado: sirve para mostrar
+ * qué pasa cuando un pago falla (ver "Datos para probar pagos" en el README).
+ */
+export const BANCO_QUE_RECHAZA = "Banco Unión Andina";
+
 export const BANCOS_PSE = [
   "Bancolombia",
   "Banco de Bogotá",
@@ -42,7 +48,7 @@ export const BANCOS_PSE = [
   "Banco de Occidente",
   "Banco Caja Social",
   "Nu Colombia",
-  "Banco de pruebas (rechaza)",
+  BANCO_QUE_RECHAZA,
 ];
 
 function marcaTarjeta(numero: string) {
@@ -80,7 +86,7 @@ class PasarelaSimulada implements Pasarela {
         motivo: rechazada ? "El pago no fue aceptado en la app de Nequi" : null,
       };
     }
-    const rechazada = s.banco === "Banco de pruebas (rechaza)";
+    const rechazada = s.banco === BANCO_QUE_RECHAZA;
     return {
       estado: rechazada ? "RECHAZADO" : "APROBADO",
       transaccionId,

@@ -32,6 +32,14 @@ export async function obtenerConteos(
   return resultado.success ? servicio.conteos(resultado.data) : {};
 }
 
+/** Unidades por producto, punto y estado (panel de administración). */
+export async function obtenerInventarioDetallado(): Promise<
+  { productoId: string; puntoId: string; estado: EstadoUnidad; cantidad: number }[]
+> {
+  await requerirAdministrador();
+  return servicio.detallado();
+}
+
 /** Unidades en cada estado en toda la red (panel de administración). */
 export async function obtenerUnidadesPorEstado(): Promise<Partial<Record<EstadoUnidad, number>>> {
   await requerirAdministrador();

@@ -91,6 +91,16 @@ export async function conteoPorProducto(
   return resultado;
 }
 
+/** Unidades por producto, punto y estado (las que siguen en algún punto). */
+export async function conteoDetallado() {
+  const filas = await db.unidad.groupBy({
+    by: ["productoId", "puntoServicioId", "estado"],
+    where: { estado: { notIn: [...FUERA_DEL_PUNTO] } },
+    _count: { _all: true },
+  });
+  return filas.map((f) => ({ productoId: f.productoId, puntoId: f.puntoServicioId, estado: f.estado, cantidad: f._count._all }));
+}
+
 /** Cuántas unidades hay en cada estado, en todos los puntos. */
 export async function unidadesPorEstado() {
   const conteos = await db.unidad.groupBy({ by: ["estado"], _count: { _all: true } });

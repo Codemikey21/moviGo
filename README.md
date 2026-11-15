@@ -115,9 +115,17 @@ La app queda en http://localhost:3000.
 
 La pasarela es simulada (proyecto académico) pero sigue el flujo de una real: cada pedido o alquiler crea un `Pago`, la pasarela responde con un aviso firmado (HMAC con `PASARELA_SECRETO`) y ese aviso actualiza el pago, el pedido y el inventario. El mismo aviso puede llegar por `POST /api/webhooks/pagos`, que es donde se conectaría Wompi o Mercado Pago cambiando solo `src/modulos/gestion-pagos/servidor/pasarela.ts`.
 
-- Tarjeta `4242 4242 4242 4242` → aprobada · `4000 0000 0000 0002` → rechazada (cualquier fecha futura y CVV).
-- Nequi `300 000 0002` → rechazado; cualquier otro celular → aprobado.
-- PSE "Banco de pruebas (rechaza)" → rechazado; los demás bancos → aprobado.
+En el sitio no aparece ningún aviso de "simulado": se ve como una tienda real. La pasarela nunca cobra y solo guarda los 4 últimos dígitos de la tarjeta.
+
+**Datos para probar pagos** (para la revisión del proyecto):
+
+| Método | Se aprueba | Se rechaza |
+|---|---|---|
+| Tarjeta | `4242 4242 4242 4242` | `4000 0000 0000 0002` |
+| Nequi | cualquier celular | `300 000 0002` |
+| PSE | cualquier banco | "Banco Unión Andina" |
+
+Con tarjeta sirve cualquier fecha futura, cualquier CVV y cualquier nombre.
 
 ### Seguimiento
 

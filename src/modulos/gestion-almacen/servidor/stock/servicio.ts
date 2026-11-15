@@ -10,3 +10,4 @@ export const disponibilidadPorColor = (productoId: string) => repositorio.dispon
 export const conteos = (productoIds: string[]) =>
   productoIds.length ? repositorio.conteoPorProducto(productoIds) : Promise.resolve({});
 export const porEstado = () => repositorio.unidadesPorEstado();
+export const detallado = () => repositorio.conteoDetallado();

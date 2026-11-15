@@ -120,25 +120,30 @@ export async function recibirEvento(cuerpo: string, firma: string): Promise<bool
 export const reembolsarDe = (filtro: { pedidoId?: string; alquilerId?: string }) => repositorio.reembolsar(filtro);
 
 /** Para el panel: ingresos del mes, totales y por día (últimos 14 días). */
+/** Fecha AAAA-MM-DD en la hora de Colombia. */
+const diaEnColombia = (fecha: Date) => new Intl.DateTimeFormat("en-CA", { timeZone: "America/Bogota" }).format(fecha);
+
 export async function resumenIngresos() {
-  const ahora = new Date();
-  const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
-  const desde = new Date(ahora.getTime() - 13 * 86_400_000);
-  desde.setHours(0, 0, 0, 0);
+  // Los días se cuentan en la hora de Colombia (UTC-5), no en la del servidor
+  const hoy = diaEnColombia(new Date());
+  const dias = Array.from({ length: 14 }, (_, i) => {
+    const dia = new Date(`${hoy}T12:00:00Z`);
+    dia.setUTCDate(dia.getUTCDate() - (13 - i));
+    return { clave: dia.toISOString().slice(0, 10), total: 0 };
+  });
+  const desde = new Date(`${dias[0].clave}T00:00:00-05:00`);
+  const inicioMes = new Date(`${hoy.slice(0, 7)}-01T00:00:00-05:00`);
   const [mes, total, pagos] = await Promise.all([
     repositorio.ingresos(inicioMes),
     repositorio.ingresos(),
     repositorio.ingresosPorDia(desde),
   ]);
-  const dias = Array.from({ length: 14 }, (_, i) => {
-    const dia = new Date(desde.getTime() + i * 86_400_000);
-    const clave = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Bogota" }).format(dia);
-    return { clave, total: 0 };
-  });
+  const periodo = { ventas: 0, alquileres: 0 };
   for (const p of pagos) {
-    const clave = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Bogota" }).format(p.fecha);
-    const dia = dias.find((d) => d.clave === clave);
+    const dia = dias.find((d) => d.clave === diaEnColombia(p.fecha));
     if (dia) dia.total += p.monto;
+    if (p.tipo === "alquiler") periodo.alquileres += p.monto;
+    else periodo.ventas += p.monto;
   }
-  return { mes, total, dias };
+  return { mes, total, dias, periodo };
 }

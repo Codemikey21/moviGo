@@ -294,5 +294,5 @@ export const pie = {
   // Se cambia a mano: la página se genera estática y no puede leer la fecha.
   anio: 2026,
   legal:
-    "Proyecto académico con fines educativos. Universidad Autónoma de Bucaramanga (UNAB), Ingeniería de Software. Las marcas y productos pertenecen a sus respectivos dueños.",
+    "Bucaramanga, Santander · Colombia. Precios en pesos colombianos con IVA incluido.",
 };

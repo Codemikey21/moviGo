@@ -33,7 +33,7 @@ export function MarcoAcceso({ panel, children }: Props) {
         </main>
 
         <p className="text-center text-[12px] text-bruma">
-          Proyecto académico · UNAB · Ingeniería de Software
+          MoviGo · Bucaramanga, Colombia
         </p>
       </div>
 

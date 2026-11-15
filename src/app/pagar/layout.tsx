@@ -19,7 +19,7 @@ export default function LayoutPago({ children }: { children: ReactNode }) {
       </header>
       {children}
       <footer className="px-5 pb-10 pt-6 text-center text-[12px] text-bruma">
-        Pasarela simulada con fines académicos. No se hacen cobros reales.
+        Tus datos viajan cifrados. MoviGo no guarda el número completo de tu tarjeta.
       </footer>
     </div>
   );

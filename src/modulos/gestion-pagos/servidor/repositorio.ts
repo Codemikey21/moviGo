@@ -77,7 +77,11 @@ export async function ingresos(desde?: Date) {
 export async function ingresosPorDia(desde: Date) {
   const pagos = await db.pago.findMany({
     where: { estado: "APROBADO", confirmadoEn: { gte: desde } },
-    select: { monto: true, confirmadoEn: true },
+    select: { monto: true, confirmadoEn: true, alquilerId: true },
   });
-  return pagos.map((p) => ({ monto: Number(p.monto), fecha: p.confirmadoEn! }));
+  return pagos.map((p) => ({
+    monto: Number(p.monto),
+    fecha: p.confirmadoEn!,
+    tipo: p.alquilerId ? ("alquiler" as const) : ("venta" as const),
+  }));
 }

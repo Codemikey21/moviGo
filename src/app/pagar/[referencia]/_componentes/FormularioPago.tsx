@@ -146,7 +146,7 @@ export function FormularioPago({ referencia, monto, destino, bancos }: Props) {
               name="numero"
               inputMode="numeric"
               autoComplete="cc-number"
-              placeholder="4242 4242 4242 4242"
+              placeholder="0000 0000 0000 0000"
               value={tarjeta.numero}
               onChange={(e) => setTarjeta({ ...tarjeta, numero: enGrupos(e.target.value) })}
               error={errores.numero}
@@ -182,9 +182,9 @@ export function FormularioPago({ referencia, monto, destino, bancos }: Props) {
                 opciones={[1, 2, 3, 6, 12, 24, 36].map((n) => ({ valor: String(n), texto: String(n) }))}
               />
             </div>
-            <p className="rounded-campo bg-escarcha px-4 py-3 text-[13px] leading-relaxed text-pizarra">
-              <span className="font-medium text-carbon">Tarjetas de prueba:</span> 4242 4242 4242 4242 se aprueba ·
-              4000 0000 0000 0002 se rechaza. Cualquier fecha futura y CVV.
+            <p className="flex items-center gap-2 text-[13px] text-pizarra">
+              <Icono nombre="candado" className="size-4 text-eucalipto" />
+              Aceptamos Visa, Mastercard y American Express.
             </p>
           </>
         )}
@@ -200,8 +200,7 @@ export function FormularioPago({ referencia, monto, destino, bancos }: Props) {
               error={errores.celular}
             />
             <p className="rounded-campo bg-escarcha px-4 py-3 text-[13px] leading-relaxed text-pizarra">
-              Te llega una notificación a la app de Nequi para aceptar el pago.{" "}
-              <span className="font-medium text-carbon">Prueba:</span> 300 000 0002 se rechaza; cualquier otro se aprueba.
+              Te llega una notificación a la app de Nequi para aceptar el pago.
             </p>
           </>
         )}
@@ -229,8 +228,7 @@ export function FormularioPago({ referencia, monto, destino, bancos }: Props) {
               <CampoTexto etiqueta="Documento" name="documento" inputMode="numeric" placeholder="1098765432" error={errores.documento} />
             </div>
             <p className="rounded-campo bg-escarcha px-4 py-3 text-[13px] leading-relaxed text-pizarra">
-              Normalmente te llevaría a la página de tu banco. <span className="font-medium text-carbon">Prueba:</span> “Banco
-              de pruebas (rechaza)” rechaza el pago.
+              Confirmamos el pago con tu banco en segundos y te mostramos el resultado aquí mismo.
             </p>
           </>
         )}
