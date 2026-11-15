@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { GOOGLE_ACTIVO } from "@/compartido/configuracion/acceso";
 import { DocumentoLegal, EnlaceLegal, type SeccionLegal } from "../_componentes/DocumentoLegal";
 
 export const metadata: Metadata = { title: "Cookies · MoviGo" };
@@ -18,7 +19,7 @@ const secciones: SeccionLegal[] = [
     tabla: [
       ["Cookie", "Para qué sirve", "Duración"],
       ["sb-…-auth-token", "Mantiene tu sesión iniciada de forma segura.", "Hasta que cierres sesión"],
-      ["sb-…-auth-token-code-verifier", "Completa el inicio de sesión con Google o con un enlace del correo.", "Unos minutos"],
+      ["sb-…-auth-token-code-verifier", GOOGLE_ACTIVO ? "Completa el inicio de sesión con Google o con un enlace del correo." : "Completa el inicio de sesión con un enlace del correo.", "Unos minutos"],
     ],
   },
   {

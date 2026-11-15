@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { GOOGLE_ACTIVO } from "@/compartido/configuracion/acceso";
 import { DocumentoLegal, EnlaceLegal, type SeccionLegal } from "../_componentes/DocumentoLegal";
 
 export const metadata: Metadata = { title: "Términos de uso · MoviGo" };
@@ -15,7 +16,7 @@ const secciones: SeccionLegal[] = [
     titulo: "Tu cuenta",
     lista: [
       "Para comprar o alquilar debes ser mayor de edad y crear una cuenta con datos reales: nombre, correo y teléfono.",
-      "Puedes entrar con tu correo y contraseña o con tu cuenta de Google. Cuida tu contraseña: lo que se haga con tu cuenta se entiende hecho por ti.",
+      `Puedes entrar con tu correo y contraseña${GOOGLE_ACTIVO ? " o con tu cuenta de Google" : ""}. Cuida tu contraseña: lo que se haga con tu cuenta se entiende hecho por ti.`,
       "Si notas un acceso que no reconoces, cambia tu contraseña y escríbenos.",
       "Podemos suspender cuentas que se usen para fraudes, pagos no autorizados o para dañar la plataforma.",
     ],

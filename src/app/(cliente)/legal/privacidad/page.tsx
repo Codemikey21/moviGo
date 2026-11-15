@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { GOOGLE_ACTIVO } from "@/compartido/configuracion/acceso";
 import { DocumentoLegal, EnlaceLegal, type SeccionLegal } from "../_componentes/DocumentoLegal";
 
 export const metadata: Metadata = { title: "Política de privacidad · MoviGo" };
@@ -17,7 +18,9 @@ const secciones: SeccionLegal[] = [
   {
     titulo: "Qué datos recogemos",
     lista: [
-      "Datos de tu cuenta: nombre, correo, teléfono y, si entras con Google, tu nombre y correo de esa cuenta.",
+      GOOGLE_ACTIVO
+        ? "Datos de tu cuenta: nombre, correo, teléfono y, si entras con Google, tu nombre y correo de esa cuenta."
+        : "Datos de tu cuenta: nombre, correo y teléfono.",
       "Direcciones de entrega y el barrio, para ubicar el domicilio en el mapa.",
       "Lo que haces en MoviGo: compras, alquileres, solicitudes de taller y cotizaciones para empresas.",
       "Datos del pago: método, banco, estado y los últimos cuatro dígitos de la tarjeta. Nunca el número completo ni el código de seguridad.",
