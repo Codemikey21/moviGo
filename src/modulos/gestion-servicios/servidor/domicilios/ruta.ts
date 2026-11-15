@@ -31,7 +31,7 @@ export async function rutaEntre(origen: Coordenada, destino: Coordenada): Promis
 }
 
 /** Distancia aproximada en metros (fórmula del haversine). */
-function distancia(a: Coordenada, b: Coordenada) {
+export function distancia(a: Coordenada, b: Coordenada) {
   const r = 6_371_000;
   const rad = (g: number) => (g * Math.PI) / 180;
   const dLat = rad(b.latitud - a.latitud);

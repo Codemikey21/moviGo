@@ -164,10 +164,11 @@ export async function cambiarRolAccion(_anterior: EstadoFormulario, formData: Fo
     usuarioId: formData.get("usuarioId"),
     rol: formData.get("rol"),
     puntoId: formData.get("puntoId") || null,
+    vehiculo: formData.get("vehiculo") || null,
   });
   if (!datos.success) return { estado: "error", mensaje: "Datos no válidos." };
   try {
-    await servicio.cambiarRol(admin.id, datos.data.usuarioId, datos.data.rol, datos.data.puntoId);
+    await servicio.cambiarRol(admin.id, datos.data.usuarioId, datos.data.rol, datos.data.puntoId, datos.data.vehiculo);
   } catch (error) {
     return aEstado(error);
   }

@@ -8,7 +8,7 @@ import { obtenerPuntos } from "@/modulos/gestion-almacen/servidor/stock/acciones
 import { EstadoDomicilio } from "@/modulos/gestion-servicios/interfaz/componentes/domicilios/EstadoDomicilio";
 import { GestionDomicilio } from "@/modulos/gestion-servicios/interfaz/componentes/domicilios/GestionDomicilio";
 import { MapaFlota } from "@/modulos/gestion-servicios/interfaz/componentes/domicilios/MapaFlota";
-import { listarDomiciliariosAdmin, listarDomiciliosAdmin } from "@/modulos/gestion-servicios/servidor/domicilios/acciones";
+import { evidenciasAdmin, listarDomiciliariosAdmin, listarDomiciliosAdmin } from "@/modulos/gestion-servicios/servidor/domicilios/acciones";
 import { EncabezadoAdmin } from "../_componentes/EncabezadoAdmin";
 
 export const metadata: Metadata = { title: "Domicilios · Administración MoviGo" };
@@ -28,6 +28,7 @@ async function Contenido() {
   const [domicilios, domiciliarios, puntos] = await Promise.all([listarDomiciliosAdmin(), listarDomiciliariosAdmin(), obtenerPuntos()]);
   const activos = domicilios.filter((d) => ["SOLICITADO", "ASIGNADO", "EN_CURSO"].includes(d.estado));
   const entregados = domicilios.filter((d) => d.estado === "COMPLETADO").slice(0, 6);
+  const evidencias = await evidenciasAdmin(entregados.map((d) => d.id));
 
   return (
     <>
@@ -38,7 +39,7 @@ async function Contenido() {
             Domicilios <span className="text-eucalipto">en vivo</span>
           </>
         }
-        descripcion="Asigna un domiciliario, márcalo en ruta y el cliente lo sigue en su mapa hasta que lo entregue."
+        descripcion="Asigna un domiciliario o deja que lo tome desde su portal. El cliente lo sigue en el mapa y le da su código al recibir."
       />
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
@@ -115,10 +116,21 @@ async function Contenido() {
               <ul className="mt-3 divide-y divide-carbon/[0.07]">
                 {entregados.map((d) => (
                   <li key={d.id} className="flex items-center justify-between gap-3 py-3 text-[14px]">
-                    <span className="truncate text-carbon">
-                      {d.cliente.nombre} · {d.destino.barrio}
+                    <span className="min-w-0">
+                      <span className="block truncate text-carbon">
+                        {d.cliente.nombre} · {d.destino.barrio}
+                      </span>
+                      <span className="block truncate text-[13px] text-pizarra">
+                        {d.domiciliario ? `Por ${d.domiciliario.nombre}` : ""}
+                        {evidencias[d.id]?.nombreReceptor ? ` · recibió ${evidencias[d.id]?.nombreReceptor}` : ""}
+                      </span>
                     </span>
-                    <span className="shrink-0 text-pizarra">
+                    <span className="flex shrink-0 items-center gap-3 text-pizarra">
+                      {evidencias[d.id]?.url && (
+                        <a href={evidencias[d.id]?.url ?? ""} target="_blank" rel="noopener noreferrer" className="text-[12px] font-bold uppercase text-bosque underline underline-offset-4">
+                          Foto
+                        </a>
+                      )}
                       {d.entregadoEn ? formatoFechaHora.format(d.entregadoEn) : ""} · {formatoPesos.format(d.costo)}
                     </span>
                   </li>
@@ -145,7 +157,7 @@ async function Contenido() {
               <div>
                 <p className="text-[16px] text-carbon">{d.nombre}</p>
                 <p className="text-[13px] text-pizarra">
-                  {d.vehiculo} · {d.enCurso ? `${d.enCurso} en curso` : "Libre"}
+                  {d.vehiculo} · {d.enCurso ? `${d.enCurso} en curso` : d.disponible ? "Disponible" : "Desconectado"}
                 </p>
               </div>
             </li>

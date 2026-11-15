@@ -7,6 +7,8 @@ import { esErrorDominio } from "@/compartido/servidor/errores/errores";
 import type { EstadoFormulario } from "@/compartido/tipos/formulario";
 import { texto } from "@/compartido/utilidades/formularios";
 import type { DomiciliarioVista, DomicilioVista, Seguimiento } from "../../tipos";
+import { urlEvidencia } from "../reparto/servicio";
+import { evidenciasDe } from "./repositorio";
 import * as servicio from "./servicio";
 import { esquemaAsignar, esquemaId } from "./validaciones";
 
@@ -24,12 +26,15 @@ export async function obtenerDomicilio(filtro: { pedidoId?: string; alquilerId?:
   return domicilio.cliente.id === perfil.id || esAdmin(perfil.rol) ? domicilio : null;
 }
 
-/** Ruta y posición del domiciliario. La pantalla la pide cada pocos segundos. */
+/** Ruta y posición del domiciliario (la ven el cliente, el domiciliario y el admin). La pantalla la pide cada pocos segundos. */
 export async function obtenerSeguimiento(domicilioId: string): Promise<Seguimiento | null> {
   const perfil = await requerirSesion();
   if (!esquemaId.safeParse(domicilioId).success) return null;
   const domicilio = await servicio.detalle(domicilioId);
-  if (!domicilio || (domicilio.cliente.id !== perfil.id && !esAdmin(perfil.rol))) return null;
+  const puedeVer =
+    domicilio &&
+    (domicilio.cliente.id === perfil.id || domicilio.domiciliario?.id === perfil.id || esAdmin(perfil.rol));
+  if (!puedeVer) return null;
   return servicio.seguimiento(domicilioId);
 }
 
@@ -40,6 +45,16 @@ export async function obtenerSeguimiento(domicilioId: string): Promise<Seguimien
 export async function listarDomiciliosAdmin(): Promise<DomicilioVista[]> {
   await requerirAdministrador();
   return servicio.paraPanel();
+}
+
+/** Foto y quién recibió, de los domicilios entregados (enlaces temporales). */
+export async function evidenciasAdmin(domicilioIds: string[]): Promise<Record<string, { url: string | null; nombreReceptor: string | null }>> {
+  await requerirAdministrador();
+  const mapa = await evidenciasDe(domicilioIds.filter((id) => esquemaId.safeParse(id).success));
+  const lista = await Promise.all(
+    [...mapa].map(async ([id, e]) => [id, { url: await urlEvidencia(e.ruta), nombreReceptor: e.nombreReceptor }] as const),
+  );
+  return Object.fromEntries(lista);
 }
 
 export async function listarDomiciliariosAdmin(): Promise<DomiciliarioVista[]> {

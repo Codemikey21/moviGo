@@ -12,6 +12,8 @@ type Props = {
   destino: Coordenada & { direccion: string };
   /** Seguimiento inicial (lo trae la página) */
   inicial: Seguimiento | null;
+  /** El domiciliario ve "llegas en…"; el cliente, "llega en…" */
+  modo?: "cliente" | "domiciliario";
   className?: string;
 };
 
@@ -34,7 +36,7 @@ const svgMoto =
  * Mapa de OpenStreetMap con la ruta del domicilio. Cada 4 segundos le pide
  * al servidor la posición del domiciliario y lo mueve.
  */
-export function MapaSeguimiento({ domicilioId, origen, destino, inicial, className = "" }: Props) {
+export function MapaSeguimiento({ domicilioId, origen, destino, inicial, modo = "cliente", className = "" }: Props) {
   const contenedor = useRef<HTMLDivElement>(null);
   const mapa = useRef<MapaLeaflet | null>(null);
   const marcador = useRef<Marker | null>(null);
@@ -96,6 +98,8 @@ export function MapaSeguimiento({ domicilioId, origen, destino, inicial, classNa
       const punto = aPunto(seguimiento.posicion);
       if (!marcador.current) {
         marcador.current = L.marker(punto, { icon: icono(L, "mapa-punto mapa-moto", svgMoto), zIndexOffset: 1000 }).addTo(m);
+        // Con GPS real puede ir fuera de la ruta trazada: que siempre quede a la vista
+        m.fitBounds(L.latLngBounds([...ruta, punto]), { padding: [60, 60], maxZoom: 16 });
       } else {
         marcador.current.setLatLng(punto);
       }
@@ -122,7 +126,7 @@ export function MapaSeguimiento({ domicilioId, origen, destino, inicial, classNa
             <span className="relative inline-flex size-2.5 rounded-full bg-turquesa" />
           </span>
           <span className="text-[12px] font-bold uppercase tracking-[0.04em] text-carbon">
-            En camino · llega en {seguimiento.minutosRestantes} min
+            {modo === "domiciliario" ? "En ruta · llegas en" : "En camino · llega en"} {seguimiento.minutosRestantes} min
           </span>
           <span className="ml-auto h-1.5 w-20 overflow-hidden rounded-full bg-escarcha">
             <span className="block h-full rounded-full bg-turquesa" style={{ width: `${Math.round(seguimiento.progreso * 100)}%` }} />

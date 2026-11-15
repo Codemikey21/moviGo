@@ -2,41 +2,45 @@
 
 import { useActionState, useState } from "react";
 import { estadoInicial } from "@/compartido/tipos/formulario";
+import { VEHICULOS_REPARTO } from "@/modulos/gestion-servicios/tipos";
 import { cambiarRolAccion } from "../../../servidor/acciones";
 import type { PerfilUsuario } from "../../../tipos";
 
 const roles = [
   { valor: "CLIENTE", texto: "Cliente" },
+  { valor: "DOMICILIARIO", texto: "Domiciliario" },
   { valor: "ADMIN_PUNTO", texto: "Admin de punto" },
   { valor: "ADMIN_SISTEMA", texto: "Admin del sistema" },
 ];
+
+const claseSelect = "h-10 rounded-full border border-carbon/10 bg-blanco px-3 text-[13px]";
 
 /** Cambiar el rol de un usuario (solo administrador del sistema). */
 export function CambiarRol({
   usuarioId,
   rol,
+  vehiculo,
   puntos,
 }: {
   usuarioId: string;
   rol: PerfilUsuario["rol"];
+  /** Solo si ya es domiciliario */
+  vehiculo?: string | null;
   puntos: { id: string; nombre: string }[];
 }) {
   const [resultado, accion, enviando] = useActionState(cambiarRolAccion, estadoInicial);
   const [elegido, setElegido] = useState<string>(rol);
-  const editable = ["CLIENTE", "ADMIN_PUNTO", "ADMIN_SISTEMA"].includes(rol);
+  const [vehiculoElegido, setVehiculoElegido] = useState<string>(vehiculo ?? VEHICULOS_REPARTO[0]);
 
-  if (!editable) return <span className="text-[13px] text-pizarra">Domiciliario</span>;
+  // Las cuentas de empresa se manejan desde el portal empresarial
+  if (rol === "EMPRESA") return <span className="text-[13px] text-pizarra">Empresa</span>;
+
+  const cambio = elegido !== rol || elegido === "ADMIN_PUNTO" || (elegido === "DOMICILIARIO" && vehiculoElegido !== vehiculo);
 
   return (
     <form action={accion} className="flex flex-wrap items-center justify-end gap-2">
       <input type="hidden" name="usuarioId" value={usuarioId} />
-      <select
-        name="rol"
-        aria-label="Rol"
-        value={elegido}
-        onChange={(e) => setElegido(e.target.value)}
-        className="h-10 rounded-full border border-carbon/10 bg-blanco px-3 text-[13px]"
-      >
+      <select name="rol" aria-label="Rol" value={elegido} onChange={(e) => setElegido(e.target.value)} className={claseSelect}>
         {roles.map((r) => (
           <option key={r.valor} value={r.valor}>
             {r.texto}
@@ -44,7 +48,7 @@ export function CambiarRol({
         ))}
       </select>
       {elegido === "ADMIN_PUNTO" && (
-        <select name="puntoId" aria-label="Punto" defaultValue="" className="h-10 rounded-full border border-carbon/10 bg-blanco px-3 text-[13px]">
+        <select name="puntoId" aria-label="Punto" defaultValue="" className={claseSelect}>
           <option value="">Punto…</option>
           {puntos.map((p) => (
             <option key={p.id} value={p.id}>
@@ -53,7 +57,22 @@ export function CambiarRol({
           ))}
         </select>
       )}
-      {elegido !== rol || elegido === "ADMIN_PUNTO" ? (
+      {elegido === "DOMICILIARIO" && (
+        <select
+          name="vehiculo"
+          aria-label="Vehículo con el que reparte"
+          value={vehiculoElegido}
+          onChange={(e) => setVehiculoElegido(e.target.value)}
+          className={claseSelect}
+        >
+          {VEHICULOS_REPARTO.map((v) => (
+            <option key={v} value={v}>
+              {v}
+            </option>
+          ))}
+        </select>
+      )}
+      {cambio ? (
         <button
           type="submit"
           disabled={enviando}

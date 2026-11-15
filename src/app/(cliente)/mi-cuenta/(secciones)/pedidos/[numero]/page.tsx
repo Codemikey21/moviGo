@@ -13,6 +13,7 @@ import { EstadoPedido } from "@/modulos/gestion-pedidos/interfaz/componentes/com
 import { cancelarMiPedidoAccion, obtenerMiPedido } from "@/modulos/gestion-pedidos/servidor/compras/acciones";
 import type { PedidoDetalle } from "@/modulos/gestion-pedidos/tipos";
 import { EstadoDomicilio } from "@/modulos/gestion-servicios/interfaz/componentes/domicilios/EstadoDomicilio";
+import { CodigoEntrega } from "@/modulos/gestion-servicios/interfaz/componentes/domicilios/CodigoEntrega";
 import { MapaSeguimiento } from "@/modulos/gestion-servicios/interfaz/componentes/domicilios/MapaSeguimiento";
 import { obtenerDomicilio, obtenerSeguimiento } from "@/modulos/gestion-servicios/servidor/domicilios/acciones";
 import type { DomicilioVista } from "@/modulos/gestion-servicios/tipos";
@@ -129,6 +130,7 @@ async function Contenido({ params }: Pick<PageProps<"/mi-cuenta/pedidos/[numero]
                   <p className="text-carbon">{domicilio.destino.direccion}</p>
                   <p>{domicilio.destino.barrio}</p>
                 </div>
+                <CodigoEntrega codigo={domicilio.codigoEntrega} estado={domicilio.estado} className="w-full" />
               </div>
             </div>
           ) : (

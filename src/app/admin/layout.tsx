@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense, type ReactNode } from "react";
 import { Logo } from "@/compartido/interfaz/layout/Logo";
 import { Icono } from "@/compartido/interfaz/ui/Icono";
+import { cerrarSesionAccion } from "@/modulos/gestion-usuarios/servidor/acciones";
 import { NavAdmin, NavAdminCargando } from "./_componentes/NavAdmin";
 
 // Panel de administración: misma barra blanca redondeada de la landing,
@@ -27,13 +28,14 @@ export default function LayoutAdmin({ children }: { children: ReactNode }) {
             >
               <Icono nombre="sitio" className="size-4" /> Ver sitio
             </Link>
-            <Link
-              href="/mi-cuenta"
-              aria-label="Mi cuenta"
-              className="grid size-10 place-items-center rounded-[14px] border border-carbon/10 text-bosque transition-colors hover:bg-escarcha"
-            >
-              <Icono nombre="cuenta" className="size-5" />
-            </Link>
+            <form action={cerrarSesionAccion}>
+              <button
+                type="submit"
+                className="h-10 rounded-[14px] border border-carbon/10 px-3 text-[12px] font-bold uppercase text-bosque transition-colors hover:bg-escarcha"
+              >
+                Salir
+              </button>
+            </form>
           </div>
         </div>
       </header>

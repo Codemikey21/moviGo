@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { ScrollSuave } from "@/compartido/interfaz/animaciones/ScrollSuave";
 import { Encabezado } from "@/compartido/interfaz/layout/Encabezado";
 import { PieDePagina } from "@/compartido/interfaz/layout/PieDePagina";
@@ -10,11 +10,15 @@ import {
   RUTA_INICIAR_SESION,
   RUTA_REGISTRO,
 } from "./_landing/contenido";
+import { SoloClientes } from "./_componentes/SoloClientes";
 
 // Todo lo que ve el cliente comparte encabezado, pie y scroll suave.
 export default function LayoutCliente({ children }: { children: ReactNode }) {
   return (
     <>
+      <Suspense fallback={null}>
+        <SoloClientes />
+      </Suspense>
       <ScrollSuave />
       <Encabezado
         enlaces={menu.principales}

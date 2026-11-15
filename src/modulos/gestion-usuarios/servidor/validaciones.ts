@@ -1,5 +1,6 @@
 // Esquemas zod de entrada y salida de este modulo.
 import { z } from "zod";
+import { VEHICULOS_REPARTO } from "@/modulos/gestion-servicios/tipos";
 
 const correo = z
   .string()
@@ -63,6 +64,7 @@ export function erroresPorCampo(error: z.ZodError): Record<string, string> {
 
 export const esquemaCambioRol = z.object({
   usuarioId: z.uuid(),
-  rol: z.enum(["CLIENTE", "ADMIN_SISTEMA", "ADMIN_PUNTO"]),
+  rol: z.enum(["CLIENTE", "DOMICILIARIO", "ADMIN_SISTEMA", "ADMIN_PUNTO"]),
   puntoId: z.uuid().nullable(),
+  vehiculo: z.enum(VEHICULOS_REPARTO).nullable(),
 });

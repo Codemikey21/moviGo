@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense, type ReactNode } from "react";
 import { EscenaScroll } from "@/compartido/interfaz/animaciones/EscenaScroll";
@@ -107,6 +108,13 @@ async function Contenido({ searchParams }: Pick<PageProps<"/mi-cuenta">, "search
     );
   }
 
+  // Los domiciliarios tienen su propio portal
+  if (perfil.rol === "DOMICILIARIO") redirect("/domiciliario");
+  // Y los administradores, su panel (salvo si el panel los devolvió por falta de permiso,
+  // como un admin de punto sin punto asignado: así no quedan en un bucle)
+  const esAdministrador = perfil.rol === "ADMIN_SISTEMA" || perfil.rol === "ADMIN_PUNTO";
+  if (esAdministrador && aviso !== "sin-permiso") redirect("/admin");
+
   const [pedidos, alquileres, novedades, mantenimientos, categorias] = await Promise.all([
     obtenerMisPedidos(),
     obtenerMisAlquileres(),
@@ -118,7 +126,7 @@ async function Contenido({ searchParams }: Pick<PageProps<"/mi-cuenta">, "search
   const pedidosActivos = pedidos.filter((p) => ["PENDIENTE_PAGO", "PAGADO", "PREPARANDO"].includes(p.estado));
   const alquileresActivos = alquileres.filter((a) => ["SOLICITADO", "ASIGNADO", "EN_CURSO"].includes(a.estado));
   const tallerActivo = mantenimientos.filter((m) => m.estado !== "REALIZADO");
-  const esAdmin = perfil.rol === "ADMIN_SISTEMA" || perfil.rol === "ADMIN_PUNTO";
+  const esAdmin = esAdministrador;
 
   // ¿Hay algo yendo a domicilio? (pedidos y alquileres son módulos distintos: la página los junta)
   const candidatos = [

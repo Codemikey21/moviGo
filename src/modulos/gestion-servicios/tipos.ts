@@ -31,14 +31,18 @@ export type DomicilioVista = {
   descripcion: string;
   creadaEn: Date;
   asignadoEn: Date | null;
+  /** Cuándo el domiciliario aceptó (null: todavía no responde) */
+  aceptadoEn: Date | null;
   entregadoEn: Date | null;
   pedidoId: string | null;
   pedidoNumero: string | null;
   alquilerId: string | null;
   cliente: { id: string; nombre: string; telefono: string | null };
   origen: { nombre: string; direccion: string } & Coordenada;
-  destino: { direccion: string; barrio: string | null } & Coordenada;
+  destino: { direccion: string; barrio: string | null; indicaciones: string } & Coordenada;
   domiciliario: { id: string; nombre: string; vehiculo: string; telefono: string | null } | null;
+  /** Lo ve el cliente (y el administrador). Nunca se le manda al domiciliario. */
+  codigoEntrega: string;
   /** Si el servicio que lleva ya está pagado (si no, aún no se despacha) */
   listoParaDespachar: boolean;
 };
@@ -60,6 +64,33 @@ export type DomiciliarioVista = {
   disponible: boolean;
   enCurso: number;
 };
+
+/** Entregas que un domiciliario puede llevar al tiempo. */
+export const MAXIMO_ACTIVAS_REPARTO = 3;
+
+/** Vehículos con los que puede repartir un domiciliario. */
+export const VEHICULOS_REPARTO = ["Scooter eléctrico", "Bicicleta eléctrica", "Moto eléctrica", "Auto eléctrico"] as const;
+
+/**
+ * Una entrega vista por el domiciliario: lo mismo que el domicilio, pero
+ * sin el código de entrega (ese se lo dice el cliente en la puerta).
+ */
+export type EntregaReparto = Omit<DomicilioVista, "codigoEntrega" | "domiciliario" | "costo"> & {
+  /** Distancia en línea recta del punto al destino, en metros */
+  distancia: number;
+  evidencia: { url: string | null; nombreReceptor: string | null } | null;
+};
+
+/** Datos del domiciliario que inició sesión. */
+export type PerfilReparto = {
+  id: string;
+  nombre: string;
+  vehiculo: string;
+  disponible: boolean;
+  calificacion: number | null;
+};
+
+export type ResumenReparto = { hoy: number; semana: number; total: number };
 
 export type EstadoMantenimiento = "PROGRAMADO" | "EN_CURSO" | "REALIZADO";
 

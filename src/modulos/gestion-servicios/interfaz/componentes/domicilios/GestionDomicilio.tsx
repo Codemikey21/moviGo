@@ -42,6 +42,14 @@ export function GestionDomicilio({ domicilio, domiciliarios }: { domicilio: Domi
         </div>
       )}
 
+      {domicilio.estado === "ASIGNADO" && domicilio.domiciliario && (
+        <p className={`rounded-campo px-4 py-3 text-[14px] ${domicilio.aceptadoEn ? "bg-salvia text-bosque" : "bg-[#f6e7c1]/60 text-[#7a5a12]"}`}>
+          {domicilio.aceptadoEn
+            ? `${domicilio.domiciliario.nombre} aceptó y va a recogerlo.`
+            : `Esperando que ${domicilio.domiciliario.nombre} acepte en su portal.`}
+        </p>
+      )}
+
       {domicilio.estado === "ASIGNADO" && (
         <BotonAccion type="submit" name="accion" value="salir" disabled={enviando} className="w-full">
           Salió a ruta

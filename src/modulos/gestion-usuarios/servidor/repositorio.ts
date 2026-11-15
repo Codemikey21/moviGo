@@ -64,25 +64,45 @@ export async function listarUsuarios(busqueda?: string) {
       activo: true,
       cliente: { select: { _count: { select: { pedidos: true, alquileres: true } } } },
       administrador: { select: { puntoAsignado: { select: { nombre: true } } } },
+      domiciliario: { select: { vehiculo: true } },
     },
   });
-  return filas.map(({ cliente, administrador, ...u }) => ({
+  return filas.map(({ cliente, administrador, domiciliario, ...u }) => ({
     ...u,
     pedidos: cliente?._count.pedidos ?? 0,
     alquileres: cliente?._count.alquileres ?? 0,
     puntoAsignado: administrador?.puntoAsignado?.nombre ?? null,
+    vehiculo: domiciliario?.vehiculo ?? null,
   }));
 }
 
-/** Cambia el rol. Los administradores llevan además su fila en administradores. */
-export async function cambiarRol(usuarioId: string, rol: "CLIENTE" | "ADMIN_SISTEMA" | "ADMIN_PUNTO", puntoId: string | null) {
+/** Cambia el rol. Los administradores llevan su fila en administradores y los domiciliarios en domiciliarios. */
+export async function cambiarRol(
+  usuarioId: string,
+  rol: "CLIENTE" | "DOMICILIARIO" | "ADMIN_SISTEMA" | "ADMIN_PUNTO",
+  puntoId: string | null,
+  vehiculo: string | null,
+) {
   await db.$transaction(async (tx) => {
     await tx.usuario.update({ where: { id: usuarioId }, data: { rol } });
-    if (rol === "CLIENTE") {
-      await tx.administrador.deleteMany({ where: { usuarioId } });
-    } else {
+
+    if (rol === "ADMIN_SISTEMA" || rol === "ADMIN_PUNTO") {
       const datos = { alcance: rol === "ADMIN_SISTEMA" ? ("SISTEMA" as const) : ("PUNTO" as const), puntoAsignadoId: rol === "ADMIN_PUNTO" ? puntoId : null };
       await tx.administrador.upsert({ where: { usuarioId }, update: datos, create: { usuarioId, ...datos } });
+    } else {
+      await tx.administrador.deleteMany({ where: { usuarioId } });
+    }
+
+    if (rol === "DOMICILIARIO" && vehiculo) {
+      await tx.domiciliario.upsert({ where: { usuarioId }, update: { vehiculo }, create: { usuarioId, vehiculo, disponible: false } });
+    } else {
+      // Se guarda su ficha para no perder el historial de entregas, pero ya no recibe más
+      await tx.domiciliario.updateMany({ where: { usuarioId }, data: { disponible: false } });
     }
   });
+}
+
+/** Domicilios que la persona tiene asignados o en ruta como domiciliario. */
+export async function entregasActivas(usuarioId: string) {
+  return db.domicilio.count({ where: { domiciliarioId: usuarioId, estado: { in: ["ASIGNADO", "EN_CURSO"] } } });
 }

@@ -75,6 +75,7 @@ El esquema está en `database/schema.prisma` y sale del diagrama de clases. Las 
 | `gestion_pagos.sql` | pagos y avisos de la pasarela |
 | `gestion_pedidos.sql` | carritos, pedidos y sus líneas |
 | `gestion_servicios.sql` | alquileres, domicilios, seguimiento, evidencias y mantenimiento |
+| `gestion_servicios_domiciliario.sql` | código de entrega, aceptación del domiciliario y bucket privado `evidencias` para la foto de la entrega |
 | `gestion_servicios_entregas.sql` | domicilios de pedidos de compra que salen de un punto de servicio |
 | `gestion_usuarios.sql` | usuarios, clientes, domiciliarios, administradores y direcciones |
 | `gestion_usuarios_autenticacion.sql` | crea el perfil de MoviGo cuando alguien se registra en Supabase Auth |
@@ -98,19 +99,27 @@ La app queda en http://localhost:3000.
 | Carrito y entrega (recoger en un punto o a domicilio) | `/carrito` |
 | Pasarela de pagos (tarjeta, Nequi o PSE de prueba) | `/pagar/<referencia>` |
 | Inicio de la cuenta: lo que está en curso, novedades y datos | `/mi-cuenta` |
-| Seguimiento del pedido con mapa (OpenStreetMap) | `/mi-cuenta/pedidos/<numero>` |
+| Seguimiento del pedido con mapa (OpenStreetMap) y código de entrega | `/mi-cuenta/pedidos/<numero>` |
 | Alquiler con código de recogida | `/mi-cuenta/alquileres/<id>` |
 | Mantenimiento de los vehículos comprados | `/mi-cuenta/mantenimiento` |
 | Portal empresarial: solicitar y aceptar cotizaciones | `/empresas` |
+| Cobertura, contacto y documentos legales | `/cobertura`, `/contacto`, `/legal/...` |
+
+| Para el domiciliario | Ruta |
+|---|---|
+| Conectarse, tomar entregas libres, aceptar o rechazar las asignadas | `/domiciliario` |
+| Entrega: mapa con la ruta, Google Maps o Waze, salir a ruta, compartir GPS y entregar con el código del cliente (foto opcional) | `/domiciliario/entregas/<id>` |
+| Entregas hechas | `/domiciliario/historial` |
 
 | Para el administrador | Ruta |
 |---|---|
 | Resumen: ingresos, pedidos por atender, alquileres, domicilios e inventario | `/admin` |
 | Pedidos: preparar, entregar o cancelar (con reembolso) | `/admin/pedidos` |
 | Alquileres: entregar con el código y recibir la devolución | `/admin/alquileres` |
-| Domicilios en vivo: asignar domiciliario, salir a ruta, entregado | `/admin/domicilios` |
+| Domicilios en vivo: asignar domiciliario, ver si aceptó, foto de la entrega | `/admin/domicilios` |
 | Taller y empresas (cotizaciones) | `/admin/mantenimiento`, `/admin/empresas` |
-| Inventario y usuarios (roles) | `/admin/inventario`, `/admin/usuarios` |
+| Inventario y usuarios (roles, también domiciliario con su vehículo) | `/admin/inventario`, `/admin/usuarios` |
+| Mensajes de contacto y suscritos al boletín | `/admin/mensajes` |
 
 ### Pagos
 
@@ -128,9 +137,13 @@ En el sitio no aparece ningún aviso de "simulado": se ve como una tienda real. 
 
 Con tarjeta sirve cualquier fecha futura, cualquier CVV y cualquier nombre.
 
-### Seguimiento
+### Domiciliarios y seguimiento
 
-El domiciliario se mueve sobre la ruta real de calles (OSRM de OpenStreetMap; si no responde, una ruta en L) durante 8 minutos desde que sale. El mapa del cliente pregunta su posición cada 4 segundos.
+Para tener un domiciliario: la persona se registra normal y el administrador del sistema le cambia el rol a **Domiciliario** en `/admin/usuarios`, eligiendo su vehículo. Al iniciar sesión entra directo a `/domiciliario`. Los tres domiciliarios de la semilla no tienen cuenta para iniciar sesión: el administrador les asigna y mueve los domicilios desde el panel.
+
+Cada domicilio tiene un **código de entrega** de 4 dígitos que solo ve el cliente; el domiciliario lo pide en la puerta para marcarlo entregado. La foto de la entrega es opcional y va al bucket privado `evidencias`.
+
+Mientras va en ruta, el teléfono del domiciliario manda su posición GPS cada 8 segundos y el mapa del cliente la pregunta cada 4. Si no comparte ubicación, el mapa simula el avance sobre la ruta real de calles (OSRM de OpenStreetMap; si no responde, una ruta en L) durante 8 minutos.
 
 ## Panel de administración
 

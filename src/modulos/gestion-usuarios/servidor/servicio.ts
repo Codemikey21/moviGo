@@ -192,10 +192,15 @@ export const usuariosParaPanel = (busqueda?: string) => repositorio.listarUsuari
 export async function cambiarRol(
   adminId: string,
   usuarioId: string,
-  rol: "CLIENTE" | "ADMIN_SISTEMA" | "ADMIN_PUNTO",
+  rol: "CLIENTE" | "DOMICILIARIO" | "ADMIN_SISTEMA" | "ADMIN_PUNTO",
   puntoId: string | null,
+  vehiculo: string | null = null,
 ) {
   if (adminId === usuarioId) throw new ErrorDominio("No puedes cambiar tu propio rol.", "propio");
   if (rol === "ADMIN_PUNTO" && !puntoId) throw new ErrorDominio("Elige el punto que va a administrar.", "punto");
-  await repositorio.cambiarRol(usuarioId, rol, puntoId);
+  if (rol === "DOMICILIARIO" && !vehiculo) throw new ErrorDominio("Elige el vehículo con el que reparte.", "vehiculo");
+  if (rol !== "DOMICILIARIO" && (await repositorio.entregasActivas(usuarioId)) > 0) {
+    throw new ErrorDominio("Tiene entregas asignadas o en ruta. Reasígnalas antes de cambiarle el rol.", "entregas");
+  }
+  await repositorio.cambiarRol(usuarioId, rol, puntoId, vehiculo);
 }

@@ -18,4 +18,6 @@ export type UsuarioFila = PerfilUsuario & {
   pedidos: number;
   alquileres: number;
   puntoAsignado: string | null;
+  /** Solo domiciliarios: con qué reparte */
+  vehiculo: string | null;
 };

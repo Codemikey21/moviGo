@@ -640,7 +640,11 @@ model Domicilio {
   estado                 EstadoServicio @default(SOLICITADO)
   descripcionPaquete     String         @map("descripcion_paquete")
   costo                  Decimal        @db.Decimal(12, 2)
+  /// 4 dígitos que el cliente le dice al domiciliario para confirmar la entrega
+  codigoEntrega          String         @map("codigo_entrega")
   asignadoEn             DateTime?      @map("asignado_en") @db.Timestamptz(6)
+  /// Cuándo el domiciliario aceptó la entrega (null: todavía no responde)
+  aceptadoEn             DateTime?      @map("aceptado_en") @db.Timestamptz(6)
   entregadoEn            DateTime?      @map("entregado_en") @db.Timestamptz(6)
   calificacion           Int?
   comentario             String?

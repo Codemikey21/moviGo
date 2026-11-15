@@ -85,6 +85,7 @@ async function Contenido({ searchParams }: Pick<PageProps<"/admin/usuarios">, "s
                 <Insignia tono={u.rol.startsWith("ADMIN") ? "oscuro" : u.rol === "DOMICILIARIO" ? "salvia" : "gris"}>
                   {nombresRol[u.rol]}
                   {u.puntoAsignado ? ` · ${u.puntoAsignado.replace("MoviGo ", "")}` : ""}
+                  {u.rol === "DOMICILIARIO" && u.vehiculo ? ` · ${u.vehiculo}` : ""}
                 </Insignia>
                 <span>
                   {u.pedidos} pedido{u.pedidos === 1 ? "" : "s"} · {u.alquileres} alquiler{u.alquileres === 1 ? "" : "es"} · desde{" "}
@@ -93,7 +94,7 @@ async function Contenido({ searchParams }: Pick<PageProps<"/admin/usuarios">, "s
               </div>
               <div>
                 {puedeCambiar && u.id !== admin.id && (
-                  <CambiarRol usuarioId={u.id} rol={u.rol} puntos={puntos.map((p) => ({ id: p.id, nombre: p.nombre }))} />
+                  <CambiarRol key={`${u.rol}-${u.vehiculo ?? ""}`} usuarioId={u.id} rol={u.rol} vehiculo={u.vehiculo} puntos={puntos.map((p) => ({ id: p.id, nombre: p.nombre }))} />
                 )}
               </div>
             </li>

@@ -10,6 +10,7 @@ import { LineaTiempo, type Paso } from "@/compartido/interfaz/ui/LineaTiempo";
 import { formatoFechaLarga, formatoPesos } from "@/compartido/utilidades/formato";
 import { VitrinaProducto } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/VitrinaProducto";
 import { EstadoAlquiler } from "@/modulos/gestion-servicios/interfaz/componentes/alquiler/EstadoAlquiler";
+import { CodigoEntrega } from "@/modulos/gestion-servicios/interfaz/componentes/domicilios/CodigoEntrega";
 import { MapaSeguimiento } from "@/modulos/gestion-servicios/interfaz/componentes/domicilios/MapaSeguimiento";
 import { cancelarMiAlquilerAccion, obtenerMiAlquiler } from "@/modulos/gestion-servicios/servidor/alquiler/acciones";
 import { obtenerDomicilio, obtenerSeguimiento } from "@/modulos/gestion-servicios/servidor/domicilios/acciones";
@@ -111,6 +112,7 @@ async function Contenido({ params }: Pick<PageProps<"/mi-cuenta/alquileres/[id]"
                   : "Te avisamos cuando asignemos a tu domiciliario."}{" "}
                 Destino: {domicilio.destino.direccion}, {domicilio.destino.barrio}.
               </p>
+              <CodigoEntrega codigo={domicilio.codigoEntrega} estado={domicilio.estado} className="mx-6 mb-6" />
             </div>
           )}
 
