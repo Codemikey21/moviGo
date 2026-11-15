@@ -14,3 +14,6 @@ export const esquemaColor = z.object({
 });
 
 export const esquemaIdColor = z.uuid();
+
+/** Cambiar el nombre o el tono de un color que ya existe. */
+export const esquemaEditarColor = esquemaColor.extend({ id: z.uuid() });

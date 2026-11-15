@@ -7,6 +7,7 @@ import { CampoTexto } from "@/compartido/interfaz/ui/CampoTexto";
 import { estadoInicial } from "@/compartido/tipos/formulario";
 import { agregarColorAccion, borrarColorAccion } from "../../../servidor/colores/acciones";
 import type { ColorProducto } from "../../../tipos";
+import { EditarColor } from "./EditarColor";
 
 /**
  * Colores en que viene el producto (los del configurador). Cada foto y cada
@@ -38,11 +39,17 @@ export function ColoresProducto({
         <ul className="flex flex-wrap gap-3">
           {colores.map((c) => (
             <li key={c.id} className="flex items-center gap-3 rounded-full bg-escarcha py-2 pl-2 pr-3">
-              <span className="size-8 rounded-full ring-1 ring-carbon/10" style={{ background: c.hex }} />
-              <span className="text-[14px] text-carbon">
-                {c.nombre}
-                <span className="ml-2 text-pizarra">{conteo[c.id] ?? 0} u.</span>
-              </span>
+              {puedeEditar ? (
+                <EditarColor productoId={productoId} color={c} unidades={conteo[c.id] ?? 0} />
+              ) : (
+                <>
+                  <span className="size-8 rounded-full ring-1 ring-carbon/10" style={{ background: c.hex }} />
+                  <span className="text-[14px] text-carbon">
+                    {c.nombre}
+                    <span className="ml-2 text-pizarra">{conteo[c.id] ?? 0} u.</span>
+                  </span>
+                </>
+              )}
               {puedeEditar && (
                 <form
                   action={borrarColorAccion}

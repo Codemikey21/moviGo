@@ -12,14 +12,21 @@ export async function listar(productoId: string): Promise<ColorProducto[]> {
   });
 }
 
-export async function nombreEnUso(productoId: string, nombre: string): Promise<boolean> {
-  return (await db.colorProducto.count({ where: { productoId, nombre: { equals: nombre, mode: "insensitive" } } })) > 0;
+/** ¿Otro color del producto ya se llama así? (sinId: el color que se está editando no cuenta) */
+export async function nombreEnUso(productoId: string, nombre: string, sinId?: string): Promise<boolean> {
+  const donde = { productoId, nombre: { equals: nombre, mode: "insensitive" as const }, ...(sinId ? { id: { not: sinId } } : {}) };
+  return (await db.colorProducto.count({ where: donde })) > 0;
 }
 
 /** El color nuevo queda de último. */
 export async function crear(datos: { productoId: string; nombre: string; hex: string }): Promise<void> {
   const ultimo = await db.colorProducto.aggregate({ where: { productoId: datos.productoId }, _max: { orden: true } });
   await db.colorProducto.create({ data: { ...datos, orden: (ultimo._max.orden ?? -1) + 1 } });
+}
+
+/** Cambia el nombre y el tono. Sus fotos y unidades siguen con este color. */
+export async function actualizar(id: string, datos: { nombre: string; hex: string }): Promise<void> {
+  await db.colorProducto.update({ where: { id }, data: datos });
 }
 
 /** Al borrarlo, sus fotos y unidades quedan sin color (no se borran). */

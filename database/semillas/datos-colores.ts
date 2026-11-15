@@ -13,8 +13,8 @@ export const coloresPorProducto: Record<string, [string, string][]> = {
 
   // Bicicletas
   "gw-zebra-r29": [["Negro mate", "#24272a"], ["Rojo", "#c0392b"], ["Azul", "#2f5d8a"]],
-  "trek-marlin-5": [["Verde lima", "#8cc63f"], ["Negro satinado", "#24272a"], ["Rojo lava", "#c4553f"]],
-  "specialized-sirrus-2": [["Gris arena", "#a8a291"], ["Negro", "#24272a"], ["Azul hielo", "#a9c7d6"]],
+  "trek-marlin-5": [["Rojo carmesí", "#9d161f"], ["Azul medianoche", "#1f2f5e"], ["Menta degradado", "#b2ecdf"]],
+  "specialized-sirrus-2": [["Verde bosque", "#0a2125"], ["Azul hielo", "#a9c7d6"], ["Verde lima", "#bac27a"]],
   "trek-verve-plus-1": [["Gris litio", "#7b8287"], ["Azul marino", "#2b3a55"]],
 
   // Motos

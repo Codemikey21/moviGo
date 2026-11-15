@@ -18,6 +18,17 @@ export async function agregar(datos: { productoId: string; nombre: string; hex: 
   await repositorio.crear(datos);
 }
 
+/** Renombrar o cambiar el tono: las fotos y unidades del color no cambian. */
+export async function editar(datos: { id: string; productoId: string; nombre: string; hex: string }) {
+  if (!(await repositorio.existe(datos.id, datos.productoId))) {
+    throw new ErrorDominio("Ese color no es de este producto.", "color");
+  }
+  if (await repositorio.nombreEnUso(datos.productoId, datos.nombre, datos.id)) {
+    throw new ErrorDominio("Ese producto ya tiene otro color con ese nombre.", "repetido");
+  }
+  await repositorio.actualizar(datos.id, { nombre: datos.nombre, hex: datos.hex });
+}
+
 export const borrar = (id: string) => repositorio.borrar(id);
 
 /** Para otros módulos: confirma que el color es de ese producto. */
