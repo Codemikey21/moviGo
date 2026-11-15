@@ -9,6 +9,7 @@ import { Icono } from "@/compartido/interfaz/ui/Icono";
 import { LineaTiempo, type Paso } from "@/compartido/interfaz/ui/LineaTiempo";
 import { formatoFechaHora, formatoPesos } from "@/compartido/utilidades/formato";
 import { VitrinaProducto } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/VitrinaProducto";
+import { PortadaServicio } from "../../../_componentes/PortadaServicio";
 import { EstadoPedido } from "@/modulos/gestion-pedidos/interfaz/componentes/compras/EstadoPedido";
 import { cancelarMiPedidoAccion, obtenerMiPedido } from "@/modulos/gestion-pedidos/servidor/compras/acciones";
 import type { PedidoDetalle } from "@/modulos/gestion-pedidos/tipos";
@@ -57,6 +58,27 @@ function pasos(p: PedidoDetalle, d: DomicilioVista | null): Paso[] {
   ];
 }
 
+/** Una línea bajo el titular con lo que sigue. */
+function detallePortada(p: PedidoDetalle, d: DomicilioVista | null) {
+  const nombres = p.lineas.map((l) => `${l.marca} ${l.nombre}`).join(" + ");
+  if (p.estado === "PENDIENTE_PAGO") return `${nombres}. Completa el pago para apartar tus unidades.`;
+  if (p.estado === "CANCELADO") return nombres;
+  if (p.estado === "ENTREGADO") return `${nombres}. ¡Disfrútalo!`;
+  if (p.entrega === "EN_PUNTO") return `${nombres}. Recógelo en ${p.punto?.nombre ?? "tu punto"}.`;
+  if (d?.estado === "EN_CURSO") return `${nombres}. ${d.domiciliario?.nombre ?? "Tu domiciliario"} va hacia ${d.destino.barrio ?? "tu casa"}.`;
+  return `${nombres}. Te avisamos cuando salga hacia tu casa.`;
+}
+
+/** Dato corto de la pestaña de la portada. */
+function Dato({ titulo, valor }: { titulo: string; valor: string }) {
+  return (
+    <span className="leading-tight">
+      <span className="block text-[12px] text-pizarra">{titulo}</span>
+      <span className="text-[17px] tabular-nums">{valor}</span>
+    </span>
+  );
+}
+
 /** Frase grande del estado actual. */
 function titular(p: PedidoDetalle, d: DomicilioVista | null) {
   if (p.estado === "CANCELADO") return "Pedido cancelado";
@@ -80,20 +102,30 @@ async function Contenido({ params }: Pick<PageProps<"/mi-cuenta/pedidos/[numero]
 
   return (
     <>
-      <section className="flex flex-wrap items-end justify-between gap-6 pb-10 pt-12">
-        <div>
-          <Link href="/mi-cuenta/pedidos" className="inline-flex items-center gap-1.5 text-[14px] text-pizarra hover:text-carbon">
-            <Icono nombre="atras" className="size-4" /> Pedidos y alquileres
-          </Link>
-          <p className="etiqueta mt-6 text-carbon/70">Pedido {pedido.numero}</p>
-          <h1 className="titular mt-4 text-[clamp(44px,6vw,88px)] text-carbon">{titular(pedido, domicilio)}</h1>
-        </div>
-        {domicilio && ["ASIGNADO", "EN_CURSO"].includes(domicilio.estado) && pedido.estado !== "ENTREGADO" ? (
-          <EstadoDomicilio estado={domicilio.estado} />
-        ) : (
-          <EstadoPedido estado={pedido.estado} entrega={pedido.entrega} />
-        )}
-      </section>
+      <PortadaServicio
+        volver={{ href: "/mi-cuenta/pedidos", texto: "Pedidos y alquileres" }}
+        etiqueta={`Pedido ${pedido.numero}`}
+        titulo={titular(pedido, domicilio)}
+        detalle={detallePortada(pedido, domicilio)}
+        estado={
+          domicilio && ["ASIGNADO", "EN_CURSO"].includes(domicilio.estado) && pedido.estado !== "ENTREGADO" ? (
+            <EstadoDomicilio estado={domicilio.estado} />
+          ) : (
+            <EstadoPedido estado={pedido.estado} entrega={pedido.entrega} />
+          )
+        }
+        foto={pedido.lineas[0]?.foto ?? null}
+        categoria={pedido.lineas[0]?.categoria ?? "scooters"}
+        accion={pedido.estado === "PENDIENTE_PAGO" && pedido.referenciaPago ? { href: `/pagar/${pedido.referenciaPago}`, texto: "Pagar ahora" } : undefined}
+        muesca={
+          <>
+            <Dato titulo="Productos" valor={String(pedido.lineas.reduce((s, l) => s + l.cantidad, 0))} />
+            <Dato titulo="Total" valor={formatoPesos.format(pedido.total)} />
+            <Dato titulo="Entrega" valor={pedido.entrega === "A_DOMICILIO" ? "A domicilio" : "En punto"} />
+          </>
+        }
+      />
+      <div className="h-6" />
 
       {pedido.estado !== "CANCELADO" && (
         <div className="rounded-tarjeta border border-carbon/10 px-6 py-7 sm:px-8">

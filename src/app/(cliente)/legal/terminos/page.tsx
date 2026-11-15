@@ -59,8 +59,8 @@ const secciones: SeccionLegal[] = [
   {
     titulo: "Mantenimiento y taller",
     parrafos: [
-      "Cuando pides un mantenimiento, primero hacemos el diagnóstico y te enviamos la cotización. No hacemos ningún trabajo hasta que la apruebes desde tu cuenta.",
-      "Te avisamos cuando el vehículo esté listo para recoger o cuando salga hacia tu dirección.",
+      "Agendas el mantenimiento desde tu cuenta para el día que prefieras y llevas el vehículo a un punto MoviGo.",
+      "Te avisamos en tu cuenta cuando entre al taller y cuando esté listo para recoger, con el costo del trabajo.",
     ],
   },
   {

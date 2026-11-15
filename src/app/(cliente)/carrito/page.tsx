@@ -3,9 +3,14 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { Boton } from "@/compartido/interfaz/ui/Boton";
-import { Icono } from "@/compartido/interfaz/ui/Icono";
+import { Escenario } from "@/compartido/interfaz/ui/Escenario";
+import { Icono, type NombreIcono } from "@/compartido/interfaz/ui/Icono";
+import { Muesca } from "@/compartido/interfaz/ui/Muesca";
 import { formatoPesos } from "@/compartido/utilidades/formato";
 import { obtenerDisponibilidad } from "@/modulos/gestion-almacen/servidor/stock/acciones";
+import { MosaicoCategorias } from "@/modulos/gestion-catalogo/interfaz/componentes/categorias/MosaicoCategorias";
+import { IlustracionVehiculo } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/IlustracionVehiculo";
+import { obtenerCategorias } from "@/modulos/gestion-catalogo/servidor/categorias/acciones";
 import { VitrinaProducto } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/VitrinaProducto";
 import { cambiarCantidadAccion, obtenerMiCarrito } from "@/modulos/gestion-pedidos/servidor/carrito/acciones";
 import { COSTO_DOMICILIO } from "@/modulos/gestion-servicios/servidor/domicilios/servicio";
@@ -43,22 +48,63 @@ function BotonCantidad({ itemId, cantidad, icono, etiqueta, deshabilitado }: { i
   );
 }
 
+const beneficios: [NombreIcono, string][] = [
+  ["escudo", "Garantía legal"],
+  ["devolucion", "5 días para retractarte"],
+  ["mantenimiento", "Taller MoviGo"],
+  ["candado", "Pago seguro"],
+];
+
+/** Lo que respalda cada compra, en una línea. */
+function Beneficios() {
+  return (
+    <ul className="flex flex-wrap gap-x-7 gap-y-3 text-[14px] text-carbon">
+      {beneficios.map(([icono, texto]) => (
+        <li key={texto} className="flex items-center gap-2">
+          <Icono nombre={icono} className="size-[18px] text-eucalipto" />
+          {texto}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 async function Contenido() {
   await connection();
   const carrito = await obtenerMiCarrito();
 
   if (!carrito.items.length) {
+    const categorias = await obtenerCategorias();
     return (
-      <div className="mx-auto max-w-[640px] py-16 text-center">
-        <span className="mx-auto grid size-20 place-items-center rounded-full bg-salvia text-bosque">
-          <Icono nombre="carrito" className="size-9" />
-        </span>
-        <h1 className="titular mt-8 text-[clamp(40px,5vw,64px)] text-carbon">Tu carrito está vacío</h1>
-        <p className="mt-4 text-[18px] text-pizarra">Elige tu próximo vehículo en el catálogo.</p>
-        <div className="mt-8">
-          <Boton href="/catalogo">Ver catálogo</Boton>
-        </div>
-      </div>
+      <>
+        <Escenario className="relative overflow-hidden rounded-tarjeta rounded-bl-none text-blanco" carril="polygon(50% 0, 78% 0, 100% 100%, 30% 100%)" haz={false}>
+          <div className="relative grid items-center gap-6 px-6 pb-24 pt-10 sm:px-10 md:grid-cols-[1fr_1.1fr] md:pt-12">
+            <div>
+              <p className="etiqueta text-turquesa">Tu carrito</p>
+              <h1 className="titular mt-4 text-[clamp(42px,5.4vw,80px)]">Todavía está vacío</h1>
+              <p className="mt-4 max-w-[420px] text-[17px] leading-relaxed text-blanco/70">
+                Elige tu próximo vehículo: lo recoges en un punto o te lo llevamos a la puerta.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Boton href="/catalogo">Ver catálogo</Boton>
+                <Boton href="/catalogo?modo=alquilar" variante="secundario">
+                  Alquilar por días
+                </Boton>
+              </div>
+            </div>
+            <IlustracionVehiculo categoria="motos" className="vehiculo-entra mx-auto w-full max-w-[560px]" />
+          </div>
+          <Muesca lado="izquierda" fondo="var(--color-blanco)" className="pr-[18px] pt-4">
+            <Beneficios />
+          </Muesca>
+        </Escenario>
+
+        <section className="mt-20">
+          <p className="etiqueta text-carbon/70">Empieza por una categoría</p>
+          <h2 className="titular mb-10 mt-4 text-[clamp(32px,3.6vw,52px)] text-carbon">¿Qué quieres mover hoy?</h2>
+          <MosaicoCategorias categorias={categorias} />
+        </section>
+      </>
     );
   }
 
@@ -114,6 +160,9 @@ async function Contenido() {
               </div>
             </li>
           ))}
+          <li className="rounded-tarjeta border border-carbon/10 px-6 py-5">
+            <Beneficios />
+          </li>
           <li className="px-2 pt-2">
             <Link href="/catalogo" className="inline-flex items-center gap-2 text-[12px] font-bold uppercase text-carbon">
               <Icono nombre="atras" className="size-4" /> Seguir comprando

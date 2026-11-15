@@ -7,8 +7,9 @@ import { Boton } from "@/compartido/interfaz/ui/Boton";
 import { BotonAccion } from "@/compartido/interfaz/ui/BotonAccion";
 import { Icono } from "@/compartido/interfaz/ui/Icono";
 import { LineaTiempo, type Paso } from "@/compartido/interfaz/ui/LineaTiempo";
-import { formatoFechaLarga, formatoPesos } from "@/compartido/utilidades/formato";
+import { formatoDia, formatoFechaLarga, formatoPesos, hoyEnColombia } from "@/compartido/utilidades/formato";
 import { VitrinaProducto } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/VitrinaProducto";
+import { PortadaServicio } from "../../../_componentes/PortadaServicio";
 import { EstadoAlquiler } from "@/modulos/gestion-servicios/interfaz/componentes/alquiler/EstadoAlquiler";
 import { CodigoEntrega } from "@/modulos/gestion-servicios/interfaz/componentes/domicilios/CodigoEntrega";
 import { MapaSeguimiento } from "@/modulos/gestion-servicios/interfaz/componentes/domicilios/MapaSeguimiento";
@@ -40,6 +41,34 @@ function pasos(a: AlquilerVista, enCamino: boolean): Paso[] {
   ];
 }
 
+/** Días que faltan para devolverlo (en hora de Colombia). */
+function diasParaDevolver(a: AlquilerVista) {
+  const hoy = new Date(`${hoyEnColombia()}T00:00:00Z`).getTime();
+  const fin = new Date(`${a.fechaFin.toISOString().slice(0, 10)}T00:00:00Z`).getTime();
+  return Math.round((fin - hoy) / 86_400_000);
+}
+
+function detalleAlquiler(a: AlquilerVista) {
+  if (a.estado === "SOLICITADO") return "Completa el pago para apartar la unidad.";
+  if (a.estado === "ASIGNADO") return a.entrega === "EN_PUNTO" ? `Recógelo en ${a.punto?.nombre ?? "tu punto"} con tu código.` : "Te avisamos cuando salga hacia tu casa.";
+  if (a.estado === "EN_CURSO") {
+    const dias = diasParaDevolver(a);
+    return dias > 1 ? `Te quedan ${dias} días. Devuélvelo a tiempo para no pagar un día extra.` : dias === 1 ? "Mañana es el último día: devuélvelo a tiempo." : dias === 0 ? "Hoy es el día de devolverlo." : "Ya pasó la fecha de devolución: cada día extra se cobra.";
+  }
+  if (a.estado === "COMPLETADO") return "Gracias por rodar con MoviGo. ¿Te gustó? También lo vendemos.";
+  return "Este alquiler se canceló.";
+}
+
+/** Dato corto de la pestaña de la portada. */
+function Dato({ titulo, valor }: { titulo: string; valor: string }) {
+  return (
+    <span className="leading-tight">
+      <span className="block text-[12px] text-pizarra">{titulo}</span>
+      <span className="text-[17px] tabular-nums">{valor}</span>
+    </span>
+  );
+}
+
 async function Contenido({ params }: Pick<PageProps<"/mi-cuenta/alquileres/[id]">, "params">) {
   await connection();
   const { id } = await params;
@@ -60,18 +89,24 @@ async function Contenido({ params }: Pick<PageProps<"/mi-cuenta/alquileres/[id]"
 
   return (
     <>
-      <section className="flex flex-wrap items-end justify-between gap-6 pb-10 pt-12">
-        <div>
-          <Link href="/mi-cuenta/pedidos" className="inline-flex items-center gap-1.5 text-[14px] text-pizarra hover:text-carbon">
-            <Icono nombre="atras" className="size-4" /> Pedidos y alquileres
-          </Link>
-          <p className="etiqueta mt-6 text-carbon/70">
-            Alquiler · {alquiler.producto.marca} {alquiler.producto.nombre}
-          </p>
-          <h1 className="titular mt-4 text-[clamp(44px,6vw,88px)] text-carbon">{titulo}</h1>
-        </div>
-        <EstadoAlquiler estado={alquiler.estado} />
-      </section>
+      <PortadaServicio
+        volver={{ href: "/mi-cuenta/pedidos", texto: "Pedidos y alquileres" }}
+        etiqueta={`Alquiler · ${alquiler.producto.marca} ${alquiler.producto.nombre}`}
+        titulo={titulo}
+        detalle={detalleAlquiler(alquiler)}
+        estado={<EstadoAlquiler estado={alquiler.estado} />}
+        foto={alquiler.producto.foto}
+        categoria={alquiler.producto.categoria}
+        accion={alquiler.estado === "SOLICITADO" && alquiler.referenciaPago ? { href: `/pagar/${alquiler.referenciaPago}`, texto: "Pagar ahora" } : undefined}
+        muesca={
+          <>
+            <Dato titulo="Días" valor={String(alquiler.dias)} />
+            <Dato titulo="Devolución" valor={formatoDia.format(alquiler.fechaFin)} />
+            <Dato titulo="Total" valor={formatoPesos.format(alquiler.total)} />
+          </>
+        }
+      />
+      <div className="h-6" />
 
       {alquiler.estado !== "CANCELADO" && (
         <div className="rounded-tarjeta border border-carbon/10 px-6 py-7 sm:px-8">
