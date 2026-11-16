@@ -10,13 +10,14 @@ import {
 } from "@/modulos/gestion-notificaciones/servidor/acciones";
 import { NOMBRE_MOTIVO } from "@/modulos/gestion-notificaciones/tipos";
 import { EncabezadoAdmin, FiltroEstados } from "../_componentes/EncabezadoAdmin";
+import { EsqueletoLista } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Mensajes · Administración MoviGo" };
 
 export default function PaginaMensajesAdmin({ searchParams }: PageProps<"/admin/mensajes">) {
   return (
     <main className="mx-auto max-w-[1440px] px-3 pb-24 md:px-5">
-      <Suspense fallback={<p className="pt-16 text-pizarra">Cargando mensajes…</p>}>
+      <Suspense fallback={<EsqueletoLista etiqueta="Cargando mensajes…" />}>
         <Contenido searchParams={searchParams} />
       </Suspense>
     </main>

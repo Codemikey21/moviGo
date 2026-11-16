@@ -6,13 +6,14 @@ import { EstadoSolicitud } from "@/modulos/portal-empresarial/interfaz/component
 import { FormularioCotizacion } from "@/modulos/portal-empresarial/interfaz/componentes/FormularioCotizacion";
 import { listarSolicitudesAdmin } from "@/modulos/portal-empresarial/servidor/acciones";
 import { EncabezadoAdmin } from "../_componentes/EncabezadoAdmin";
+import { EsqueletoLista } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Empresas · Administración MoviGo" };
 
 export default function PaginaEmpresasAdmin() {
   return (
     <main className="mx-auto max-w-[1440px] px-3 pb-24 md:px-5">
-      <Suspense fallback={<p className="pt-16 text-pizarra">Cargando solicitudes…</p>}>
+      <Suspense fallback={<EsqueletoLista etiqueta="Cargando solicitudes…" />}>
         <Contenido />
       </Suspense>
     </main>

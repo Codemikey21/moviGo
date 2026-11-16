@@ -10,13 +10,14 @@ import { haceCuanto, TarjetaEntrega } from "@/modulos/gestion-servicios/interfaz
 import { MAXIMO_ACTIVAS_REPARTO } from "@/modulos/gestion-servicios/tipos";
 import { obtenerInicioReparto } from "@/modulos/gestion-servicios/servidor/reparto/acciones";
 import { categoriaDelVehiculo } from "./_componentes/vehiculo";
+import { Esqueleto } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Entregas · Reparto MoviGo" };
 
 export default function PaginaReparto() {
   return (
     <main className="mx-auto max-w-[1180px] px-3 pb-24 pt-4 md:px-5">
-      <Suspense fallback={<div className="h-[420px] animate-pulse rounded-tarjeta bg-carbon/10" />}>
+      <Suspense fallback={<Esqueleto className="h-[420px] rounded-tarjeta" />}>
         <Contenido />
       </Suspense>
     </main>

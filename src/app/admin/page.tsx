@@ -3,7 +3,6 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { Suspense, type ReactNode } from "react";
 import { Contador } from "@/compartido/interfaz/animaciones/Contador";
-import { EscenaScroll } from "@/compartido/interfaz/animaciones/EscenaScroll";
 import { Revelador } from "@/compartido/interfaz/animaciones/Revelador";
 import { TextoPalabras } from "@/compartido/interfaz/animaciones/TextoPalabras";
 import { Icono, type NombreIcono } from "@/compartido/interfaz/ui/Icono";
@@ -28,13 +27,14 @@ import { listarDomiciliariosAdmin, listarDomiciliosAdmin } from "@/modulos/gesti
 import { listarSolicitudesAdmin } from "@/modulos/portal-empresarial/servidor/acciones";
 import { GraficaIngresos } from "./_componentes/GraficaIngresos";
 import { InventarioCategorias, type FilaInventario } from "./_componentes/InventarioCategorias";
+import { EsqueletoResumenAdmin } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Resumen · Administración MoviGo" };
 
 export default function PaginaResumen() {
   return (
     <main className="-mt-[76px] bg-carbon">
-      <Suspense fallback={<p className="px-5 pb-[60vh] pt-40 text-center text-blanco/60">Cargando el resumen…</p>}>
+      <Suspense fallback={<EsqueletoResumenAdmin />}>
         <Contenido />
       </Suspense>
     </main>
@@ -230,9 +230,31 @@ async function Contenido() {
         <p className="mt-6 font-mono text-[13px] uppercase text-niebla">{fecha} · Bucaramanga</p>
       </section>
 
-      {/* 2. Flota en vivo: el mapa crece al bajar */}
-      <EscenaScroll className="md:h-[180vh]" classNamePin="grid place-items-center bg-carbon">
-        <div className="escena-crece relative h-[calc(100svh-170px)] w-[calc(100vw-24px)] overflow-hidden rounded-tarjeta rounded-b-none bg-[#1a2426] md:mt-[90px] md:w-[calc(100vw-40px)] md:[transform-origin:50%_30%]">
+      {/* 2. Cifras: lo primero que se ve */}
+      <section className="contenedor grid gap-3.5 pb-14 pt-2 sm:grid-cols-2 lg:grid-cols-5" aria-label="Cifras">
+        {cifras.map((c) => (
+          <Link
+            key={c.etiqueta}
+            href={c.href}
+            className="group flex min-h-[230px] flex-col rounded-[28px] bg-[#172022] p-6 text-blanco transition-[background-color,translate] duration-500 ease-salida hover:-translate-y-1.5 hover:bg-bosque"
+          >
+            <p className="etiqueta text-niebla">{c.etiqueta}</p>
+            <p className="mt-auto whitespace-nowrap pt-6 text-[clamp(34px,3vw,48px)] leading-none tracking-[-0.045em]">
+              <Contador valor={c.valor} decimales={c.decimales} prefijo={c.prefijo} sufijo={c.sufijo} />
+            </p>
+            <p className={`mt-2.5 text-[13px] ${c.tono ?? "text-turquesa"}`}>{c.nota}</p>
+            {c.linea && (
+              <svg viewBox="0 0 200 40" className="mt-3 h-9 w-full overflow-visible" aria-hidden>
+                <path d={tendencia} fill="none" stroke="#64d5b3" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
+          </Link>
+        ))}
+      </section>
+
+      {/* 3. Flota en vivo */}
+      <section aria-label="Flota en vivo" className="px-3 pb-14 md:px-5">
+        <div className="relative h-[min(78svh,760px)] w-full overflow-hidden rounded-tarjeta rounded-b-none bg-[#1a2426]">
           <div className="absolute inset-0">
             <MapaFlota
               puntos={puntos.map((p) => ({ nombre: p.nombre, latitud: p.latitud, longitud: p.longitud }))}
@@ -318,37 +340,15 @@ async function Contenido() {
             </nav>
           </Muesca>
         </div>
-      </EscenaScroll>
+      </section>
 
       <Revelador>
-        {/* 3. Cifras */}
-        <section className="contenedor grid gap-3.5 pb-28 pt-10 sm:grid-cols-2 lg:grid-cols-5" aria-label="Cifras">
-          {cifras.map((c) => (
-            <Link
-              key={c.etiqueta}
-              href={c.href}
-              data-revelar
-              className="group flex min-h-[230px] flex-col rounded-[28px] bg-[#172022] p-6 text-blanco transition-[background-color,translate] duration-500 ease-salida hover:-translate-y-1.5 hover:bg-bosque"
-            >
-              <p className="etiqueta text-niebla">{c.etiqueta}</p>
-              <p className="mt-auto whitespace-nowrap pt-6 text-[clamp(34px,3vw,48px)] leading-none tracking-[-0.045em]">
-                <Contador valor={c.valor} decimales={c.decimales} prefijo={c.prefijo} sufijo={c.sufijo} />
-              </p>
-              <p className={`mt-2.5 text-[13px] ${c.tono ?? "text-turquesa"}`}>{c.nota}</p>
-              {c.linea && (
-                <svg viewBox="0 0 200 40" className="mt-3 h-9 w-full overflow-visible" aria-hidden>
-                  <path d={tendencia} fill="none" stroke="#64d5b3" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              )}
-            </Link>
-          ))}
-        </section>
-
         {/* 4. Por atender */}
         <section id="por-atender" className="scroll-mt-24 rounded-t-[48px] bg-blanco pb-24 pt-24 md:pt-28">
           <div className="contenedor">
             <p className="etiqueta text-center text-bruma">Por atender</p>
             <TextoPalabras
+              estatico
               className="titular mx-auto mt-5 max-w-[900px] text-center text-[clamp(32px,4vw,50px)] text-carbon"
               partes={
                 filas.length

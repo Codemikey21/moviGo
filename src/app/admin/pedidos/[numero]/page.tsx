@@ -17,13 +17,14 @@ import {
   obtenerDomicilio,
   obtenerSeguimiento,
 } from "@/modulos/gestion-servicios/servidor/domicilios/acciones";
+import { EsqueletoDetalle } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Pedido · Administración MoviGo" };
 
 export default function PaginaPedidoAdmin({ params }: PageProps<"/admin/pedidos/[numero]">) {
   return (
     <main className="mx-auto max-w-[1440px] px-3 pb-24 md:px-5">
-      <Suspense fallback={<p className="pt-16 text-pizarra">Cargando el pedido…</p>}>
+      <Suspense fallback={<EsqueletoDetalle etiqueta="Cargando el pedido…" className="pt-16" />}>
         <Contenido params={params} />
       </Suspense>
     </main>

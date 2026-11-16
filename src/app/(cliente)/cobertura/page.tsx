@@ -8,6 +8,7 @@ import { formatoPesos } from "@/compartido/utilidades/formato";
 import { obtenerPuntos } from "@/modulos/gestion-almacen/servidor/stock/acciones";
 import { MapaFlota } from "@/modulos/gestion-servicios/interfaz/componentes/domicilios/MapaFlota";
 import { COSTO_DOMICILIO } from "@/modulos/gestion-servicios/servidor/domicilios/servicio";
+import { Esqueleto } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Zonas de cobertura · MoviGo" };
 
@@ -52,7 +53,7 @@ export default function PaginaCobertura() {
       </header>
 
       <section className="px-3 pt-12 md:px-5">
-        <Suspense fallback={<div className="h-[560px] animate-pulse rounded-tarjeta bg-escarcha" />}>
+        <Suspense fallback={<Esqueleto className="h-[560px] rounded-tarjeta" />}>
           <MapaYPuntos />
         </Suspense>
       </section>

@@ -10,6 +10,7 @@ import { VitrinaProducto } from "@/modulos/gestion-catalogo/interfaz/componentes
 import { EstadoMantenimiento } from "@/modulos/gestion-servicios/interfaz/componentes/mantenimiento/EstadoMantenimiento";
 import { FormularioMantenimiento } from "@/modulos/gestion-servicios/interfaz/componentes/mantenimiento/FormularioMantenimiento";
 import { obtenerMisMantenimientos, obtenerMisVehiculos } from "@/modulos/gestion-servicios/servidor/mantenimiento/acciones";
+import { EsqueletoLista } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Mantenimiento · MoviGo" };
 
@@ -22,7 +23,7 @@ const pasosTaller = [
 export default function PaginaMantenimiento() {
   return (
     <div className="contenedor">
-      <Suspense fallback={<p className="mt-10 text-pizarra">Cargando…</p>}>
+      <Suspense fallback={<EsqueletoLista className="mt-10" conTitulo={false} filas={4} />}>
         <Contenido />
       </Suspense>
     </div>

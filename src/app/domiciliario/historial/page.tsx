@@ -5,13 +5,14 @@ import { Suspense } from "react";
 import { formatoFechaHora } from "@/compartido/utilidades/formato";
 import { kilometros } from "@/modulos/gestion-servicios/interfaz/componentes/reparto/TarjetaEntrega";
 import { obtenerHistorialReparto } from "@/modulos/gestion-servicios/servidor/reparto/acciones";
+import { EsqueletoLista } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Historial · Reparto MoviGo" };
 
 export default function PaginaHistorialReparto() {
   return (
     <main className="mx-auto max-w-[1180px] px-3 pb-24 pt-6 md:px-5">
-      <Suspense fallback={<p className="pt-10 text-pizarra">Cargando historial…</p>}>
+      <Suspense fallback={<EsqueletoLista etiqueta="Cargando historial…" className="pt-10" conTitulo={false} />}>
         <Contenido />
       </Suspense>
     </main>

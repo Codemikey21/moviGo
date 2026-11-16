@@ -81,8 +81,11 @@ export function PieDePagina({
       </div>
 
       {/* Foto grande, copyright y marca */}
-      <div className="relative h-[460px] md:h-[560px]">
+      <div className="relative isolate h-[460px] md:h-[560px]">
         <ImagenSlot src={foto} alt="" tono="carbon" />
+        {/* Tinte de la marca: las luces de la foto pasan a verde MoviGo
+            (mix-blend color conserva las luces y sombras y cambia el tono) */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 bg-[#3f8a78] opacity-85 mix-blend-color" />
         {/* Degradado para que el texto se lea sobre la foto */}
         <div
           aria-hidden

@@ -9,6 +9,7 @@ import { obtenerPuntos } from "@/modulos/gestion-almacen/servidor/stock/acciones
 import { CambiarRol } from "@/modulos/gestion-usuarios/interfaz/componentes/administracion/CambiarRol";
 import { listarUsuariosAdmin } from "@/modulos/gestion-usuarios/servidor/acciones";
 import { EncabezadoAdmin } from "../_componentes/EncabezadoAdmin";
+import { EsqueletoLista } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Usuarios · Administración MoviGo" };
 
@@ -23,7 +24,7 @@ const nombresRol = {
 export default function PaginaUsuariosAdmin({ searchParams }: PageProps<"/admin/usuarios">) {
   return (
     <main className="mx-auto max-w-[1440px] px-3 pb-24 md:px-5">
-      <Suspense fallback={<p className="pt-16 text-pizarra">Cargando usuarios…</p>}>
+      <Suspense fallback={<EsqueletoLista etiqueta="Cargando usuarios…" />}>
         <Contenido searchParams={searchParams} />
       </Suspense>
     </main>

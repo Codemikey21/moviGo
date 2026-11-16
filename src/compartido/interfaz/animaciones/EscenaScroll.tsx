@@ -10,13 +10,17 @@ import { ScrollTrigger, useGSAP } from "./gsap";
  * moverse o aparecer (como el producto que se achica en Zoox).
  */
 export function EscenaScroll({
-  alto = "250vh",
+  alto,
   className = "",
   classNamePin = "",
   children,
   ...resto
 }: {
-  /** Cuánto scroll dura la escena */
+  /**
+   * Cuánto scroll dura la escena. Normalmente se da con clases en className
+   * (h-svh md:h-[200vh]) para que en el celular la escena no sea más alta
+   * que la pantalla; este valor fijo, si se pasa, gana sobre las clases.
+   */
   alto?: string;
   className?: string;
   classNamePin?: string;
@@ -39,7 +43,7 @@ export function EscenaScroll({
   );
 
   return (
-    <section ref={seccion} className={`relative [--p:0] ${className}`} style={{ height: alto }} {...resto}>
+    <section ref={seccion} className={`relative [--p:0] ${className}`} style={alto ? { height: alto } : undefined} {...resto}>
       <div className={`sticky top-0 h-svh overflow-hidden ${classNamePin}`}>{children}</div>
     </section>
   );

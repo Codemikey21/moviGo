@@ -15,6 +15,7 @@ import { VitrinaProducto } from "@/modulos/gestion-catalogo/interfaz/componentes
 import { cambiarCantidadAccion, obtenerMiCarrito } from "@/modulos/gestion-pedidos/servidor/carrito/acciones";
 import { COSTO_DOMICILIO } from "@/modulos/gestion-servicios/servidor/domicilios/servicio";
 import { FormularioEntrega } from "./_componentes/FormularioEntrega";
+import { EsqueletoLista } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Carrito · MoviGo" };
 
@@ -22,7 +23,7 @@ export default function PaginaCarrito() {
   return (
     <main className="min-h-svh bg-blanco pb-[120px] pt-[140px]">
       <div className="contenedor">
-        <Suspense fallback={<p className="text-pizarra">Cargando tu carrito…</p>}>
+        <Suspense fallback={<EsqueletoLista etiqueta="Cargando tu carrito…" className="" conTitulo={false} filas={3} />}>
           <Contenido />
         </Suspense>
       </div>

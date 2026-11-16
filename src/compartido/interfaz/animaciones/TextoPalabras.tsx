@@ -9,15 +9,21 @@ type Parte = { texto: string; resaltado?: boolean };
  * Frase que se va "encendiendo" palabra por palabra mientras se hace
  * scroll (como las declaraciones grandes de Zoox). Las partes resaltadas
  * salen en verde eucalipto.
+ *
+ * Con `estatico` la frase sale completa desde el inicio: se usa en las
+ * pantallas de trabajo (panel, cuenta, compra), donde leer rápido importa
+ * más que el efecto.
  */
 export function TextoPalabras({
   partes,
   className = "",
   como: Etiqueta = "h2",
+  estatico = false,
 }: {
   partes: Parte[];
   className?: string;
   como?: "h1" | "h2" | "p";
+  estatico?: boolean;
 }) {
   const raiz = useRef<HTMLHeadingElement>(null);
 
@@ -29,7 +35,7 @@ export function TextoPalabras({
   useGSAP(
     () => {
       const el = raiz.current;
-      if (!el) return;
+      if (!el || estatico) return;
       const spans = Array.from(el.querySelectorAll<HTMLElement>("[data-palabra]"));
       ScrollTrigger.create({
         trigger: el,
@@ -41,8 +47,20 @@ export function TextoPalabras({
         },
       });
     },
-    { scope: raiz },
+    { scope: raiz, dependencies: [estatico] },
   );
+
+  if (estatico) {
+    return (
+      <Etiqueta className={className}>
+        {partes.map((p, i) => (
+          <span key={i} className={p.resaltado ? "text-eucalipto" : undefined}>
+            {p.texto}
+          </span>
+        ))}
+      </Etiqueta>
+    );
+  }
 
   return (
     <Etiqueta ref={raiz} className={className}>

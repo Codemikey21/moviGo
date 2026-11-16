@@ -10,13 +10,14 @@ import { obtenerConteos, obtenerPuntos } from "@/modulos/gestion-almacen/servido
 import { VitrinaProducto } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/VitrinaProducto";
 import { obtenerCategorias } from "@/modulos/gestion-catalogo/servidor/categorias/acciones";
 import { listarProductosAdmin } from "@/modulos/gestion-catalogo/servidor/productos/acciones";
+import { EsqueletoLista } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Inventario · Administración MoviGo" };
 
 export default function PaginaInventario({ searchParams }: PageProps<"/admin/inventario">) {
   return (
     <main className="mx-auto max-w-[1440px] px-3 pb-24 pt-10 md:px-5 md:pt-14">
-      <Suspense fallback={<p className="text-pizarra">Cargando inventario…</p>}>
+      <Suspense fallback={<EsqueletoLista etiqueta="Cargando inventario…" className="" />}>
         <Contenido searchParams={searchParams} />
       </Suspense>
     </main>

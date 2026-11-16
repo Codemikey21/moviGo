@@ -96,7 +96,19 @@ export function InventarioCategorias({ puntos, categorias, filas }: Props) {
           {libres} unidad{libres === 1 ? "" : "es"} lista{libres === 1 ? "" : "s"} para salir hoy.
         </h2>
         <p className="mt-3 text-[15px] text-blanco/65">
-          {enPunto} de {capacidad} espacios ocupados ({capacidad ? Math.round((enPunto / capacidad) * 100) : 0} %).
+          {enPunto > capacidad ? (
+            // Más unidades que espacios (p. ej. cargadas a mano en la base): se dice tal cual
+            <>
+              {enPunto} unidades para {capacidad} espacios:{" "}
+              <span className="text-[#e9b43c]">
+                {enPunto - capacidad} por encima de la capacidad.
+              </span>
+            </>
+          ) : (
+            <>
+              {enPunto} de {capacidad} espacios ocupados ({capacidad ? Math.round((enPunto / capacidad) * 100) : 0} %).
+            </>
+          )}
         </p>
         <div className="mb-3 mt-7 flex flex-wrap gap-5 text-[13px] text-blanco/70">
           <span className="flex items-center gap-2"><i className="size-2.5 rounded-[3px] bg-turquesa" />Libre</span>

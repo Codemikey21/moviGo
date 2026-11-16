@@ -7,13 +7,14 @@ import { VitrinaProducto } from "@/modulos/gestion-catalogo/interfaz/componentes
 import { EstadoPedido } from "@/modulos/gestion-pedidos/interfaz/componentes/compras/EstadoPedido";
 import { conteosPedidosAdmin, listarPedidosAdmin } from "@/modulos/gestion-pedidos/servidor/compras/acciones";
 import { EncabezadoAdmin, FiltroEstados } from "../_componentes/EncabezadoAdmin";
+import { EsqueletoLista } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Pedidos · Administración MoviGo" };
 
 export default function PaginaPedidosAdmin({ searchParams }: PageProps<"/admin/pedidos">) {
   return (
     <main className="mx-auto max-w-[1440px] px-3 pb-24 md:px-5">
-      <Suspense fallback={<p className="pt-16 text-pizarra">Cargando pedidos…</p>}>
+      <Suspense fallback={<EsqueletoLista etiqueta="Cargando pedidos…" />}>
         <Contenido searchParams={searchParams} />
       </Suspense>
     </main>

@@ -16,13 +16,14 @@ import { MapaSeguimiento } from "@/modulos/gestion-servicios/interfaz/componente
 import { cancelarMiAlquilerAccion, obtenerMiAlquiler } from "@/modulos/gestion-servicios/servidor/alquiler/acciones";
 import { obtenerDomicilio, obtenerSeguimiento } from "@/modulos/gestion-servicios/servidor/domicilios/acciones";
 import type { AlquilerVista } from "@/modulos/gestion-servicios/tipos";
+import { EsqueletoDetalle } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Mi alquiler · MoviGo" };
 
 export default function PaginaAlquiler({ params }: PageProps<"/mi-cuenta/alquileres/[id]">) {
   return (
     <div className="contenedor">
-      <Suspense fallback={<p className="mt-10 text-pizarra">Cargando tu alquiler…</p>}>
+      <Suspense fallback={<EsqueletoDetalle etiqueta="Cargando tu alquiler…" />}>
         <Contenido params={params} />
       </Suspense>
     </div>

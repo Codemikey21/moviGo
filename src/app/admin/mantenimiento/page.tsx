@@ -7,13 +7,14 @@ import { EstadoMantenimiento } from "@/modulos/gestion-servicios/interfaz/compon
 import { GestionMantenimiento } from "@/modulos/gestion-servicios/interfaz/componentes/mantenimiento/GestionMantenimiento";
 import { listarMantenimientosAdmin } from "@/modulos/gestion-servicios/servidor/mantenimiento/acciones";
 import { EncabezadoAdmin } from "../_componentes/EncabezadoAdmin";
+import { EsqueletoLista } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Taller · Administración MoviGo" };
 
 export default function PaginaTallerAdmin() {
   return (
     <main className="mx-auto max-w-[1440px] px-3 pb-24 md:px-5">
-      <Suspense fallback={<p className="pt-16 text-pizarra">Cargando el taller…</p>}>
+      <Suspense fallback={<EsqueletoLista etiqueta="Cargando el taller…" />}>
         <Contenido />
       </Suspense>
     </main>

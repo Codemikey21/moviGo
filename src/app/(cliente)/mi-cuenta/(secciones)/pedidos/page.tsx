@@ -11,6 +11,7 @@ import { EstadoPedido } from "@/modulos/gestion-pedidos/interfaz/componentes/com
 import { obtenerMisPedidos } from "@/modulos/gestion-pedidos/servidor/compras/acciones";
 import { EstadoAlquiler } from "@/modulos/gestion-servicios/interfaz/componentes/alquiler/EstadoAlquiler";
 import { obtenerMisAlquileres } from "@/modulos/gestion-servicios/servidor/alquiler/acciones";
+import { EsqueletoLista } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Pedidos y alquileres · MoviGo" };
 
@@ -44,7 +45,7 @@ const mesAnio = new Intl.DateTimeFormat("es-CO", { month: "long", year: "numeric
 export default function PaginaPedidos({ searchParams }: PageProps<"/mi-cuenta/pedidos">) {
   return (
     <div className="contenedor">
-      <Suspense fallback={<p className="mt-10 text-pizarra">Cargando…</p>}>
+      <Suspense fallback={<EsqueletoLista className="mt-10" conTitulo={false} />}>
         <Contenido searchParams={searchParams} />
       </Suspense>
     </div>

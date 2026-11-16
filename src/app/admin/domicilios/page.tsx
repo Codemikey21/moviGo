@@ -10,13 +10,14 @@ import { GestionDomicilio } from "@/modulos/gestion-servicios/interfaz/component
 import { MapaFlota } from "@/modulos/gestion-servicios/interfaz/componentes/domicilios/MapaFlota";
 import { evidenciasAdmin, listarDomiciliariosAdmin, listarDomiciliosAdmin } from "@/modulos/gestion-servicios/servidor/domicilios/acciones";
 import { EncabezadoAdmin } from "../_componentes/EncabezadoAdmin";
+import { EsqueletoLista } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Domicilios · Administración MoviGo" };
 
 export default function PaginaDomiciliosAdmin() {
   return (
     <main className="mx-auto max-w-[1440px] px-3 pb-24 md:px-5">
-      <Suspense fallback={<p className="pt-16 text-pizarra">Cargando domicilios…</p>}>
+      <Suspense fallback={<EsqueletoLista etiqueta="Cargando domicilios…" />}>
         <Contenido />
       </Suspense>
     </main>

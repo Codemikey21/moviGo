@@ -23,9 +23,9 @@ import { listarCatalogo, obtenerProducto } from "@/modulos/gestion-catalogo/serv
 import { MAX_ANTICIPACION_DIAS } from "@/modulos/gestion-servicios/servidor/alquiler/validaciones";
 import { COSTO_DOMICILIO } from "@/modulos/gestion-servicios/servidor/domicilios/servicio";
 import { obtenerMiPerfil } from "@/modulos/gestion-usuarios/servidor/acciones";
+import { BarraCompra } from "./_componentes/BarraCompra";
 import { ProductoEnColor, ProveedorColor } from "./_componentes/ColorElegido";
 import { Configurador } from "./_componentes/Configurador";
-import { DetallesProducto } from "./_componentes/DetallesProducto";
 import { FichaTecnica } from "./_componentes/FichaTecnica";
 
 export async function generateMetadata({ params }: PageProps<"/producto/[slug]">): Promise<Metadata> {
@@ -94,7 +94,7 @@ async function Contenido({
   return (
     <ProveedorColor categoria={cat} nombre={`${producto.marca} ${producto.nombre}`} colores={producto.colores} fotos={producto.fotos}>
       {/* 1. Vitrina: el producto a pantalla completa que se encoge al bajar */}
-      <EscenaScroll className="h-svh md:h-[250vh]" classNamePin="bg-blanco" data-cabecera-clara="">
+      <EscenaScroll className="h-svh md:h-[200vh]" classNamePin="bg-blanco" data-cabecera-clara="">
         <div className="escena-lado absolute left-[6vw] top-1/2 hidden w-[36vw] md:block">
           <p className="etiqueta text-eucalipto">
             {producto.marca} · {producto.categoria.nombre}
@@ -148,19 +148,13 @@ async function Contenido({
       </EscenaScroll>
 
       <Revelador>
-        {/* 2. Detalles */}
-        <section className="contenedor pb-24 pt-16 md:pb-32 md:pt-10" aria-label="Detalles">
-          <div data-revelar>
-            <DetallesProducto especificaciones={producto.especificaciones} descripcion={producto.descripcion} />
-          </div>
-        </section>
-
-        {/* 3. Configurador */}
+        {/* 2. Configurador: lo primero después de la vitrina */}
         <section id="configurar" className="scroll-mt-24 bg-salvia py-24 md:py-32">
           <div className="contenedor">
             <p className="etiqueta text-center text-bosque">Hazlo tuyo</p>
             <TextoPalabras
-              className="titular mx-auto mb-16 mt-5 max-w-[1000px] text-center text-[clamp(32px,4vw,52px)] text-carbon md:mb-20"
+              estatico
+              className="titular mx-auto mb-12 mt-5 max-w-[1000px] text-center text-[clamp(32px,4vw,52px)] text-carbon md:mb-16"
               partes={[
                 { texto: producto.colores.length > 1 ? "Escoge el color, el punto y cómo te lo llevas. " : "Escoge el punto y cómo te lo llevas. " },
                 { texto: "Nosotros nos encargamos del resto.", resaltado: true },
@@ -186,6 +180,15 @@ async function Contenido({
             />
           </div>
         </section>
+
+        {/* 3. Ficha técnica */}
+        {producto.especificaciones.length > 0 && (
+          <section className="bg-bosque py-24 md:py-28" aria-label="Ficha técnica">
+            <div className="contenedor">
+              <FichaTecnica especificaciones={producto.especificaciones} nombre={producto.nombre} />
+            </div>
+          </section>
+        )}
 
         {/* 4. Cómo te llega */}
         <section className="contenedor pb-16 pt-24 md:pt-32" aria-labelledby="como-llega">
@@ -213,34 +216,7 @@ async function Contenido({
           </PilaTarjetas>
         </section>
 
-        {/* 5. Ficha técnica */}
-        {producto.especificaciones.length > 0 && (
-          <section className="bg-bosque py-24 md:py-28" aria-label="Ficha técnica">
-            <div className="contenedor">
-              <FichaTecnica especificaciones={producto.especificaciones} nombre={producto.nombre} />
-            </div>
-          </section>
-        )}
-
-        {/* 6. Llévalo */}
-        <section className="bg-salvia py-24 md:py-32">
-          <div className="contenedor grid items-center gap-12 md:grid-cols-[1fr_1.2fr] md:gap-16">
-            <div data-revelar className="text-center">
-              <p className="etiqueta text-bosque">Tu próximo trayecto</p>
-              <p className="titular mx-auto mt-5 max-w-[320px] text-[clamp(36px,3.6vw,48px)] text-carbon">
-                Llévalo hoy y empieza a moverte distinto.
-              </p>
-              <div className="mt-9">
-                <Boton href="#configurar">{disponibles ? "Comprar ahora" : "Ver colores"}</Boton>
-              </div>
-            </div>
-            <div data-revelar className="relative aspect-[4/3] overflow-hidden rounded-tarjeta">
-              <Image src={fotoAmbiente[cat] ?? "/img/landing/catalogo.jpg"} alt="" fill sizes="(min-width: 768px) 55vw, 100vw" className="object-cover" />
-            </div>
-          </div>
-        </section>
-
-        {/* 7. Dónde lo encuentras */}
+        {/* 5. Dónde lo encuentras */}
         <section className="contenedor pt-24 md:pt-32" aria-labelledby="donde">
           <h2 id="donde" className="etiqueta mb-8 text-bruma">
             Dónde lo encuentras
@@ -274,6 +250,14 @@ async function Contenido({
           </section>
         )}
       </Revelador>
+
+      <BarraCompra
+        nombre={`${producto.marca} ${producto.nombre}`}
+        slug={producto.slug}
+        precio={producto.precioVenta}
+        tarifaDia={producto.tarifaAlquilerDia}
+        disponibles={disponibles}
+      />
     </ProveedorColor>
   );
 }

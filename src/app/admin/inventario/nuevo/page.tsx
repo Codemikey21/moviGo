@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { requerirRol } from "@/compartido/servidor/autenticacion/guardas";
 import { FormularioProducto } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/FormularioProducto";
 import { obtenerCategorias } from "@/modulos/gestion-catalogo/servidor/categorias/acciones";
+import { EsqueletoLista } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Nuevo producto · Administración MoviGo" };
 
@@ -18,7 +19,7 @@ export default function PaginaNuevoProducto() {
         Nuevo producto
       </h1>
       <div className="mt-8 rounded-tarjeta bg-blanco p-6 sm:p-8">
-        <Suspense fallback={<p className="text-pizarra">Cargando…</p>}>
+        <Suspense fallback={<EsqueletoLista filas={4} className="" conTitulo={false} />}>
           <Formulario />
         </Suspense>
       </div>

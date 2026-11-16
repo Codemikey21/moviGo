@@ -21,6 +21,7 @@ import {
   cambiarActivoProductoAccion,
   obtenerProductoAdmin,
 } from "@/modulos/gestion-catalogo/servidor/productos/acciones";
+import { EsqueletoLista } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Producto · Administración MoviGo" };
 
@@ -30,7 +31,7 @@ export default function PaginaProductoAdmin({ params, searchParams }: PageProps<
       <Link href="/admin/inventario" className="text-[14px] text-pizarra hover:text-carbon">
         ← Inventario
       </Link>
-      <Suspense fallback={<p className="mt-6 text-pizarra">Cargando producto…</p>}>
+      <Suspense fallback={<EsqueletoLista etiqueta="Cargando producto…" filas={4} className="mt-6" />}>
         <Contenido params={params} searchParams={searchParams} />
       </Suspense>
     </main>

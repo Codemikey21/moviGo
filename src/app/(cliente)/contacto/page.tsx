@@ -8,6 +8,7 @@ import { obtenerPuntos } from "@/modulos/gestion-almacen/servidor/stock/acciones
 import { FormularioContacto } from "@/modulos/gestion-notificaciones/interfaz/componentes/FormularioContacto";
 import { MOTIVOS_CONTACTO, type MotivoContacto } from "@/modulos/gestion-notificaciones/tipos";
 import { obtenerMiPerfil } from "@/modulos/gestion-usuarios/servidor/acciones";
+import { Esqueleto } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Contacto · MoviGo" };
 
@@ -67,7 +68,7 @@ export default function PaginaContacto({ searchParams }: PageProps<"/contacto">)
           <Canales />
           <section>
             <p className="etiqueta pb-5 text-carbon/70">Visítanos</p>
-            <Suspense fallback={<div className="h-56 animate-pulse rounded-tarjeta bg-escarcha" />}>
+            <Suspense fallback={<Esqueleto className="h-56 rounded-tarjeta" />}>
               <Puntos />
             </Suspense>
           </section>

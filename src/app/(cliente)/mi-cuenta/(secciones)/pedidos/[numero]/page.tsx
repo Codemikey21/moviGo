@@ -18,13 +18,14 @@ import { CodigoEntrega } from "@/modulos/gestion-servicios/interfaz/componentes/
 import { MapaSeguimiento } from "@/modulos/gestion-servicios/interfaz/componentes/domicilios/MapaSeguimiento";
 import { obtenerDomicilio, obtenerSeguimiento } from "@/modulos/gestion-servicios/servidor/domicilios/acciones";
 import type { DomicilioVista } from "@/modulos/gestion-servicios/tipos";
+import { EsqueletoDetalle } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Seguir pedido · MoviGo" };
 
 export default function PaginaPedido({ params }: PageProps<"/mi-cuenta/pedidos/[numero]">) {
   return (
     <div className="contenedor">
-      <Suspense fallback={<p className="mt-10 text-pizarra">Cargando tu pedido…</p>}>
+      <Suspense fallback={<EsqueletoDetalle etiqueta="Cargando tu pedido…" />}>
         <Contenido params={params} />
       </Suspense>
     </div>

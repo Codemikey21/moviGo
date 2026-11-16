@@ -7,13 +7,14 @@ import { AccionesAlquiler } from "@/modulos/gestion-servicios/interfaz/component
 import { EstadoAlquiler } from "@/modulos/gestion-servicios/interfaz/componentes/alquiler/EstadoAlquiler";
 import { conteosAlquileresAdmin, listarAlquileresAdmin } from "@/modulos/gestion-servicios/servidor/alquiler/acciones";
 import { EncabezadoAdmin, FiltroEstados } from "../_componentes/EncabezadoAdmin";
+import { EsqueletoLista } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Alquileres · Administración MoviGo" };
 
 export default function PaginaAlquileresAdmin({ searchParams }: PageProps<"/admin/alquileres">) {
   return (
     <main className="mx-auto max-w-[1440px] px-3 pb-24 md:px-5">
-      <Suspense fallback={<p className="pt-16 text-pizarra">Cargando alquileres…</p>}>
+      <Suspense fallback={<EsqueletoLista etiqueta="Cargando alquileres…" />}>
         <Contenido searchParams={searchParams} />
       </Suspense>
     </main>

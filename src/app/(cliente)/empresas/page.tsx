@@ -9,6 +9,7 @@ import { obtenerMiPerfil } from "@/modulos/gestion-usuarios/servidor/acciones";
 import { EstadoSolicitud } from "@/modulos/portal-empresarial/interfaz/componentes/EstadoSolicitud";
 import { FormularioSolicitud } from "@/modulos/portal-empresarial/interfaz/componentes/FormularioSolicitud";
 import { obtenerMiEmpresa, responderCotizacionAccion } from "@/modulos/portal-empresarial/servidor/acciones";
+import { Esqueleto } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Portal empresarial · MoviGo" };
 
@@ -51,7 +52,7 @@ export default function PaginaEmpresas() {
       </section>
 
       <div className="contenedor">
-        <Suspense fallback={<p className="text-pizarra">Cargando…</p>}>
+        <Suspense fallback={<Esqueleto className="h-[420px] rounded-tarjeta" />}>
           <Portal />
         </Suspense>
       </div>

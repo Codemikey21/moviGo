@@ -8,13 +8,14 @@ import { formatoFechaHora, formatoPesos } from "@/compartido/utilidades/formato"
 import { obtenerPago } from "@/modulos/gestion-pagos/servidor/acciones";
 import { BANCOS_PSE } from "@/modulos/gestion-pagos/servidor/pasarela";
 import { FormularioPago } from "./_componentes/FormularioPago";
+import { EsqueletoPago } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Pagar · MoviGo Pay" };
 
 export default function PaginaPago({ params }: PageProps<"/pagar/[referencia]">) {
   return (
     <main className="px-3 pt-8 md:px-5 md:pt-12">
-      <Suspense fallback={<p className="text-center text-pizarra">Cargando el pago…</p>}>
+      <Suspense fallback={<EsqueletoPago />}>
         <Contenido params={params} />
       </Suspense>
     </main>

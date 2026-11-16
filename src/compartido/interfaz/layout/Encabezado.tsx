@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Suspense, useCallback, useEffect, useState, type ReactNode } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { Boton } from "../ui/Boton";
 import { Chevron } from "../ui/Chevron";
 import { Icono } from "../ui/Icono";
 import { useHaySesion } from "../hooks/useHaySesion";
 import { Logo } from "./Logo";
 import { MenuLateral } from "./MenuLateral";
+import { EVENTO_CARRITO } from "./eventos";
 
 type Enlace = { texto: string; href: string };
 
@@ -26,7 +27,7 @@ type Props = {
 };
 
 /** Carrito con el numerito de unidades. */
-function BotonCarrito({ cantidad }: { cantidad: number }) {
+function BotonCarrito({ cantidad, salta = false }: { cantidad: number; salta?: boolean }) {
   return (
     <Link
       href="/carrito"
@@ -35,7 +36,12 @@ function BotonCarrito({ cantidad }: { cantidad: number }) {
     >
       <Icono nombre="carrito" className="size-[22px]" />
       {cantidad > 0 && (
-        <span className="absolute -right-1.5 -top-1.5 grid min-w-5 place-items-center rounded-full bg-turquesa px-1 text-[11px] font-bold leading-5 text-carbon">
+        <span
+          key={cantidad}
+          className={`absolute -right-1.5 -top-1.5 grid min-w-5 place-items-center rounded-full bg-turquesa px-1 text-[11px] font-bold leading-5 text-carbon ${
+            salta ? "insignia-salta" : ""
+          }`}
+        >
           {cantidad}
         </span>
       )}
@@ -50,16 +56,29 @@ function BotonCarrito({ cantidad }: { cantidad: number }) {
 function CarritoConRuta({ contarCarrito }: { contarCarrito: () => Promise<number> }) {
   const ruta = usePathname();
   const [cantidad, setCantidad] = useState(0);
+  const [salta, setSalta] = useState(false);
+  const anterior = useRef(0);
   useEffect(() => {
     let vigente = true;
-    contarCarrito()
-      .then((n) => vigente && setCantidad(n))
-      .catch(() => {});
+    const contar = (animar: boolean) =>
+      contarCarrito()
+        .then((n) => {
+          if (!vigente) return;
+          // La insignia da un saltico solo cuando el carrito crece
+          setSalta(animar && n > anterior.current);
+          anterior.current = n;
+          setCantidad(n);
+        })
+        .catch(() => {});
+    contar(false);
+    const alCambiar = () => contar(true);
+    window.addEventListener(EVENTO_CARRITO, alCambiar);
     return () => {
       vigente = false;
+      window.removeEventListener(EVENTO_CARRITO, alCambiar);
     };
   }, [contarCarrito, ruta]);
-  return <BotonCarrito cantidad={cantidad} />;
+  return <BotonCarrito cantidad={cantidad} salta={salta} />;
 }
 
 // Curva y duración medidas en el sitio de referencia

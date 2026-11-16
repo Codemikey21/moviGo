@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { Aviso } from "@/compartido/interfaz/ui/Aviso";
 import { Boton } from "@/compartido/interfaz/ui/Boton";
 import { BotonAccion } from "@/compartido/interfaz/ui/BotonAccion";
 import { Icono } from "@/compartido/interfaz/ui/Icono";
+import { EVENTO_CARRITO } from "@/compartido/interfaz/layout/eventos";
 import { estadoInicial } from "@/compartido/tipos/formulario";
 import { formatoPesos } from "@/compartido/utilidades/formato";
 import { SelectorPunto } from "@/modulos/gestion-almacen/interfaz/componentes/stock/SelectorPunto";
@@ -155,6 +156,11 @@ function FormularioCompra({
 }) {
   const [estado, accion, enviando] = useActionState(agregarAlCarritoAccion, {});
   const [cantidad, setCantidad] = useState(1);
+
+  // Avisa a la barra de arriba para que el contador del carrito se actualice
+  useEffect(() => {
+    if (estado.ok) window.dispatchEvent(new Event(EVENTO_CARRITO));
+  }, [estado]);
 
   return (
     <form action={accion} className="space-y-6">

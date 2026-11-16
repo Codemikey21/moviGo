@@ -14,13 +14,14 @@ import { kilometros } from "@/modulos/gestion-servicios/interfaz/componentes/rep
 import { obtenerSeguimiento } from "@/modulos/gestion-servicios/servidor/domicilios/acciones";
 import { obtenerEntregaReparto } from "@/modulos/gestion-servicios/servidor/reparto/acciones";
 import type { Coordenada, EntregaReparto } from "@/modulos/gestion-servicios/tipos";
+import { Esqueleto } from "@/compartido/interfaz/ui/Esqueleto";
 
 export const metadata: Metadata = { title: "Entrega · Reparto MoviGo" };
 
 export default function PaginaEntregaReparto({ params }: PageProps<"/domiciliario/entregas/[id]">) {
   return (
     <main className="mx-auto max-w-[1180px] px-3 pb-24 pt-6 md:px-5">
-      <Suspense fallback={<div className="h-[560px] animate-pulse rounded-tarjeta bg-carbon/10" />}>
+      <Suspense fallback={<Esqueleto className="h-[560px] rounded-tarjeta" />}>
         <Contenido params={params} />
       </Suspense>
     </main>
