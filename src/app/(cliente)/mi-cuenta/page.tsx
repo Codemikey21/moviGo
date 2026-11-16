@@ -24,6 +24,8 @@ import { obtenerCategorias } from "@/modulos/gestion-catalogo/servidor/categoria
 import { obtenerMisNotificaciones } from "@/modulos/gestion-notificaciones/servidor/acciones";
 import { obtenerMisPedidos } from "@/modulos/gestion-pedidos/servidor/compras/acciones";
 import type { PedidoResumen } from "@/modulos/gestion-pedidos/tipos";
+import { FotoOVehiculo } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/FotoOVehiculo";
+import type { Foto } from "@/modulos/gestion-catalogo/tipos";
 import { MapaSeguimiento } from "@/modulos/gestion-servicios/interfaz/componentes/domicilios/MapaSeguimiento";
 import { obtenerMisAlquileres } from "@/modulos/gestion-servicios/servidor/alquiler/acciones";
 import { obtenerDomicilio, obtenerSeguimiento } from "@/modulos/gestion-servicios/servidor/domicilios/acciones";
@@ -39,17 +41,6 @@ export const metadata: Metadata = { title: "Mi cuenta · MoviGo" };
 const avisos: Record<string, string> = {
   "contrasena-actualizada": "Listo, tu contraseña quedó actualizada.",
   "sin-permiso": "No tienes permiso para entrar a esa sección.",
-};
-
-// Foto de ambiente (de la landing) para las tarjetas de lo que está en curso
-const fotoCategoria: Record<string, string> = {
-  "autos-electricos": "/img/landing/pie.jpg",
-  motos: "/img/landing/palabra-escape.jpg",
-  scooters: "/img/landing/recorrido-3.jpg",
-  bicicletas: "/img/landing/palabra-domingo.jpg",
-  drones: "/img/landing/palabra-perspectiva.jpg",
-  patinetas: "/img/landing/recorrido-1.jpg",
-  accesorios: "/img/landing/comprar.jpg",
 };
 
 const textoPedido: Record<string, string> = {
@@ -153,6 +144,7 @@ async function Contenido({ searchParams }: Pick<PageProps<"/mi-cuenta">, "search
       total: c.totalProductos,
       desdeVenta: c.desdeVenta,
       desdeAlquiler: c.desdeAlquiler,
+      foto: c.foto,
     }));
 
   const enCurso: ElementoEnCurso[] = [
@@ -383,9 +375,24 @@ function CartaFoto({ foto, children }: { foto: string; children: ReactNode }) {
   );
 }
 
+/**
+ * Lo que está en curso va sobre el escenario oscuro con el vehículo real
+ * (su foto sin fondo o el dibujo de su categoría) bajo el carril de luz.
+ */
+function CartaVehiculo({ foto, categoria, titulo, children }: { foto: Foto | null; categoria: string; titulo: string; children: ReactNode }) {
+  return (
+    <Escenario className="relative h-full" carril="polygon(8% 0, 46% 0, 62% 100%, 0 100%)" haz={false}>
+      <div className="absolute bottom-[10%] left-[4%] w-[58%] max-w-[640px] md:bottom-[12%]">
+        <FotoOVehiculo foto={foto} categoria={categoria} titulo={titulo} tamanos="(min-width: 1240px) 640px, 60vw" className="vehiculo-entra" />
+      </div>
+      {children}
+    </Escenario>
+  );
+}
+
 function CartaAlquiler({ alquiler: a }: { alquiler: AlquilerVista }) {
   return (
-    <CartaFoto foto={fotoCategoria[a.producto.categoria] ?? "/img/landing/alquilar.jpg"}>
+    <CartaVehiculo foto={a.producto.foto} categoria={a.producto.categoria} titulo={`${a.producto.marca} ${a.producto.nombre}`}>
       <div className="absolute right-6 top-6 max-w-[440px] text-right text-blanco md:right-12 md:top-12">
         <p className="etiqueta">
           Alquiler · {a.dias} día{a.dias === 1 ? "" : "s"} · {textoAlquiler[a.estado]}
@@ -410,19 +417,19 @@ function CartaAlquiler({ alquiler: a }: { alquiler: AlquilerVista }) {
           <p className="mt-1.5 font-mono text-[clamp(34px,4vw,54px)] font-medium tracking-[0.12em] text-turquesa">{a.codigoRecogida}</p>
         </div>
       )}
-    </CartaFoto>
+    </CartaVehiculo>
   );
 }
 
 function CartaTaller({ mantenimiento: m }: { mantenimiento: MantenimientoVista }) {
   return (
-    <CartaFoto foto="/img/landing/recorrido-2.jpg">
+    <CartaVehiculo foto={m.producto.foto} categoria={m.producto.categoria} titulo={`${m.producto.marca} ${m.producto.nombre}`}>
       <div className="absolute right-6 top-6 max-w-[440px] text-right text-blanco md:right-12 md:top-12">
         <p className="etiqueta">Taller · {m.tipo === "PREVENTIVO" ? "Revisión" : "Arreglo"}</p>
         <h3 className="titular mt-3 text-[clamp(32px,3.4vw,44px)]">
           {m.producto.marca} {m.producto.nombre}
         </h3>
-        <p className="mt-3 text-[17px] leading-relaxed md:text-[19px]">{formatoFechaHora.format(m.programadoPara)}. Te avisamos cuando esté listo.</p>
+        <p className="mt-3 text-[17px] leading-relaxed md:text-[19px]">{formatoFechaHora.format(m.programadoPara).replace(/\.$/, "")}. Te avisamos cuando esté listo.</p>
         <div className="mt-6">
           <Boton href="/mi-cuenta/mantenimiento">Ver el taller</Boton>
         </div>
@@ -431,7 +438,7 @@ function CartaTaller({ mantenimiento: m }: { mantenimiento: MantenimientoVista }
         <p className="etiqueta">Estado</p>
         <p className="mt-1.5 text-[30px] text-turquesa">{textoTaller[m.estado]}</p>
       </div>
-    </CartaFoto>
+    </CartaVehiculo>
   );
 }
 

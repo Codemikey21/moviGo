@@ -27,7 +27,7 @@ export function VitrinaProducto({
       className={`relative overflow-hidden bg-[radial-gradient(120%_100%_at_50%_0%,#edf4f2_0%,#d3e4df_62%,#c4d9d2_100%)] ${className}`}
     >
       {foto ? (
-        <Image src={foto.url} alt={foto.textoAlt} fill sizes={tamanos} className="object-cover" />
+        <Image src={foto.url} alt={foto.textoAlt} fill sizes={tamanos} className="object-contain p-[6%]" />
       ) : (
         <div className="absolute inset-0 grid place-items-center">
           <IlustracionVehiculo categoria={categoria} color={color} className={`relative ${tamanoDibujo}`} />

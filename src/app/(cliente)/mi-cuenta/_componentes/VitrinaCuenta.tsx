@@ -7,7 +7,9 @@ import { Boton } from "@/compartido/interfaz/ui/Boton";
 import { Escenario } from "@/compartido/interfaz/ui/Escenario";
 import { Muesca } from "@/compartido/interfaz/ui/Muesca";
 import { formatoPesos } from "@/compartido/utilidades/formato";
+import { FotoOVehiculo } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/FotoOVehiculo";
 import { IlustracionVehiculo } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/IlustracionVehiculo";
+import type { Foto } from "@/modulos/gestion-catalogo/tipos";
 
 export type CategoriaVitrina = {
   slug: string;
@@ -17,6 +19,8 @@ export type CategoriaVitrina = {
   total: number;
   desdeVenta: number | null;
   desdeAlquiler: number | null;
+  /** Foto sin fondo de un producto de la categoría (si no hay, el dibujo) */
+  foto: Foto | null;
 };
 
 export type ElementoEnCurso = {
@@ -119,10 +123,13 @@ export function VitrinaCuenta({
 
         <Escenario className="escena-encoge absolute inset-0">
           <div className="escena-vehiculo absolute left-1/2 top-[44%] w-[min(820px,86vw)] md:top-[42%] md:w-[min(820px,60vw)]">
-            <IlustracionVehiculo
+            <FotoOVehiculo
               key={mostrado}
+              foto={c.foto}
               categoria={c.slug}
               titulo={c.nombre}
+              prioridad={mostrado === 0}
+              tamanos="(min-width: 768px) 60vw, 86vw"
               className={`block w-full ${saliendo ? "vehiculo-sale" : "vehiculo-entra"}`}
             />
           </div>

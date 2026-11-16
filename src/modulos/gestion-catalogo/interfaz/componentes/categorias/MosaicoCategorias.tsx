@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Escenario } from "@/compartido/interfaz/ui/Escenario";
 import { formatoPesos } from "@/compartido/utilidades/formato";
 import type { CategoriaResumen } from "../../../tipos";
-import { IlustracionVehiculo } from "../productos/IlustracionVehiculo";
+import { FotoOVehiculo } from "../productos/FotoOVehiculo";
 
 type Fondo = "oscuro" | "salvia" | "escarcha";
 type Tamano = "grande" | "ancha" | "normal";
@@ -96,7 +96,7 @@ function TarjetaCategoria({ categoria: c, modo }: { categoria: CategoriaResumen;
   const oscuro = estilo.fondo === "oscuro";
   const tamano = { grande: "sm:col-span-2 lg:row-span-2", ancha: "sm:col-span-2", normal: "" }[estilo.tamano];
   const fondo = { oscuro: "", salvia: "bg-salvia", escarcha: "bg-escarcha" }[estilo.fondo];
-  const dibujo = { grande: "inset-x-[6%]", ancha: "left-[26%] right-[4%]", normal: "inset-x-[8%]" }[estilo.tamano];
+  const dibujo = { grande: "inset-x-[6%]", ancha: "left-[36%] right-[6%]", normal: "inset-x-[8%]" }[estilo.tamano];
   const precio =
     modo === "alquilar" && c.desdeAlquiler !== null
       ? `desde ${formatoPesos.format(c.desdeAlquiler)} por día`
@@ -109,7 +109,7 @@ function TarjetaCategoria({ categoria: c, modo }: { categoria: CategoriaResumen;
       <div
         className={`absolute ${dibujo} top-1/2 -translate-y-[56%] transition-transform duration-700 ease-salida group-hover:translate-x-3.5 group-hover:scale-[1.04]`}
       >
-        <IlustracionVehiculo categoria={c.slug} className="w-full" />
+        <FotoOVehiculo foto={c.foto} categoria={c.slug} titulo={c.nombre} tamanos="(min-width: 1024px) 40vw, 90vw" />
       </div>
       <p className={`etiqueta relative ${oscuro ? "text-turquesa" : "text-bosque"}`}>{c.nombre}</p>
       <div className="relative flex items-end justify-between gap-3">

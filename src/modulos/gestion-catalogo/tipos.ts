@@ -18,6 +18,8 @@ export type CategoriaResumen = {
   desdeVenta: number | null;
   /** Tarifa de alquiler por día más baja (null si nada se alquila) */
   desdeAlquiler: number | null;
+  /** Foto sin fondo de un producto de la categoría (null: se usa el dibujo) */
+  foto: Foto | null;
 };
 
 export type Foto = {

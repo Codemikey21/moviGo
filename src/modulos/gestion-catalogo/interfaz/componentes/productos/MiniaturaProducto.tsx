@@ -16,7 +16,7 @@ export function MiniaturaProducto({
   return (
     <div className={`relative shrink-0 overflow-hidden rounded-[14px] bg-salvia ${className}`}>
       {foto ? (
-        <Image src={foto.url} alt={foto.textoAlt} fill sizes={tamanos} className="object-cover" />
+        <Image src={foto.url} alt={foto.textoAlt} fill sizes={tamanos} className="object-contain p-[6%]" />
       ) : (
         <span
           aria-hidden
