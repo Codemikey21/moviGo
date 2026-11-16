@@ -7,9 +7,8 @@ import { NombreColor, ProductoEnColor } from "./ColorElegido";
 
 /**
  * Barra flotante con el precio y los botones de compra. Aparece cuando la
- * persona ya pasó la vitrina y se esconde mientras el configurador está en
- * pantalla (ahí ya tiene los botones de verdad). Así comprar queda siempre
- * a un clic, sin importar en qué parte de la página esté.
+ * persona ya pasó el configurador (ficha técnica, cómo te llega, puntos…),
+ * así comprar queda a un clic sin tener que volver a subir.
  */
 export function BarraCompra({
   nombre,
@@ -28,30 +27,22 @@ export function BarraCompra({
 
   useEffect(() => {
     const configurador = document.getElementById("configurar");
-    let pasoVitrina = false;
-    let configuradorEnPantalla = false;
-    const actualizar = () => setVisible(pasoVitrina && !configuradorEnPantalla);
-
+    if (!configurador) return;
+    // Arriba del configurador ya están los botones de la vitrina; la barra
+    // sale solo cuando el configurador quedó atrás.
+    const pie = document.querySelector("footer");
     const alBajar = () => {
-      pasoVitrina = window.scrollY > window.innerHeight * 0.9;
-      actualizar();
+      const paso = configurador.getBoundingClientRect().bottom < window.innerHeight * 0.4;
+      // En el pie ya no hace falta: no tapa el copyright ni el boletín
+      const enPie = pie ? pie.getBoundingClientRect().top < window.innerHeight * 0.85 : false;
+      setVisible(paso && !enPie);
     };
-
-    const observador = new IntersectionObserver(
-      ([entrada]) => {
-        configuradorEnPantalla = entrada.isIntersecting;
-        actualizar();
-      },
-      // Cuenta como "en pantalla" cuando ocupa la franja central
-      { rootMargin: "-25% 0px -25% 0px" },
-    );
-    if (configurador) observador.observe(configurador);
-
     alBajar();
     window.addEventListener("scroll", alBajar, { passive: true });
+    window.addEventListener("resize", alBajar);
     return () => {
       window.removeEventListener("scroll", alBajar);
-      observador.disconnect();
+      window.removeEventListener("resize", alBajar);
     };
   }, []);
 
