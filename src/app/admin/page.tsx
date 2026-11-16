@@ -16,7 +16,8 @@ import {
   obtenerUnidadesPorEstado,
 } from "@/modulos/gestion-almacen/servidor/stock/acciones";
 import { ordenarCategorias } from "@/modulos/gestion-catalogo/interfaz/componentes/categorias/MosaicoCategorias";
-import { IlustracionVehiculo } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/IlustracionVehiculo";
+import { IconoProducto } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/IconoProducto";
+import type { Foto } from "@/modulos/gestion-catalogo/tipos";
 import { obtenerCategorias } from "@/modulos/gestion-catalogo/servidor/categorias/acciones";
 import { listarProductosAdmin } from "@/modulos/gestion-catalogo/servidor/productos/acciones";
 import { obtenerResumenIngresos } from "@/modulos/gestion-pagos/servidor/acciones";
@@ -58,6 +59,7 @@ function hace(fecha: Date) {
 type Fila = {
   id: string;
   categoria: string | null;
+  foto?: Foto | null;
   icono?: NombreIcono;
   titulo: string;
   referencia: string;
@@ -108,6 +110,7 @@ async function Contenido() {
         return {
           id: p.id,
           categoria: p.lineas[0]?.categoria ?? null,
+          foto: p.lineas[0]?.foto ?? null,
           titulo: `${p.lineas[0]?.marca ?? ""} ${p.lineas[0]?.nombre ?? "Pedido"}${p.lineas.length > 1 ? ` y ${p.lineas.length - 1} más` : ""}`,
           referencia: p.numero,
           cliente: p.cliente.nombre,
@@ -124,6 +127,7 @@ async function Contenido() {
       (a): Fila => ({
         id: a.id,
         categoria: a.producto.categoria,
+        foto: a.producto.foto,
         titulo: `${a.producto.marca} ${a.producto.nombre} · ${a.dias} día${a.dias === 1 ? "" : "s"}`,
         referencia: a.codigoRecogida ?? "Alquiler",
         cliente: a.cliente.nombre,
@@ -165,7 +169,7 @@ async function Contenido() {
     estado: f.estado,
     cantidad: f.cantidad,
   }));
-  const categoriasOrden = ordenarCategorias(categorias).map((c) => ({ slug: c.slug, nombre: c.nombre }));
+  const categoriasOrden = ordenarCategorias(categorias).map((c) => ({ slug: c.slug, nombre: c.nombre, foto: c.foto }));
 
   const hoy = ingresos.dias.at(-1)?.total ?? 0;
   const periodo = ingresos.periodo.ventas + ingresos.periodo.alquileres;
@@ -376,7 +380,7 @@ async function Contenido() {
                         <td className="py-5">
                           <span className="flex items-center gap-3.5">
                             <span className="grid h-12 w-16 shrink-0 place-items-center rounded-[14px] bg-escarcha text-bosque">
-                              {f.categoria ? <IlustracionVehiculo categoria={f.categoria} className="w-[54px]" /> : <Icono nombre={f.icono ?? "paquete"} className="size-5" />}
+                              {f.categoria ? <IconoProducto foto={f.foto ?? null} categoria={f.categoria} className="w-[54px]" /> : <Icono nombre={f.icono ?? "paquete"} className="size-5" />}
                             </span>
                             <span className="min-w-0">
                               <span className="block max-w-[300px] truncate text-[16px] text-carbon">{f.titulo}</span>

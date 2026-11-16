@@ -4,11 +4,15 @@ import Link from "next/link";
 import { useState } from "react";
 import { Escenario } from "@/compartido/interfaz/ui/Escenario";
 import { Muesca } from "@/compartido/interfaz/ui/Muesca";
-import { IlustracionVehiculo } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/IlustracionVehiculo";
+import { FotoOVehiculo } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/FotoOVehiculo";
+import { IconoProducto } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/IconoProducto";
+import type { Foto } from "@/modulos/gestion-catalogo/tipos";
 
 export type FilaHistorial = {
   id: string;
   categoria: string;
+  /** Foto del producto (si no tiene, se usa el dibujo de la categoría) */
+  foto: Foto | null;
   titulo: string;
   /** Referencia y fecha */
   detalle: string;
@@ -56,7 +60,7 @@ export function HistorialCuenta({ pestanas }: { pestanas: { nombre: string; fila
           }`}
         >
           {destacada ? (
-            <IlustracionVehiculo categoria={destacada.categoria} className="w-full" />
+            <FotoOVehiculo key={destacada.id} foto={destacada.foto} categoria={destacada.categoria} titulo={destacada.titulo} className="vehiculo-entra w-full" />
           ) : (
             <p className="pt-24 text-center text-blanco/60">Todavía no hay movimientos aquí.</p>
           )}
@@ -99,7 +103,7 @@ export function HistorialCuenta({ pestanas }: { pestanas: { nombre: string; fila
                 className="grid grid-cols-[56px_1fr_auto] items-center gap-x-4 gap-y-1 py-4 transition-[padding] duration-500 ease-salida hover:pl-2.5"
               >
                 <span className="row-span-2 grid size-14 place-items-center rounded-[16px] bg-blanco/8">
-                  <IlustracionVehiculo categoria={f.categoria} className="w-[46px]" />
+                  <IconoProducto foto={f.foto} categoria={f.categoria} className="w-[46px]" />
                 </span>
                 <span className="truncate text-[18px] text-blanco">{f.titulo}</span>
                 <span className="text-right text-[18px] tabular-nums text-blanco">{f.monto}</span>

@@ -3,14 +3,16 @@
 import { useEffect, useRef, useState } from "react";
 import { Escenario } from "@/compartido/interfaz/ui/Escenario";
 import { Muesca } from "@/compartido/interfaz/ui/Muesca";
-import { IlustracionVehiculo } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/IlustracionVehiculo";
+import { FotoOVehiculo } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/FotoOVehiculo";
+import { IconoProducto } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/IconoProducto";
+import type { Foto } from "@/modulos/gestion-catalogo/tipos";
 
 export type FilaInventario = { categoria: string; puntoId: string; estado: string; cantidad: number };
 
 type Props = {
   puntos: { id: string; nombre: string; capacidad: number }[];
   /** En el orden en que se muestran */
-  categorias: { slug: string; nombre: string }[];
+  categorias: { slug: string; nombre: string; foto: Foto | null }[];
   filas: FilaInventario[];
 };
 
@@ -64,7 +66,7 @@ export function InventarioCategorias({ puntos, categorias, filas }: Props) {
               {actual.nombre} · {suma((f) => f.categoria === actual.slug && f.estado === "DISPONIBLE")} libres
             </p>
             <div className="absolute inset-x-[6%] top-[22%]">
-              <IlustracionVehiculo key={actual.slug} categoria={actual.slug} titulo={actual.nombre} className="vehiculo-entra block w-full" />
+              <FotoOVehiculo key={actual.slug} foto={actual.foto} categoria={actual.slug} titulo={actual.nombre} className="vehiculo-entra block w-full" />
             </div>
           </>
         )}
@@ -114,7 +116,7 @@ export function InventarioCategorias({ puntos, categorias, filas }: Props) {
               <li key={c.slug} className={`border-t border-blanco/15 py-3 ${total ? "" : "opacity-45"}`}>
                 <div className="flex items-center justify-between gap-4 text-[16px]">
                   <span className="flex items-center gap-3">
-                    <IlustracionVehiculo categoria={c.slug} className="w-11" />
+                    <IconoProducto foto={c.foto} categoria={c.slug} className="w-11" />
                     {c.nombre}
                   </span>
                   <b className="font-medium tabular-nums">

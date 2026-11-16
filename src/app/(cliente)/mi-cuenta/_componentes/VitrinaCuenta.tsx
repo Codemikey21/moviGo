@@ -8,7 +8,7 @@ import { Escenario } from "@/compartido/interfaz/ui/Escenario";
 import { Muesca } from "@/compartido/interfaz/ui/Muesca";
 import { formatoPesos } from "@/compartido/utilidades/formato";
 import { FotoOVehiculo } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/FotoOVehiculo";
-import { IlustracionVehiculo } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/IlustracionVehiculo";
+import { IconoProducto } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/IconoProducto";
 import type { Foto } from "@/modulos/gestion-catalogo/tipos";
 
 export type CategoriaVitrina = {
@@ -25,6 +25,7 @@ export type CategoriaVitrina = {
 
 export type ElementoEnCurso = {
   categoria: string;
+  foto: Foto | null;
   titulo: string;
   detalle: string;
   href: string;
@@ -94,7 +95,7 @@ export function VitrinaCuenta({
             <li key={e.href} className="border-t border-carbon/10">
               <Link href={e.href} className="group grid grid-cols-[52px_1fr_auto] items-center gap-4 py-4">
                 <span className="grid size-[52px] place-items-center rounded-[15px] bg-escarcha">
-                  <IlustracionVehiculo categoria={e.categoria} className="w-[42px]" />
+                  <IconoProducto foto={e.foto} categoria={e.categoria} className="w-[42px]" />
                 </span>
                 <span className="min-w-0">
                   <span className="block truncate text-[17px] text-carbon">{e.titulo}</span>

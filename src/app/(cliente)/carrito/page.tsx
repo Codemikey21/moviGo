@@ -9,7 +9,7 @@ import { Muesca } from "@/compartido/interfaz/ui/Muesca";
 import { formatoPesos } from "@/compartido/utilidades/formato";
 import { obtenerDisponibilidad } from "@/modulos/gestion-almacen/servidor/stock/acciones";
 import { MosaicoCategorias } from "@/modulos/gestion-catalogo/interfaz/componentes/categorias/MosaicoCategorias";
-import { IlustracionVehiculo } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/IlustracionVehiculo";
+import { FotoOVehiculo } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/FotoOVehiculo";
 import { obtenerCategorias } from "@/modulos/gestion-catalogo/servidor/categorias/acciones";
 import { VitrinaProducto } from "@/modulos/gestion-catalogo/interfaz/componentes/productos/VitrinaProducto";
 import { cambiarCantidadAccion, obtenerMiCarrito } from "@/modulos/gestion-pedidos/servidor/carrito/acciones";
@@ -92,7 +92,12 @@ async function Contenido() {
                 </Boton>
               </div>
             </div>
-            <IlustracionVehiculo categoria="motos" className="vehiculo-entra mx-auto w-full max-w-[560px]" />
+            <FotoOVehiculo
+              foto={categorias.find((c) => c.slug === "motos")?.foto ?? null}
+              categoria="motos"
+              titulo="Moto"
+              className="vehiculo-entra mx-auto w-full max-w-[560px]"
+            />
           </div>
           <Muesca lado="izquierda" fondo="var(--color-blanco)" className="pr-[18px] pt-4">
             <Beneficios />

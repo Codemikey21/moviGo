@@ -150,18 +150,21 @@ async function Contenido({ searchParams }: Pick<PageProps<"/mi-cuenta">, "search
   const enCurso: ElementoEnCurso[] = [
     ...pedidosActivos.map((p) => ({
       categoria: p.lineas[0]?.categoria ?? "scooters",
+      foto: p.lineas[0]?.foto ?? null,
       titulo: nombreLineas(p),
       detalle: `Pedido · ${enRuta?.href === `/mi-cuenta/pedidos/${p.numero}` && enRuta.domicilio.estado === "EN_CURSO" ? "va en camino" : textoPedido[p.estado].toLowerCase()}`,
       href: `/mi-cuenta/pedidos/${p.numero}`,
     })),
     ...alquileresActivos.map((a) => ({
       categoria: a.producto.categoria,
+      foto: a.producto.foto,
       titulo: `${a.producto.marca} ${a.producto.nombre}`,
       detalle: `Alquiler · ${a.estado === "EN_CURSO" ? `lo devuelves el ${formatoDia.format(a.fechaFin)}` : textoAlquiler[a.estado].toLowerCase()}`,
       href: `/mi-cuenta/alquileres/${a.id}`,
     })),
     ...tallerActivo.map((m) => ({
       categoria: m.producto.categoria,
+      foto: m.producto.foto,
       titulo: `${m.producto.marca} ${m.producto.nombre}`,
       detalle: `Taller · ${formatoFechaHora.format(m.programadoPara)}`,
       href: "/mi-cuenta/mantenimiento",
@@ -465,6 +468,7 @@ function filaPedido(p: PedidoResumen): FilaHistorial {
   return {
     id: p.id,
     categoria: p.lineas[0]?.categoria ?? "scooters",
+    foto: p.lineas[0]?.foto ?? null,
     titulo: nombreLineas(p),
     detalle: `${p.numero} · ${formatoDia.format(p.creadoEn)}`,
     monto: formatoPesos.format(p.total),
@@ -478,6 +482,7 @@ function filaAlquiler(a: AlquilerVista): FilaHistorial {
   return {
     id: a.id,
     categoria: a.producto.categoria,
+    foto: a.producto.foto,
     titulo: `${a.producto.marca} ${a.producto.nombre} · ${a.dias} día${a.dias === 1 ? "" : "s"}`,
     detalle: `${a.codigoRecogida ?? "Alquiler"} · ${formatoDia.format(a.fechaInicio)}`,
     monto: formatoPesos.format(a.total),
@@ -491,6 +496,7 @@ function filaTaller(m: MantenimientoVista): FilaHistorial {
   return {
     id: m.id,
     categoria: m.producto.categoria,
+    foto: m.producto.foto,
     titulo: `${m.tipo === "PREVENTIVO" ? "Revisión" : "Arreglo"} · ${m.producto.marca} ${m.producto.nombre}`,
     detalle: `${m.unidad.serial} · ${formatoDia.format(m.programadoPara)}`,
     monto: m.costo ? formatoPesos.format(m.costo) : "Por cotizar",
