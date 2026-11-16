@@ -295,7 +295,7 @@ Con tarjeta sirve cualquier nombre, cualquier fecha futura y cualquier CVV de 3 
 | Integrante | |
 |---|---|
 | **Miguel Ángel Solano Díaz** | (U00177983) |
-| **Andi Lin** | |(U00180153)
+| **Andi Lin** | |(U00180153) |
 
 Ingeniería de Software · Universidad Autónoma de Bucaramanga (UNAB) · 2026
 
